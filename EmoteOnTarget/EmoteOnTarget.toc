@@ -1,0 +1,7 @@
+## Interface: 100105  -- Versión de la interfaz de WoW (ajusta según la versión actual)
+## Title: EmoteOnTarget
+## Notes: ¡Ejecuta emotes personalizados al seleccionar un objetivo!
+## Author: TuNombre
+## Version: 1.0
+
+EmoteOnTarget.lua
