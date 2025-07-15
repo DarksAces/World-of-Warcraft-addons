@@ -1,0 +1,8 @@
+## Interface: 112000
+## Title: AFK Meme Machine
+## Notes: Mensajes AFK personalizados y multilenguaje.
+## Author: Daniel
+## Version: 1.0
+
+Locales.lua
+AFK_Meme_Machine.lua
