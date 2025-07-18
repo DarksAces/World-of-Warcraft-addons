@@ -1,60 +1,79 @@
--- Nombre del addon
 local addonName = "EmoteOnTarget"
-
--- Crear el frame principal
 local frame = CreateFrame("Frame")
-frame:RegisterEvent("PLAYER_TARGET_CHANGED")
-frame:RegisterEvent("PLAYER_LOGIN")
 
--- Tabla de emotes personalizados
+local cooldownSeconds = 5
+local lastEmoteTime = 0
+
 local emotes = {
-    FRIENDLY_NPC    = { "/salute", "/bow", "/talk" },       -- NPC amistoso (verde, naranja, amarillo)
-    HOSTILE_PLAYER  = { "/rude", "/chicken", "/laugh", "/roar" },  -- Jugador enemigo (PvP)
-    FRIENDLY_PLAYER = { "/wave", "/cheer", "/hug", "/clap" },      -- Jugador amistoso
-    HOSTILE_NPC     = { "/roar", "/threaten" },           -- NPC hostil (rojo)
+    FRIENDLY_NPC = {
+        "salute", "bow", "talk", "wave", "cheer", "thank", "nod", "blowkiss", "curtsey"
+    },
+    HOSTILE_PLAYER = {
+        "rude", "chicken", "laugh", "roar", "flex", "scowl", "kick", "mock", "taunt"
+    },
+    FRIENDLY_PLAYER = {
+        "wave", "cheer", "hug", "clap", "smile", "blowkiss", "dance", "highfive"
+    },
+    HOSTILE_NPC = {
+        "roar", "threaten", "growl", "snarl", "shakefist", "point", "scowl"
+    },
 }
 
--- Función para elegir un emote aleatorio de una lista
+local showMessages = true
+
 local function GetRandomEmote(emoteList)
-    return emoteList[math.random(1, #emoteList)]
+    return emoteList[math.random(#emoteList)]
 end
 
--- Función principal para manejar eventos
 frame:SetScript("OnEvent", function(self, event, ...)
     if event == "PLAYER_TARGET_CHANGED" then
-        -- Verificar si hay un objetivo seleccionado
         if UnitExists("target") then
+            local currentTime = GetTime()
+            if currentTime - lastEmoteTime < cooldownSeconds then
+                -- En cooldown, no hacer emote
+                return
+            end
+            lastEmoteTime = currentTime
+
             local targetName = UnitName("target")
-            local reaction = UnitReaction("player", "target")
+            local reaction = UnitReaction("player", "target") or 5
             local isPlayer = UnitIsPlayer("target")
             local isFriend = UnitIsFriend("player", "target")
-            
-            -- Determinar el tipo de objetivo y ejecutar un emote aleatorio
+
+            if UnitIsDeadOrGhost("target") or UnitIsDead("target") or not UnitIsConnected("target") then
+                if showMessages then
+                    print(addonName .. ": Target is dead, ghost or disconnected, no emote.")
+                end
+                return
+            end
+
+            local emote
             if isPlayer then
                 if isFriend then
-                    local emote = GetRandomEmote(emotes.FRIENDLY_PLAYER)
-                    DoEmote(emote:sub(2))  -- Elimina la barra "/" para usar DoEmote
-                    print("Greeting " .. targetName .. " with " .. emote .. ".")
+                    emote = GetRandomEmote(emotes.FRIENDLY_PLAYER)
+                    if showMessages then print(addonName .. ": Greeting " .. targetName .. " with " .. emote .. ".") end
                 else
-                    local emote = GetRandomEmote(emotes.HOSTILE_PLAYER)
-                    DoEmote(emote:sub(2))  -- Elimina la barra "/" para usar DoEmote
-                    print("Challenging " .. targetName .. " with " .. emote .. ".")
+                    emote = GetRandomEmote(emotes.HOSTILE_PLAYER)
+                    if showMessages then print(addonName .. ": Challenging " .. targetName .. " with " .. emote .. ".") end
                 end
             else
-                if reaction and reaction <= 4 then -- Hostil o neutral
-                    local emote = GetRandomEmote(emotes.HOSTILE_NPC)
-                    DoEmote(emote:sub(2))  -- Elimina la barra "/" para usar DoEmote
-                    print("Challenging " .. targetName .. " with " .. emote .. ".")
-                else -- Amistoso
-                    local emote = GetRandomEmote(emotes.FRIENDLY_NPC)
-                    DoEmote(emote:sub(2))  -- Elimina la barra "/" para usar DoEmote
-                    print("Greeting " .. targetName .. " with " .. emote .. ".")
+                if reaction <= 4 then
+                    emote = GetRandomEmote(emotes.HOSTILE_NPC)
+                    if showMessages then print(addonName .. ": Challenging " .. targetName .. " with " .. emote .. ".") end
+                else
+                    emote = GetRandomEmote(emotes.FRIENDLY_NPC)
+                    if showMessages then print(addonName .. ": Greeting " .. targetName .. " with " .. emote .. ".") end
                 end
             end
+
+            DoEmote(emote)
         else
-            print("No target selected.")
+            if showMessages then print(addonName .. ": No target selected.") end
         end
     elseif event == "PLAYER_LOGIN" then
-        print(addonName .. " loaded. Select a target to see the emotes!")
+        if showMessages then print(addonName .. " loaded. Select a target to see the emotes!") end
     end
 end)
+
+frame:RegisterEvent("PLAYER_TARGET_CHANGED")
+frame:RegisterEvent("PLAYER_LOGIN")
