@@ -1,7 +1,0 @@
-## Interface: 100105 (Versión de la interfaz de WoW)
-## Title: MobCounter
-## Notes: Un addon para contar monstruos y jugadores enemigos asesinados.
-## Author: TuNombre
-## Version: 1.0
-
-MobCounter.lua

@@ -1,0 +1,7 @@
+## Interface: 11403
+## Title: LostAggro Funny Edition
+## Notes: Avisos visuales y en chat cuando pierdes el agro y a quién se lo pasó.
+## Author: Daniel
+## Version: 1.0
+LostAggro_Locales.lua
+LostAggro.lua

@@ -1,0 +1,7 @@
+## Interface: 100207
+## Title: MicroMetrics
+## Notes: Estadísticas rápidas al salir de combate
+## Author: Daniel
+## Version: 1.0.2
+Locales.lua
+MicroMetrics.lua

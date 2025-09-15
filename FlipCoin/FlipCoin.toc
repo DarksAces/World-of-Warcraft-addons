@@ -1,7 +1,0 @@
-## Interface: 100007
-## Title: FlipCoin
-## Notes: Tira una moneda con /flip o haz duelos con /flip Nombre1 CARA/CRUZ Nombre2 CARA/CRUZ [canal]
-## Author: Daniel
-## Version: 1.0
-
-FlipCoin.lua

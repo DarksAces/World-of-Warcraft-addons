@@ -1,0 +1,7 @@
+## Interface: 100110
+## Title: Bag Space Notifier
+## Notes: Te avisa cuando tu inventario está al 90% lleno.
+## Author: DarkAce
+## Version: 1.0.0
+## DefaultEnable: 1
+BagSpaceNotifier.lua

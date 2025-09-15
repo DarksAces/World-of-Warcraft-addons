@@ -1,0 +1,8 @@
+## Interface: 100207
+## Title: Recollect
+## Notes: Medidor de combate moderno y estilizado
+## Author: Daniel
+## Version: 0.1
+## SavedVariables: RecollectDB
+
+Recollect.lua

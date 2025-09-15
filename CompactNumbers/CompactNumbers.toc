@@ -1,6 +1,0 @@
-## Interface: 100207
-## Title: CompactNumbers
-## Notes: Reduce los números grandes a formato K/M.
-## Author: DanielGPT
-## Version: 1.0
-CompactNumbers.lua

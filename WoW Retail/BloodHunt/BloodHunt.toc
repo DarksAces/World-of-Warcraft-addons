@@ -1,0 +1,12 @@
+## Interface: 100207
+## Title: BloodHunt
+## Notes: Sistema de objetivos PvP con venganza y puntuación persistente
+## Author: BloodHunt Team
+## Version: 1.0.1
+## SavedVariables: BloodHuntDB
+## DefaultState: enabled
+core.lua
+data.lua
+events.lua
+ui.lua
+config.lua
