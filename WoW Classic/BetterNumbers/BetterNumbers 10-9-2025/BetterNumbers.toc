@@ -1,5 +1,0 @@
-## Interface: 50501
-## Title: Better Numbers MoP
-## Author: DarkAce
-## Version: 1.0
-BetterNumbers.lua
