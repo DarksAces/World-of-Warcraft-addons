@@ -1,0 +1,19 @@
+## Interface: 110002
+## Title: Better Combat Text
+## Notes: Enhanced floating combat text with smooth animations, intelligent colors, and smart grouping for PvP and PvE
+## Author: Daniel
+
+## Version: 1.0.2
+## SavedVariables: BetterCombatTextDB
+## OptionalDeps: 
+## LoadOnDemand: 0
+## DefaultState: enabled
+
+## X-Category: Combat
+## X-License: MIT
+## X-Website: 
+## X-Curse-Project-ID: 
+## X-WoWI-ID: 
+## X-Wago-ID: 
+
+BetterCombatText.lua

@@ -1,0 +1,7 @@
+## Interface: 11405
+## Title: EmoteOnKill
+## Notes: Realiza una emoción aleatoria cada vez que matas a un NPC o jugador.
+## Version: 1.0
+## Author: TuNombre
+## DefaultState: Enabled
+EmoteOnKill.lua
