@@ -2,5 +2,5 @@
 ## Title: Better Combat Text MoP
 ## Notes: Floating combat text with enhanced animations
 ## Author: DarkAce
-## Version: 1.0
+## Version: 1.0.
 BetterCombatText.lua
