@@ -11,8 +11,9 @@ Todos los addons están escritos en:
 ## 📦 Estructura del repositorio
 
 Los addons están organizados por versiones del juego:
-- **Retail** → última versión oficial de WoW.
-- **Classic / WotLK / SoD...** → ramas específicas según la expansión o cliente.
+- **Retail** → Última versión oficial de WoW.
+- **Classic** → Se refiere a WoW Classic, que avanza progresivamente hacia la versión Retail.
+- **Classic Era** → Modalidad de juego que se mantiene estrictamente en la era Classic, sin avanzar hacia Retail.
 
 Cada carpeta contiene:
 - Archivos `.lua` con la lógica del addon.
@@ -32,26 +33,13 @@ Cada carpeta contiene:
 
 ## 🔧 Instalación
 
-1. Descarga la carpeta del addon deseado.
-2. Copia la carpeta en la ruta correspondiente:
-
-   **Retail**
-   ```bash
-   World of Warcraft/_retail_/Interface/AddOns/
-   ```
-   **Classic**
-   ```bash
-   World of Warcraft/_classic_/Interface/AddOns/
-   ```
-   **Classic Era**
-   ```bash
-   World of Warcraft/_classic_era_/Interface/AddOns/
-   ```
+Todos mis addons están disponibles en **CurseForge**, lo que permite instalarlos y mantenerlos siempre actualizados fácilmente.  
+Visita mi perfil de CurseForge: [Darkace Projects](https://www.curseforge.com/members/darkace/projects)
 
 ---
 
 ## 📌 Addons más populares
 
-- **Better Combat Text** → Mejora el texto flotante de combate con animaciones, colores por tipo de daño y agrupación inteligente.
-- **Better Numbers** → Optimiza la visualización de números de daño, curación y otras métricas para una lectura rápida.
-- **Quest Helper** → Facilita la localización y seguimiento de misiones, mostrando objetivos y rutas de forma clara en el mapa.
+- **Better Combat Text** → Mejora el texto flotante de combate con animaciones, colores por tipo de daño y agrupación inteligente. [Ver en CurseForge](https://www.curseforge.com/wow/addons/better-combat-text)
+- **Better Numbers** → Optimiza la visualización de números de daño, curación y otras métricas para una lectura rápida. [Ver en CurseForge](https://www.curseforge.com/wow/addons/better-numbers)
+- **Quest Helper** → Facilita la localización y seguimiento de misiones. [Ver en CurseForge](https://www.curseforge.com/wow/addons/quest-help)
