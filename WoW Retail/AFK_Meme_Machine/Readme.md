@@ -26,7 +26,6 @@
 **To install:**  
 Go to [CurseForge](https://www.curseforge.com/wow/addons/afk-meme-machine) and download the addon.
 
-
 ### Description
 The **AFK Fun addon** customizes your AFK status in WoW by showing fun, customizable messages with random emotes.
 
