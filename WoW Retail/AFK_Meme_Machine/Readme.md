@@ -1,9 +1,3 @@
-# 🎭 AFK Fun Addon
-
-AFK Fun es un addon para **World of Warcraft** que personaliza tu estado AFK mostrando mensajes divertidos y personalizables con emotes aleatorios.
-
----
-
 ## 📑 Table of Contents
 - [🌍 Supported Languages / Idiomas Soportados](#-supported-languages--idiomas-soportados)
 - [✍️ English](#️-english)
@@ -28,6 +22,10 @@ AFK Fun es un addon para **World of Warcraft** que personaliza tu estado AFK mos
 ---
 
 ## ✍️ English
+
+**To install:**  
+Go to [CurseForge](https://www.curseforge.com/wow/addons/afk-meme-machine) and download the addon.
+
 
 ### Description
 The **AFK Fun addon** customizes your AFK status in WoW by showing fun, customizable messages with random emotes.
@@ -58,6 +56,9 @@ The **AFK Fun addon** customizes your AFK status in WoW by showing fun, customiz
 ---
 
 ## 🇪🇸 Español
+
+**Para instalar:**  
+Accede a [CurseForge](https://www.curseforge.com/wow/addons/afk-meme-machine) y descarga el addon.
 
 ### Descripción
 El addon **AFK Fun** personaliza tu estado AFK en WoW mostrando mensajes divertidos y personalizables con emotes aleatorios.
