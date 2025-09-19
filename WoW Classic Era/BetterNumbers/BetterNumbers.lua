@@ -1,13 +1,13 @@
--- CompactNumbers: Muestra vida y manÃ¡/poder con nÃºmeros acortados (K/M/B)
--- Ahora con contorno negro y escalado automÃ¡tico para diferentes resoluciones
+-- CompactNumbers: Muestra vida y mana/poder con numeros acortados (K/M/B)
+-- Ahora con contorno negro y escalado automatico para diferentes resoluciones
 
--- Variables de configuraciÃ³n
+-- Variables de configuracion
 local decimalPlaces = 1
 local showPercent = false
 local baseFontSize = 12
 local percentFontSize = 9
 
--- FunciÃ³n para obtener el factor de escala de la UI
+-- Funcion para obtener el factor de escala de la UI
 local function GetUIScale()
     local screenWidth = GetScreenWidth()
     local screenHeight = GetScreenHeight()
@@ -15,7 +15,7 @@ local function GetUIScale()
     local baseWidth = 1920
     local baseHeight = 1080
     
-    -- Calcular factor de escala basado en resoluciÃ³n
+    -- Calcular factor de escala basado en resolucion
     local scaleX = screenWidth / baseWidth
     local scaleY = screenHeight / baseHeight
     local scale = math.min(scaleX, scaleY)
@@ -24,7 +24,7 @@ local function GetUIScale()
     return math.max(0.5, math.min(2.0, scale))
 end
 
--- FunciÃ³n para reducir nÃºmeros grandes con decimales configurables
+-- Funcion para reducir nymeros grandes con decimales configurables
 local function ShortenNumber(value)
     local formatString = "%." .. decimalPlaces .. "f"
     if value >= 1e18 then
