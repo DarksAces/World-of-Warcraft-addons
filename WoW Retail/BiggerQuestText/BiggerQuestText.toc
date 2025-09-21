@@ -1,0 +1,8 @@
+## Interface: 110002
+## Title: Bigger Quest Text
+## Notes: Makes NPC dialog and quest text bigger and more readable
+## Author: TuNombre
+## Version: 1.0
+## SavedVariables: BiggerQuestTextDB
+
+BiggerQuestText.lua
