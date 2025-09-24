@@ -1,0 +1,7 @@
+## Interface: 30400
+## Title: CursorTrail
+## Notes: Deja un rastro detrás del cursor
+## Author: Daniel
+## Version: 1.0
+
+CursorTrail.lua
