@@ -1,5 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
-# Ignorar carpetas de versiones repetidas de WoW
+# Ignorar carpetas de versiones classicas de WoW
 "WoW Classic/**" linguist-vendored
 "WoW Classic Era/**" linguist-vendored
