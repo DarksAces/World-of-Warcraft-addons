@@ -1,6 +1,27 @@
 ## Interface: 50400
-## Title: Better Combat Text MoP
-## Notes: Floating combat text with enhanced animations
+## Title: Better Combat Text Enhanced
+## Notes: Enhanced combat text with modern UI and improved functionality
 ## Author: DarkAce
-## Version: 1.0.
-BetterCombatText.lua
+## Version: 2.0.0
+## SavedVariables: BCT_SavedSettings
+## OptionalDeps: 
+## X-Category: Combat
+
+# Utilities (load first)
+Utils\Colors.lua
+Utils\Formatting.lua
+
+# Core configuration
+Config.lua
+
+# UI Components
+UI\FloatingText.lua
+UI\CombatLog.lua
+UI\ConfigFrame.lua
+
+# Combat System
+Combat\GroupManager.lua
+Combat\Parser.lua
+
+# Main Core (load last)
+Core.lua

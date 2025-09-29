@@ -1,86 +1,10 @@
 -- Better Combat Text Addon for World of Warcraft
 -- Enhanced UI with modern design and improved functionality
--- Version with selective display options and crit streak toggle
+-- Version without minimap button + Anti-Freeze Fix
 
 local addonName = "BetterCombatText"
 
--- Added DPS/HPS tracking system variables
-local dpsTracker = {
-    enabled = true,
-    window = 5.0, -- 5 second window
-    damageEvents = {},
-    healingEvents = {},
-    currentDPS = 0,
-    currentHPS = 0,
-    maxDPS = 0,
-    maxHPS = 0,
-    lastUpdate = 0,
-    displayFrame = nil,
-    inCombat = false,
-    combatStartTime = 0,
-    lastCombatActivity = 0
-}
-
--- Added critical streak tracking
-local critStreakTracker = {
-    enabled = true,
-    currentStreak = 0,
-    maxStreak = 0,
-    lastCritTime = 0,
-    streakTimeout = 3.0, -- Reset streak after 3 seconds
-    minStreakForEffect = 3 -- Minimum crits for special effect
-}
-
--- Added threat tracking
-local threatTracker = {
-    enabled = true,
-    hasAggro = false,
-    threatLevel = 0,
-    lastThreatCheck = 0,
-    checkInterval = 0.5
-}
-
--- Added advanced statistics tracking
-local advancedStats = {
-    enabled = true,
-    sessionStart = 0,
-    totalDamage = 0,
-    totalHealing = 0,
-    totalCrits = 0,
-    totalHits = 0,
-    maxDamage = 0,
-    maxHealing = 0,
-    damageBySchool = {},
-    healingBySpell = {},
-    critRate = 0,
-    avgDamage = 0,
-    avgHealing = 0,
-    displayFrame = nil,
-    updateInterval = 1.0,
-    lastUpdate = 0
-}
-
--- Added character profiles system
-local characterProfiles = {
-    enabled = true,
-    profiles = {},
-    currentProfile = nil,
-    autoSwitch = true
-}
-
--- Added practice mode system
-local practiceMode = {
-    enabled = false,
-    timer = nil,
-    interval = 2.0,
-    minDamage = 100,
-    maxDamage = 5000,
-    critChance = 0.25,
-    healChance = 0.3,
-    running = false
-}
-
--- Enhanced Configuration with selective display options
+-- Enhanced Configuration (removed minimap button option)
 local config = {
     enabled = true,
     showDamage = true,
@@ -101,32 +25,7 @@ local config = {
     showIcons = true,
     compactMode = false,
     autoHide = false,
-    autoHideDelay = 5.0,
-    -- Added new config options
-    showDPS = false,
-    showHPS = false,
-    dpsDisplayManuallyEnabled = false,  -- FIXED: Added missing variable
-    showThreatIndicator = true,
-    showCritStreaks = true, -- Can now be disabled
-    dpsUpdateInterval = 0.5,
-    practiceMode = false,
-    -- Added animation options
-    animationType = "default", -- default, bounce, spiral, slide
-    particleEffects = true,
-    rotationEffects = false,
-    
-    -- NEW: Selective damage type display options
-    showOutgoingDamage = true,      -- Damage dealt by player
-    showIncomingDamage = true,      -- Damage received by player
-    showOutgoingHealing = true,     -- Healing done by player
-    showIncomingHealing = true,     -- Healing received by player
-    showPeriodicDamage = true,      -- DoT/HoT effects
-    showMeleeDamage = true,         -- Auto-attacks and melee abilities
-    showSpellDamage = true,         -- Spell damage
-    showCriticalHits = true,        -- Critical strikes
-    showOverkillDamage = true,      -- Overkill/killing blows
-    showPetDamage = false,          -- Pet damage (if implemented)
-    showEnvironmentalDamage = true, -- Fall damage, drowning, etc.
+    autoHideDelay = 5.0
 }
 
 -- Enhanced Color schemes with themes
@@ -183,629 +82,6 @@ local maxLogEntries = 200
 -- Create the main addon frame
 local BCT = CreateFrame("Frame", addonName)
 
--- Added character profile functions
-function BCT:CreateCharacterProfile()
-    local playerName = UnitName("player")
-    local realmName = GetRealmName()
-    local className = UnitClass("player")
-    local specID = GetSpecialization()
-    local specName = specID and select(2, GetSpecializationInfo(specID)) or "Unknown"
-    
-    local profileKey = playerName .. "-" .. realmName .. "-" .. specName
-    
-    if not characterProfiles.profiles[profileKey] then
-        characterProfiles.profiles[profileKey] = {
-            name = playerName,
-            realm = realmName,
-            class = className,
-            spec = specName,
-            config = {},
-            created = GetTime(),
-            lastUsed = GetTime()
-        }
-        
-        -- Copy current config to profile
-        for key, value in pairs(config) do
-            characterProfiles.profiles[profileKey].config[key] = value
-        end
-        
-        print("|cff00ff00BCT:|r Created profile for " .. profileKey)
-    end
-    
-    characterProfiles.currentProfile = profileKey
-    return characterProfiles.profiles[profileKey]
-end
-
-function BCT:LoadCharacterProfile(profileKey)
-    if not characterProfiles.profiles[profileKey] then
-        print("|cffFF0000BCT:|r Profile not found: " .. profileKey)
-        return false
-    end
-    
-    local profile = characterProfiles.profiles[profileKey]
-    
-    -- Load profile config
-    for key, value in pairs(profile.config) do
-        if config[key] ~= nil then
-            config[key] = value
-        end
-    end
-    
-    profile.lastUsed = GetTime()
-    characterProfiles.currentProfile = profileKey
-    
-    print("|cff00ff00BCT:|r Loaded profile: " .. profileKey)
-    return true
-end
-
-function BCT:SaveCurrentProfile()
-    if not characterProfiles.currentProfile then
-        self:CreateCharacterProfile()
-        return
-    end
-    
-    local profile = characterProfiles.profiles[characterProfiles.currentProfile]
-    if profile then
-        -- Save current config to profile
-        for key, value in pairs(config) do
-            profile.config[key] = value
-        end
-        profile.lastUsed = GetTime()
-        print("|cff00ff00BCT:|r Saved current settings to profile")
-    end
-end
-
-function BCT:AutoSwitchProfile()
-    if not characterProfiles.autoSwitch then return end
-    
-    local playerName = UnitName("player")
-    local realmName = GetRealmName()
-    local specID = GetSpecialization()
-    local specName = specID and select(2, GetSpecializationInfo(specID)) or "Unknown"
-    
-    local profileKey = playerName .. "-" .. realmName .. "-" .. specName
-    
-    if characterProfiles.currentProfile ~= profileKey then
-        if characterProfiles.profiles[profileKey] then
-            self:LoadCharacterProfile(profileKey)
-        else
-            self:CreateCharacterProfile()
-        end
-    end
-end
-
--- Added practice mode functions
-function BCT:StartPracticeMode()
-    if practiceMode.running then
-        self:StopPracticeMode()
-        return
-    end
-    
-    practiceMode.running = true
-    config.practiceMode = true
-    
-    practiceMode.timer = C_Timer.NewTicker(practiceMode.interval, function()
-        self:GeneratePracticeNumbers()
-    end)
-    
-    print("|cff00ff00BCT:|r Practice mode started - generating test numbers every " .. practiceMode.interval .. " seconds")
-end
-
-function BCT:StopPracticeMode()
-    if not practiceMode.running then return end
-    
-    practiceMode.running = false
-    config.practiceMode = false
-    
-    if practiceMode.timer then
-        practiceMode.timer:Cancel()
-        practiceMode.timer = nil
-    end
-    
-    print("|cff00ff00BCT:|r Practice mode stopped")
-end
-
-function BCT:GeneratePracticeNumbers()
-    if not practiceMode.running then return end
-    
-    -- Generate random damage
-    local damage = math.random(practiceMode.minDamage, practiceMode.maxDamage)
-    local isCrit = math.random() < practiceMode.critChance
-    local isOverkill = math.random() < 0.1 -- 10% chance for overkill
-    local isHealing = math.random() < practiceMode.healChance
-    
-    if isHealing then
-        local healAmount = math.random(practiceMode.minDamage * 0.5, practiceMode.maxDamage * 0.8)
-        self:UpdateCritStreak(isCrit)
-        self:UpdateDPSTracker(healAmount, true)
-        self:UpdateAdvancedStats(healAmount, isCrit, true, 2)
-        
-        local color = isCrit and colors.critHealing or colors.healing
-        local size = config.fontSize
-        if isCrit then size = size * config.critMultiplier end
-        
-        local text = "+" .. self:FormatNumber(healAmount)
-        self:DisplayFloatingText(text, color, size, isCrit, false)
-        self:AddToCombatLog(healAmount, "Practice Heal", isCrit, false, true, true)
-    else
-        self:UpdateCritStreak(isCrit)
-        self:UpdateDPSTracker(damage, false)
-        self:UpdateAdvancedStats(damage, isCrit, false, math.random(1, 6))
-        
-        local school = math.random(1, 6)
-        local color = self:GetDamageColor(school, isCrit, isOverkill, true)
-        local size = config.fontSize
-        
-        if isCrit then size = size * config.critMultiplier end
-        if isOverkill then size = size * config.killBlowMultiplier end
-        
-        self:DisplayFloatingText(self:FormatNumber(damage), color, size, isCrit, isOverkill)
-        self:AddToCombatLog(damage, "Practice " .. self:GetSchoolName(school), isCrit, isOverkill, false, true)
-    end
-end
-
--- Modified crit streak functions to respect the new setting
-function BCT:UpdateCritStreak(isCrit)
-    -- Check if crit streaks are enabled
-    if not config.showCritStreaks then 
-        return 
-    end
-    
-    local currentTime = GetTime()
-    
-    if isCrit then
-        if currentTime - critStreakTracker.lastCritTime <= critStreakTracker.streakTimeout then
-            critStreakTracker.currentStreak = critStreakTracker.currentStreak + 1
-        else
-            critStreakTracker.currentStreak = 1
-        end
-        
-        critStreakTracker.lastCritTime = currentTime
-        
-        if critStreakTracker.currentStreak > critStreakTracker.maxStreak then
-            critStreakTracker.maxStreak = critStreakTracker.currentStreak
-        end
-        
-        -- Special effect for streak
-        if critStreakTracker.currentStreak >= critStreakTracker.minStreakForEffect then
-            self:DisplayStreakEffect(critStreakTracker.currentStreak)
-        end
-    else
-        -- Reset streak if too much time has passed
-        if currentTime - critStreakTracker.lastCritTime > critStreakTracker.streakTimeout then
-            critStreakTracker.currentStreak = 0
-        end
-    end
-end
-
-function BCT:DisplayStreakEffect(streakCount)
-    if not config.showCritStreaks then return end
-    
-    local streakText = "STREAK x" .. streakCount .. "!"
-    local color = {1, 0.8, 0, 1} -- Gold color for streaks
-    local size = config.fontSize * 1.8
-    
-    -- Create special streak floating text
-    self:DisplayFloatingText(streakText, color, size, true, false, true) -- true for special effect
-end
-
--- Added DPS/HPS calculation functions
-function BCT:UpdateDPSTracker(damage, isHealing)
-    if not config.showDPS and not config.showHPS then return end
-    
-    local currentTime = GetTime()
-    
-    -- Update combat state and last activity time
-    self:UpdateCombatState(currentTime)
-    dpsTracker.lastCombatActivity = currentTime
-    
-    -- Only track DPS/HPS during combat
-    if not dpsTracker.inCombat then return end
-    
-    local events = isHealing and dpsTracker.healingEvents or dpsTracker.damageEvents
-    
-    -- Add new event
-    table.insert(events, {
-        damage = damage,
-        time = currentTime
-    })
-    
-    -- Remove events outside the window
-    local windowStart = currentTime - dpsTracker.window
-    for i = #events, 1, -1 do
-        if events[i].time < windowStart then
-            table.remove(events, i)
-        else
-            break
-        end
-    end
-    
-    -- Calculate DPS/HPS only if we have events
-    local totalDamage = 0
-    local validEvents = 0
-    for _, event in ipairs(events) do
-        if event.time >= windowStart then
-            totalDamage = totalDamage + event.damage
-            validEvents = validEvents + 1
-        end
-    end
-    
-    -- Only calculate DPS if we have recent damage/healing
-    local dps = 0
-    if validEvents > 0 then
-        local timeWindow = math.min(dpsTracker.window, currentTime - dpsTracker.combatStartTime)
-        if timeWindow > 0 then
-            dps = totalDamage / timeWindow
-        end
-    end
-    
-    if isHealing then
-        dpsTracker.currentHPS = dps
-        if dps > dpsTracker.maxHPS then
-            dpsTracker.maxHPS = dps
-        end
-    else
-        dpsTracker.currentDPS = dps
-        if dps > dpsTracker.maxDPS then
-            dpsTracker.maxDPS = dps
-        end
-    end
-    
-    -- Update display if enough time has passed
-    if currentTime - dpsTracker.lastUpdate > config.dpsUpdateInterval then
-        self:UpdateDPSDisplay()
-        dpsTracker.lastUpdate = currentTime
-    end
-end
-
--- Added combat state management
-function BCT:UpdateCombatState(currentTime)
-    local wasInCombat = dpsTracker.inCombat
-    
-    -- Check if player is in combat or has recent combat activity
-    local playerInCombat = UnitAffectingCombat("player")
-    local timeSinceLastActivity = currentTime - dpsTracker.lastCombatActivity
-    
-    if playerInCombat or timeSinceLastActivity < 3.0 then
-        if not dpsTracker.inCombat then
-            dpsTracker.inCombat = true
-            dpsTracker.combatStartTime = currentTime
-            -- Clear old events when entering combat
-            dpsTracker.damageEvents = {}
-            dpsTracker.healingEvents = {}
-        end
-    else
-        if dpsTracker.inCombat and timeSinceLastActivity > 5.0 then
-            dpsTracker.inCombat = false
-            dpsTracker.currentDPS = 0
-            dpsTracker.currentHPS = 0
-            self:UpdateDPSDisplay()
-        end
-    end
-end
-
-function BCT:UpdateDPSDisplay()
-    -- FIXED: Solo mostrar si está habilitado manualmente
-    if not config.dpsDisplayManuallyEnabled or (not config.showDPS and not config.showHPS) then 
-        if dpsTracker.displayFrame then
-            dpsTracker.displayFrame:Hide()
-        end
-        return 
-    end
-    
-    if not dpsTracker.displayFrame then
-        self:CreateDPSDisplay()
-    end
-    
-    -- Only show DPS during combat
-    if not dpsTracker.inCombat then
-        dpsTracker.displayFrame:Hide()
-        return
-    end
-    
-    local dpsText = ""
-    if config.showDPS and dpsTracker.currentDPS > 0 then
-        dpsText = string.format("DPS: %.0f", dpsTracker.currentDPS)
-    end
-    
-    local hpsText = ""
-    if config.showHPS and dpsTracker.currentHPS > 0 then
-        hpsText = string.format("HPS: %.0f", dpsTracker.currentHPS)
-    end
-    
-    local displayText = ""
-    if dpsText ~= "" and hpsText ~= "" then
-        displayText = dpsText .. " | " .. hpsText
-    elseif dpsText ~= "" then
-        displayText = dpsText
-    elseif hpsText ~= "" then
-        displayText = hpsText
-    end
-    
-    if displayText ~= "" then
-        dpsTracker.displayFrame.text:SetText(displayText)
-        dpsTracker.displayFrame:Show()
-    else
-        dpsTracker.displayFrame:Hide()
-    end
-end
-
-function BCT:CreateDPSDisplay()
-    local currentTheme = themes[config.theme]
-    
-    dpsTracker.displayFrame = CreateFrame("Frame", "BCT_DPSDisplay", UIParent, "BackdropTemplate")
-    dpsTracker.displayFrame:SetSize(200, 30)
-    dpsTracker.displayFrame:SetPoint("TOP", UIParent, "TOP", 0, -100)
-    
-    dpsTracker.displayFrame:SetBackdrop({
-        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-        tile = true, tileSize = 8, edgeSize = 8,
-        insets = { left = 2, right = 2, top = 2, bottom = 2 }
-    })
-    dpsTracker.displayFrame:SetBackdropColor(unpack(currentTheme.background))
-    dpsTracker.displayFrame:SetBackdropBorderColor(unpack(currentTheme.border))
-    
-    dpsTracker.displayFrame.text = dpsTracker.displayFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    dpsTracker.displayFrame.text:SetPoint("CENTER")
-    dpsTracker.displayFrame.text:SetTextColor(unpack(currentTheme.accent))
-    
-    dpsTracker.displayFrame:SetMovable(true)
-    dpsTracker.displayFrame:EnableMouse(true)
-    dpsTracker.displayFrame:RegisterForDrag("LeftButton")
-    dpsTracker.displayFrame:SetScript("OnDragStart", dpsTracker.displayFrame.StartMoving)
-    dpsTracker.displayFrame:SetScript("OnDragStop", dpsTracker.displayFrame.StopMovingOrSizing)
-    
-    dpsTracker.displayFrame:Hide()
-end
-
--- Added threat indicator functions
-function BCT:UpdateThreatIndicator()
-    if not config.showThreatIndicator then return end
-    
-    local currentTime = GetTime()
-    if currentTime - threatTracker.lastThreatCheck < threatTracker.checkInterval then
-        return
-    end
-    
-    threatTracker.lastThreatCheck = currentTime
-    
-    -- Check if player has aggro on current target
-    local hasAggro = false
-    local threatLevel = 0
-    
-    if UnitExists("target") and UnitCanAttack("player", "target") then
-        local isTanking, status, threatpct = UnitDetailedThreatSituation("player", "target")
-        hasAggro = isTanking or false
-        threatLevel = threatpct or 0
-    end
-    
-    -- Update threat status
-    if hasAggro ~= threatTracker.hasAggro then
-        threatTracker.hasAggro = hasAggro
-        self:DisplayThreatChange(hasAggro)
-    end
-    
-    threatTracker.threatLevel = threatLevel
-end
-
-function BCT:DisplayThreatChange(hasAggro)
-    local text = hasAggro and "AGGRO!" or "AGGRO LOST"
-    local color = hasAggro and {1, 0, 0, 1} or {0, 1, 0, 1} -- Red for aggro, green for lost
-    local size = config.fontSize * 1.5
-    
-    self:DisplayFloatingText(text, color, size, false, false, true)
-end
-
--- Added advanced statistics panel creation
-function BCT:CreateAdvancedStatsPanel()
-    if advancedStats.displayFrame then return end
-    
-    local currentTheme = themes[config.theme]
-    
-    advancedStats.displayFrame = CreateFrame("Frame", "BCT_AdvancedStatsPanel", UIParent, "BackdropTemplate")
-    advancedStats.displayFrame:SetSize(300, 200)
-    advancedStats.displayFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -50, -150)
-    
-    advancedStats.displayFrame:SetBackdrop({
-        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-        tile = true, tileSize = 8, edgeSize = 8,
-        insets = { left = 4, right = 4, top = 4, bottom = 4 }
-    })
-    advancedStats.displayFrame:SetBackdropColor(unpack(currentTheme.background))
-    advancedStats.displayFrame:SetBackdropBorderColor(unpack(currentTheme.border))
-    
-    -- Title
-    local title = advancedStats.displayFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    title:SetPoint("TOP", advancedStats.displayFrame, "TOP", 0, -10)
-    title:SetText("Combat Statistics")
-    title:SetTextColor(unpack(currentTheme.accent))
-    
-    -- Session time
-    local sessionTime = advancedStats.displayFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    sessionTime:SetPoint("TOPLEFT", advancedStats.displayFrame, "TOPLEFT", 15, -35)
-    sessionTime:SetText("Session: 00:00:00")
-    sessionTime:SetTextColor(unpack(currentTheme.text))
-    advancedStats.displayFrame.sessionTime = sessionTime
-    
-    -- Total damage
-    local totalDmg = advancedStats.displayFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    totalDmg:SetPoint("TOPLEFT", sessionTime, "BOTTOMLEFT", 0, -5)
-    totalDmg:SetText("Total Damage: 0")
-    totalDmg:SetTextColor(1, 0.8, 0, 1)
-    advancedStats.displayFrame.totalDmg = totalDmg
-    
-    -- Total healing
-    local totalHeal = advancedStats.displayFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    totalHeal:SetPoint("TOPLEFT", totalDmg, "BOTTOMLEFT", 0, -5)
-    totalHeal:SetText("Total Healing: 0")
-    totalHeal:SetTextColor(0, 1, 0.5, 1)
-    advancedStats.displayFrame.totalHeal = totalHeal
-    
-    -- Crit rate
-    local critRate = advancedStats.displayFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    critRate:SetPoint("TOPLEFT", totalHeal, "BOTTOMLEFT", 0, -5)
-    critRate:SetText("Crit Rate: 0%")
-    critRate:SetTextColor(1, 0.5, 0, 1)
-    advancedStats.displayFrame.critRate = critRate
-    
-    -- Average damage
-    local avgDmg = advancedStats.displayFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    avgDmg:SetPoint("TOPLEFT", critRate, "BOTTOMLEFT", 0, -5)
-    avgDmg:SetText("Avg Damage: 0")
-    avgDmg:SetTextColor(0.8, 0.8, 1, 1)
-    advancedStats.displayFrame.avgDmg = avgDmg
-    
-    -- Max damage
-    local maxDmg = advancedStats.displayFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    maxDmg:SetPoint("TOPLEFT", avgDmg, "BOTTOMLEFT", 0, -5)
-    maxDmg:SetText("Max Hit: 0")
-    maxDmg:SetTextColor(1, 0, 1, 1)
-    advancedStats.displayFrame.maxDmg = maxDmg
-    
-    -- Current streak
-    local currentStreak = advancedStats.displayFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    currentStreak:SetPoint("TOPLEFT", maxDmg, "BOTTOMLEFT", 0, -5)
-    currentStreak:SetText("Crit Streak: 0")
-    currentStreak:SetTextColor(1, 0.8, 0, 1)
-    advancedStats.displayFrame.currentStreak = currentStreak
-    
-    -- Make it movable
-    advancedStats.displayFrame:SetMovable(true)
-    advancedStats.displayFrame:EnableMouse(true)
-    advancedStats.displayFrame:RegisterForDrag("LeftButton")
-    advancedStats.displayFrame:SetScript("OnDragStart", advancedStats.displayFrame.StartMoving)
-    advancedStats.displayFrame:SetScript("OnDragStop", advancedStats.displayFrame.StopMovingOrSizing)
-    
-    -- Close button
-    local closeBtn = CreateFrame("Button", nil, advancedStats.displayFrame, "UIPanelCloseButton")
-    closeBtn:SetPoint("TOPRIGHT", advancedStats.displayFrame, "TOPRIGHT", -2, -2)
-    closeBtn:SetScript("OnClick", function() 
-        advancedStats.displayFrame:Hide() 
-    end)
-    
-    advancedStats.displayFrame:Hide()
-end
-
--- Added function to update advanced statistics
-function BCT:UpdateAdvancedStats(amount, isCrit, isHealing, school)
-    if not advancedStats.enabled then return end
-    
-    local currentTime = GetTime()
-    
-    -- Initialize session start time
-    if advancedStats.sessionStart == 0 then
-        advancedStats.sessionStart = currentTime
-    end
-    
-    -- Update totals
-    if isHealing then
-        advancedStats.totalHealing = advancedStats.totalHealing + amount
-        if amount > advancedStats.maxHealing then
-            advancedStats.maxHealing = amount
-        end
-    else
-        advancedStats.totalDamage = advancedStats.totalDamage + amount
-        if amount > advancedStats.maxDamage then
-            advancedStats.maxDamage = amount
-        end
-        
-        -- Track damage by school
-        local schoolName = self:GetSchoolName(school or 1)
-        if not advancedStats.damageBySchool[schoolName] then
-            advancedStats.damageBySchool[schoolName] = 0
-        end
-        advancedStats.damageBySchool[schoolName] = advancedStats.damageBySchool[schoolName] + amount
-    end
-    
-    -- Update hit counters
-    advancedStats.totalHits = advancedStats.totalHits + 1
-    if isCrit then
-        advancedStats.totalCrits = advancedStats.totalCrits + 1
-    end
-    
-    -- Calculate rates and averages
-    if advancedStats.totalHits > 0 then
-        advancedStats.critRate = (advancedStats.totalCrits / advancedStats.totalHits) * 100
-        advancedStats.avgDamage = advancedStats.totalDamage / advancedStats.totalHits
-    end
-    
-    -- Update display if enough time has passed
-    if currentTime - advancedStats.lastUpdate > advancedStats.updateInterval then
-        self:UpdateAdvancedStatsDisplay()
-        advancedStats.lastUpdate = currentTime
-    end
-end
-
--- Added function to update advanced statistics display
-function BCT:UpdateAdvancedStatsDisplay()
-    if not advancedStats.displayFrame or not advancedStats.displayFrame:IsShown() then return end
-    
-    local sessionTime = GetTime() - advancedStats.sessionStart
-    local hours = math.floor(sessionTime / 3600)
-    local minutes = math.floor((sessionTime % 3600) / 60)
-    local seconds = math.floor(sessionTime % 60)
-    local timeString = string.format("%02d:%02d:%02d", hours, minutes, seconds)
-    
-    advancedStats.displayFrame.sessionTime:SetText("Session: " .. timeString)
-    advancedStats.displayFrame.totalDmg:SetText("Total Damage: " .. self:FormatNumber(advancedStats.totalDamage))
-    advancedStats.displayFrame.totalHeal:SetText("Total Healing: " .. self:FormatNumber(advancedStats.totalHealing))
-    advancedStats.displayFrame.critRate:SetText("Crit Rate: " .. string.format("%.1f%%", advancedStats.critRate))
-    advancedStats.displayFrame.avgDmg:SetText("Avg Damage: " .. self:FormatNumber(math.floor(advancedStats.avgDamage)))
-    advancedStats.displayFrame.maxDmg:SetText("Max Hit: " .. self:FormatNumber(advancedStats.maxDamage))
-    advancedStats.displayFrame.currentStreak:SetText("Crit Streak: " .. critStreakTracker.currentStreak .. " (Max: " .. critStreakTracker.maxStreak .. ")")
-end
-
--- Added function to toggle advanced statistics panel
-function BCT:ToggleAdvancedStatsPanel()
-    if not advancedStats.displayFrame then
-        self:CreateAdvancedStatsPanel()
-    end
-    
-    if advancedStats.displayFrame:IsShown() then
-        advancedStats.displayFrame:Hide()
-    else
-        advancedStats.displayFrame:Show()
-        self:UpdateAdvancedStatsDisplay()
-    end
-end
-
--- Added function to reset advanced statistics
-function BCT:ResetAdvancedStats()
-    advancedStats.sessionStart = GetTime()
-    advancedStats.totalDamage = 0
-    advancedStats.totalHealing = 0
-    advancedStats.totalCrits = 0
-    advancedStats.totalHits = 0
-    advancedStats.maxDamage = 0
-    advancedStats.maxHealing = 0
-    advancedStats.damageBySchool = {}
-    advancedStats.healingBySpell = {}
-    advancedStats.critRate = 0
-    advancedStats.avgDamage = 0
-    advancedStats.avgHealing = 0
-    
-    -- Reset crit streak tracker
-    critStreakTracker.currentStreak = 0
-    critStreakTracker.maxStreak = 0
-    critStreakTracker.lastCritTime = 0
-    
-    -- Reset DPS tracker
-    dpsTracker.damageEvents = {}
-    dpsTracker.healingEvents = {}
-    dpsTracker.currentDPS = 0
-    dpsTracker.currentHPS = 0
-    dpsTracker.maxDPS = 0
-    dpsTracker.maxHPS = 0
-    
-    if advancedStats.displayFrame and advancedStats.displayFrame:IsShown() then
-        self:UpdateAdvancedStatsDisplay()
-    end
-    
-    print("|cff00ff00BCT:|r Advanced statistics reset")
-end
-
 -- Enhanced floating text with better animations and cleanup
 function BCT:CreateFloatingText()
     local text = CreateFrame("Frame", nil, UIParent)
@@ -821,10 +97,6 @@ function BCT:CreateFloatingText()
     text.moveAnim = text.animGroup:CreateAnimation("Translation")
     text.fadeAnim = text.animGroup:CreateAnimation("Alpha")
     text.scaleAnim = text.animGroup:CreateAnimation("Scale")
-    
-    -- Added particle effect animation for special effects
-    text.particleAnim = text.animGroup:CreateAnimation("Scale")
-    text.rotateAnim = text.animGroup:CreateAnimation("Rotation")
     
     -- Icon support
     text.icon = text:CreateTexture(nil, "OVERLAY")
@@ -1117,15 +389,15 @@ function BCT:CreateConfigFrame()
     title:SetTextColor(unpack(currentTheme.accent))
 
     -- Create tabs
-    local tabs = {"General", "Display", "Themes", "Advanced"}
+    local tabs = {"General", "Display", "Themes"}
     local tabFrames = {}
     local tabButtons = {}
 
     for i, tabName in ipairs(tabs) do
         -- Tab button
         local tabButton = CreateFrame("Button", nil, configFrame, "BackdropTemplate")
-        tabButton:SetSize(100, 30)
-        tabButton:SetPoint("TOPLEFT", configFrame, "TOPLEFT", 20 + (i-1) * 105, -50)
+        tabButton:SetSize(120, 30)
+        tabButton:SetPoint("TOPLEFT", configFrame, "TOPLEFT", 20 + (i-1) * 125, -50)
         tabButton:SetBackdrop({
             bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
             edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
@@ -1175,9 +447,6 @@ function BCT:CreateConfigFrame()
     
     -- Themes Tab Content
     BCT:CreateThemesTab(tabFrames[3])
-    
-    -- Advanced Tab Content
-    BCT:CreateAdvancedTab(tabFrames[4])
 
     -- Close button
     local closeButton = CreateFrame("Button", nil, configFrame, "UIPanelCloseButton")
@@ -1187,7 +456,7 @@ function BCT:CreateConfigFrame()
     configFrame:Hide()
 end
 
--- Enhanced General Tab with new options
+-- Create General Tab
 function BCT:CreateGeneralTab(parent)
     local yOffset = -20
     
@@ -1201,141 +470,33 @@ function BCT:CreateGeneralTab(parent)
     enableCheck:SetScript("OnClick", function(self)
         config.enabled = self:GetChecked()
     end)
+    yOffset = yOffset - 40
+
+    -- Show Damage
+    local damageCheck = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
+    damageCheck:SetPoint("TOPLEFT", parent, "TOPLEFT", 20, yOffset)
+    damageCheck:SetChecked(config.showDamage)
+    damageCheck.text = damageCheck:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    damageCheck.text:SetPoint("LEFT", damageCheck, "RIGHT", 5, 0)
+    damageCheck.text:SetText("Show Damage Numbers")
+    damageCheck:SetScript("OnClick", function(self)
+        config.showDamage = self:GetChecked()
+    end)
     yOffset = yOffset - 30
 
-    -- Show Critical Streaks (NEW)
-    local critStreakCheck = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
-    critStreakCheck:SetPoint("TOPLEFT", parent, "TOPLEFT", 20, yOffset)
-    critStreakCheck:SetChecked(config.showCritStreaks)
-    critStreakCheck.text = critStreakCheck:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    critStreakCheck.text:SetPoint("LEFT", critStreakCheck, "RIGHT", 5, 0)
-    critStreakCheck.text:SetText("Show Critical Hit Streaks")
-    critStreakCheck:SetScript("OnClick", function(self)
-        config.showCritStreaks = self:GetChecked()
+    -- Show Healing
+    local healingCheck = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
+    healingCheck:SetPoint("TOPLEFT", parent, "TOPLEFT", 20, yOffset)
+    healingCheck:SetChecked(config.showHealing)
+    healingCheck.text = healingCheck:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    healingCheck.text:SetPoint("LEFT", healingCheck, "RIGHT", 5, 0)
+    healingCheck.text:SetText("Show Healing Numbers")
+    healingCheck:SetScript("OnClick", function(self)
+        config.showHealing = self:GetChecked()
     end)
     yOffset = yOffset - 40
 
-    -- Section Title
-    local damageTitle = parent:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    damageTitle:SetPoint("TOPLEFT", parent, "TOPLEFT", 20, yOffset)
-    damageTitle:SetText("Damage Display Options")
-    damageTitle:SetTextColor(1, 0.8, 0, 1)
-    yOffset = yOffset - 30
-
-    -- Outgoing Damage
-    local outDamageCheck = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
-    outDamageCheck:SetPoint("TOPLEFT", parent, "TOPLEFT", 30, yOffset)
-    outDamageCheck:SetChecked(config.showOutgoingDamage)
-    outDamageCheck.text = outDamageCheck:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    outDamageCheck.text:SetPoint("LEFT", outDamageCheck, "RIGHT", 5, 0)
-    outDamageCheck.text:SetText("Show Outgoing Damage")
-    outDamageCheck:SetScript("OnClick", function(self)
-        config.showOutgoingDamage = self:GetChecked()
-    end)
-    yOffset = yOffset - 25
-
-    -- Incoming Damage
-    local inDamageCheck = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
-    inDamageCheck:SetPoint("TOPLEFT", parent, "TOPLEFT", 30, yOffset)
-    inDamageCheck:SetChecked(config.showIncomingDamage)
-    inDamageCheck.text = inDamageCheck:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    inDamageCheck.text:SetPoint("LEFT", inDamageCheck, "RIGHT", 5, 0)
-    inDamageCheck.text:SetText("Show Incoming Damage")
-    inDamageCheck:SetScript("OnClick", function(self)
-        config.showIncomingDamage = self:GetChecked()
-    end)
-    yOffset = yOffset - 25
-
-    -- Melee Damage
-    local meleeCheck = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
-    meleeCheck:SetPoint("TOPLEFT", parent, "TOPLEFT", 250, yOffset + 50)
-    meleeCheck:SetChecked(config.showMeleeDamage)
-    meleeCheck.text = meleeCheck:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    meleeCheck.text:SetPoint("LEFT", meleeCheck, "RIGHT", 5, 0)
-    meleeCheck.text:SetText("Show Melee Damage")
-    meleeCheck:SetScript("OnClick", function(self)
-        config.showMeleeDamage = self:GetChecked()
-    end)
-
-    -- Spell Damage
-    local spellCheck = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
-    spellCheck:SetPoint("TOPLEFT", parent, "TOPLEFT", 250, yOffset + 25)
-    spellCheck:SetChecked(config.showSpellDamage)
-    spellCheck.text = spellCheck:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    spellCheck.text:SetPoint("LEFT", spellCheck, "RIGHT", 5, 0)
-    spellCheck.text:SetText("Show Spell Damage")
-    spellCheck:SetScript("OnClick", function(self)
-        config.showSpellDamage = self:GetChecked()
-    end)
-
-    -- Critical Hits
-    local critCheck = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
-    critCheck:SetPoint("TOPLEFT", parent, "TOPLEFT", 30, yOffset)
-    critCheck:SetChecked(config.showCriticalHits)
-    critCheck.text = critCheck:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    critCheck.text:SetPoint("LEFT", critCheck, "RIGHT", 5, 0)
-    critCheck.text:SetText("Show Critical Hits")
-    critCheck:SetScript("OnClick", function(self)
-        config.showCriticalHits = self:GetChecked()
-    end)
-    yOffset = yOffset - 25
-
-    -- Overkill Damage
-    local overkillCheck = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
-    overkillCheck:SetPoint("TOPLEFT", parent, "TOPLEFT", 30, yOffset)
-    overkillCheck:SetChecked(config.showOverkillDamage)
-    overkillCheck.text = overkillCheck:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    overkillCheck.text:SetPoint("LEFT", overkillCheck, "RIGHT", 5, 0)
-    overkillCheck.text:SetText("Show Overkill/Killing Blows")
-    overkillCheck:SetScript("OnClick", function(self)
-        config.showOverkillDamage = self:GetChecked()
-    end)
-    yOffset = yOffset - 25
-
-    -- Periodic Damage (DoTs/HoTs)
-    local periodicCheck = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
-    periodicCheck:SetPoint("TOPLEFT", parent, "TOPLEFT", 30, yOffset)
-    periodicCheck:SetChecked(config.showPeriodicDamage)
-    periodicCheck.text = periodicCheck:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    periodicCheck.text:SetPoint("LEFT", periodicCheck, "RIGHT", 5, 0)
-    periodicCheck.text:SetText("Show DoT/HoT Effects")
-    periodicCheck:SetScript("OnClick", function(self)
-        config.showPeriodicDamage = self:GetChecked()
-    end)
-    yOffset = yOffset - 40
-
-    -- Healing Section
-    local healingTitle = parent:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    healingTitle:SetPoint("TOPLEFT", parent, "TOPLEFT", 20, yOffset)
-    healingTitle:SetText("Healing Display Options")
-    healingTitle:SetTextColor(0, 1, 0.5, 1)
-    yOffset = yOffset - 30
-
-    -- Outgoing Healing
-    local outHealCheck = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
-    outHealCheck:SetPoint("TOPLEFT", parent, "TOPLEFT", 30, yOffset)
-    outHealCheck:SetChecked(config.showOutgoingHealing)
-    outHealCheck.text = outHealCheck:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    outHealCheck.text:SetPoint("LEFT", outHealCheck, "RIGHT", 5, 0)
-    outHealCheck.text:SetText("Show Outgoing Healing")
-    outHealCheck:SetScript("OnClick", function(self)
-        config.showOutgoingHealing = self:GetChecked()
-    end)
-    yOffset = yOffset - 25
-
-    -- Incoming Healing
-    local inHealCheck = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
-    inHealCheck:SetPoint("TOPLEFT", parent, "TOPLEFT", 30, yOffset)
-    inHealCheck:SetChecked(config.showIncomingHealing)
-    inHealCheck.text = inHealCheck:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    inHealCheck.text:SetPoint("LEFT", inHealCheck, "RIGHT", 5, 0)
-    inHealCheck.text:SetText("Show Incoming Healing")
-    inHealCheck:SetScript("OnClick", function(self)
-        config.showIncomingHealing = self:GetChecked()
-    end)
-
-    -- Font Size section
-    yOffset = yOffset - 50
+    -- Font Size
     local fontLabel = parent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     fontLabel:SetPoint("TOPLEFT", parent, "TOPLEFT", 20, yOffset)
     fontLabel:SetText("Font Size: " .. config.fontSize)
@@ -1351,47 +512,6 @@ function BCT:CreateGeneralTab(parent)
     fontSlider:SetScript("OnValueChanged", function(self, value)
         config.fontSize = math.floor(value)
         fontLabel:SetText("Font Size: " .. config.fontSize)
-    end)
-    yOffset = yOffset - 70
-
-    -- DPS/HPS toggle checkboxes with proper manual control
-    local showDPSCheck = CreateFrame("CheckButton", "BCT_ShowDPSCheck", parent, "UICheckButtonTemplate")
-    showDPSCheck:SetPoint("TOPLEFT", parent, "TOPLEFT", 20, yOffset)
-    showDPSCheck.text = showDPSCheck:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    showDPSCheck.text:SetPoint("LEFT", showDPSCheck, "RIGHT", 5, 0)
-    showDPSCheck.text:SetText("Show DPS")
-    showDPSCheck:SetChecked(config.showDPS)
-    showDPSCheck:SetScript("OnClick", function()
-        config.showDPS = showDPSCheck:GetChecked()
-        if config.showDPS or config.showHPS then
-            config.dpsDisplayManuallyEnabled = true
-        else
-            config.dpsDisplayManuallyEnabled = false
-            if dpsTracker.displayFrame then
-                dpsTracker.displayFrame:Hide()
-            end
-        end
-        BCT:UpdateDPSDisplay()
-    end)
-    yOffset = yOffset - 30
-    
-    local showHPSCheck = CreateFrame("CheckButton", "BCT_ShowHPSCheck", parent, "UICheckButtonTemplate")
-    showHPSCheck:SetPoint("TOPLEFT", parent, "TOPLEFT", 20, yOffset)
-    showHPSCheck.text = showHPSCheck:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    showHPSCheck.text:SetPoint("LEFT", showHPSCheck, "RIGHT", 5, 0)
-    showHPSCheck.text:SetText("Show HPS")
-    showHPSCheck:SetChecked(config.showHPS)
-    showHPSCheck:SetScript("OnClick", function()
-        config.showHPS = showHPSCheck:GetChecked()
-        if config.showDPS or config.showHPS then
-            config.dpsDisplayManuallyEnabled = true
-        else
-            config.dpsDisplayManuallyEnabled = false
-            if dpsTracker.displayFrame then
-                dpsTracker.displayFrame:Hide()
-            end
-        end
-        BCT:UpdateDPSDisplay()
     end)
 end
 
@@ -1501,158 +621,6 @@ function BCT:CreateThemesTab(parent)
         
         themeButtons[i] = btn
     end
-end
-
--- Advanced Tab for new features
-function BCT:CreateAdvancedTab(parent)
-    local yOffset = -20
-    
-    local title = parent:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    title:SetPoint("TOP", parent, "TOP", 0, yOffset)
-    title:SetText("Advanced Features")
-    title:SetTextColor(1, 1, 0, 1)
-    yOffset = yOffset - 40
-
-    -- Animation Type Selection
-    local animLabel = parent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    animLabel:SetPoint("TOPLEFT", parent, "TOPLEFT", 20, yOffset)
-    animLabel:SetText("Animation Style:")
-    yOffset = yOffset - 25
-
-    local animTypes = {"default", "bounce", "spiral", "slide"}
-    local animButtons = {}
-    
-    for i, animType in ipairs(animTypes) do
-        local btn = CreateFrame("Button", nil, parent, "BackdropTemplate")
-        btn:SetSize(80, 25)
-        btn:SetPoint("TOPLEFT", parent, "TOPLEFT", 20 + (i-1) * 85, yOffset)
-        btn:SetBackdrop({
-            bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-            tile = true, tileSize = 8, edgeSize = 8,
-            insets = { left = 2, right = 2, top = 2, bottom = 2 }
-        })
-        
-        local btnText = btn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-        btnText:SetPoint("CENTER")
-        btnText:SetText(string.upper(string.sub(animType, 1, 1)) .. string.sub(animType, 2))
-        
-        btn:SetScript("OnClick", function(self)
-            config.animationType = animType
-            for _, b in pairs(animButtons) do
-                b:SetBackdropColor(0.2, 0.2, 0.2, 0.8)
-            end
-            self:SetBackdropColor(0.3, 0.6, 0.9, 0.8)
-            print("|cff00ff00BCT:|r Animation style changed to " .. animType)
-        end)
-        
-        if config.animationType == animType then
-            btn:SetBackdropColor(0.3, 0.6, 0.9, 0.8)
-        else
-            btn:SetBackdropColor(0.2, 0.2, 0.2, 0.8)
-        end
-        
-        animButtons[i] = btn
-    end
-    yOffset = yOffset - 40
-
-    -- Particle Effects
-    local particleCheck = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
-    particleCheck:SetPoint("TOPLEFT", parent, "TOPLEFT", 20, yOffset)
-    particleCheck:SetChecked(config.particleEffects)
-    particleCheck.text = particleCheck:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    particleCheck.text:SetPoint("LEFT", particleCheck, "RIGHT", 5, 0)
-    particleCheck.text:SetText("Particle Effects for Crits")
-    particleCheck:SetScript("OnClick", function(self)
-        config.particleEffects = self:GetChecked()
-    end)
-    yOffset = yOffset - 30
-
-    -- Rotation Effects
-    local rotationCheck = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
-    rotationCheck:SetPoint("TOPLEFT", parent, "TOPLEFT", 20, yOffset)
-    rotationCheck:SetChecked(config.rotationEffects)
-    rotationCheck.text = rotationCheck:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    rotationCheck.text:SetPoint("LEFT", rotationCheck, "RIGHT", 5, 0)
-    rotationCheck.text:SetText("Rotation Effects (Spiral Mode)")
-    rotationCheck:SetScript("OnClick", function(self)
-        config.rotationEffects = self:GetChecked()
-    end)
-    yOffset = yOffset - 40
-
-    -- Practice Mode Section
-    local practiceLabel = parent:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    practiceLabel:SetPoint("TOPLEFT", parent, "TOPLEFT", 20, yOffset)
-    practiceLabel:SetText("Practice Mode")
-    practiceLabel:SetTextColor(0, 1, 0.5, 1)
-    yOffset = yOffset - 30
-
-    -- Practice Mode Toggle
-    local practiceBtn = CreateFrame("Button", nil, parent, "BackdropTemplate")
-    practiceBtn:SetSize(120, 30)
-    practiceBtn:SetPoint("TOPLEFT", parent, "TOPLEFT", 20, yOffset)
-    practiceBtn:SetBackdrop({
-        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-        tile = true, tileSize = 8, edgeSize = 8,
-        insets = { left = 2, right = 2, top = 2, bottom = 2 }
-    })
-    practiceBtn:SetBackdropColor(0.2, 0.2, 0.2, 0.8)
-    
-    local practiceBtnText = practiceBtn:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    practiceBtnText:SetPoint("CENTER")
-    practiceBtnText:SetText("Start Practice")
-    
-    practiceBtn:SetScript("OnClick", function(self)
-        if practiceMode.running then
-            BCT:StopPracticeMode()
-            practiceBtnText:SetText("Start Practice")
-            self:SetBackdropColor(0.2, 0.2, 0.2, 0.8)
-        else
-            BCT:StartPracticeMode()
-            practiceBtnText:SetText("Stop Practice")
-            self:SetBackdropColor(0.2, 0.6, 0.2, 0.8)
-        end
-    end)
-    
-    -- Profile Management Section
-    yOffset = yOffset - 60
-    local profileLabel = parent:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    profileLabel:SetPoint("TOPLEFT", parent, "TOPLEFT", 20, yOffset)
-    profileLabel:SetText("Character Profiles")
-    profileLabel:SetTextColor(0.8, 0.6, 1, 1)
-    yOffset = yOffset - 30
-
-    -- Save Profile Button
-    local saveProfileBtn = CreateFrame("Button", nil, parent, "BackdropTemplate")
-    saveProfileBtn:SetSize(100, 25)
-    saveProfileBtn:SetPoint("TOPLEFT", parent, "TOPLEFT", 20, yOffset)
-    saveProfileBtn:SetBackdrop({
-        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-        tile = true, tileSize = 8, edgeSize = 8,
-        insets = { left = 2, right = 2, top = 2, bottom = 2 }
-    })
-    saveProfileBtn:SetBackdropColor(0.2, 0.2, 0.2, 0.8)
-    
-    local saveProfileText = saveProfileBtn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    saveProfileText:SetPoint("CENTER")
-    saveProfileText:SetText("Save Profile")
-    
-    saveProfileBtn:SetScript("OnClick", function()
-        BCT:SaveCurrentProfile()
-    end)
-
-    -- Auto Switch Profiles
-    local autoSwitchCheck = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
-    autoSwitchCheck:SetPoint("TOPLEFT", parent, "TOPLEFT", 130, yOffset)
-    autoSwitchCheck:SetChecked(characterProfiles.autoSwitch)
-    autoSwitchCheck.text = autoSwitchCheck:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    autoSwitchCheck.text:SetPoint("LEFT", autoSwitchCheck, "RIGHT", 5, 0)
-    autoSwitchCheck.text:SetText("Auto Switch")
-    autoSwitchCheck:SetScript("OnClick", function(self)
-        characterProfiles.autoSwitch = self:GetChecked()
-    end)
 end
 
 -- Enhanced combat log display with better formatting
@@ -1805,10 +773,10 @@ function BCT:DisplayFloatingText(text, color, size, isCrit, isOverkill, isDot, i
     local textFrame = self:GetTextFromPool()
     if not textFrame then return end
 
-    -- Clean previous state completely
+    -- Limpiar estado previo completamente
     self:CleanupFloatingText(textFrame)
     
-    -- Configure new state
+    -- Configurar nuevo estado
     textFrame.cleanupTimer = GetTime()
     textFrame.isActive = true
     textFrame.lastAnimationTime = GetTime()
@@ -1826,11 +794,11 @@ function BCT:DisplayFloatingText(text, color, size, isCrit, isOverkill, isDot, i
     textFrame:SetPoint("CENTER", UIParent, "CENTER", offsetX, offsetY)
     textFrame:Show()
 
-    -- Stop previous animations completely
+    -- Detener animaciones previas completamente
     textFrame.animGroup:Stop()
     textFrame.animGroup:SetScript("OnFinished", nil)
 
-    -- Enhanced animations based on type and animation style
+    -- Enhanced animations based on type
     local moveDistance = isDot and 80 or 120
     local animDuration = config.fadeTime / config.animationSpeed
     
@@ -1840,60 +808,21 @@ function BCT:DisplayFloatingText(text, color, size, isCrit, isOverkill, isDot, i
         moveDistance = moveDistance * 2.2
     end
     
-    -- Enhanced animation system with multiple animation types
-    if config.animationType == "bounce" then
-        textFrame.moveAnim:SetOffset(0, moveDistance * 0.7)
-        textFrame.moveAnim:SetDuration(animDuration * 0.6)
-        textFrame.moveAnim:SetSmoothing("BOUNCE")
-    elseif config.animationType == "spiral" then
-        textFrame.moveAnim:SetOffset(math.random(-50, 50), moveDistance)
-        textFrame.moveAnim:SetDuration(animDuration)
-        textFrame.moveAnim:SetSmoothing("IN_OUT")
-        
-        -- Add rotation for spiral effect
-        if config.rotationEffects then
-            textFrame.rotateAnim:SetDegrees(math.random(-180, 180))
-            textFrame.rotateAnim:SetDuration(animDuration)
-            textFrame.rotateAnim:SetSmoothing("IN_OUT")
-        end
-    elseif config.animationType == "slide" then
-        local slideDirection = math.random(1, 4)
-        if slideDirection == 1 then -- Up
-            textFrame.moveAnim:SetOffset(0, moveDistance)
-        elseif slideDirection == 2 then -- Right
-            textFrame.moveAnim:SetOffset(moveDistance * 0.8, moveDistance * 0.5)
-        elseif slideDirection == 3 then -- Left
-            textFrame.moveAnim:SetOffset(-moveDistance * 0.8, moveDistance * 0.5)
-        else -- Up-diagonal
-            textFrame.moveAnim:SetOffset(math.random(-30, 30), moveDistance)
-        end
-        textFrame.moveAnim:SetDuration(animDuration)
-        textFrame.moveAnim:SetSmoothing("OUT")
-    else -- default
-        textFrame.moveAnim:SetOffset(0, moveDistance)
-        textFrame.moveAnim:SetDuration(animDuration)
-        textFrame.moveAnim:SetSmoothing("OUT")
-    end
+    textFrame.moveAnim:SetOffset(0, moveDistance)
+    textFrame.moveAnim:SetDuration(animDuration)
+    textFrame.moveAnim:SetSmoothing("OUT")
 
     textFrame.fadeAnim:SetFromAlpha(1)
     textFrame.fadeAnim:SetToAlpha(0)
     textFrame.fadeAnim:SetDuration(animDuration)
     textFrame.fadeAnim:SetStartDelay(animDuration * 0.4)
 
-    -- Enhanced scale animation with particle effects
+    -- Enhanced scale animation
     if isCrit or isOverkill then
         local scaleAmount = isCrit and 1.4 or 1.6
         textFrame.scaleAnim:SetScale(scaleAmount, scaleAmount)
         textFrame.scaleAnim:SetDuration(0.4)
         textFrame.scaleAnim:SetSmoothing("BOUNCE")
-        
-        -- Added particle effects for critical hits
-        if config.particleEffects and (isCrit or isOverkill) then
-            textFrame.particleAnim:SetScale(1.8, 1.8)
-            textFrame.particleAnim:SetDuration(0.2)
-            textFrame.particleAnim:SetStartDelay(0.1)
-            textFrame.particleAnim:SetSmoothing("OUT")
-        end
     else
         textFrame.scaleAnim:SetScale(1, 1)
         textFrame.scaleAnim:SetDuration(0)
@@ -1908,34 +837,34 @@ function BCT:DisplayFloatingText(text, color, size, isCrit, isOverkill, isDot, i
         end
     end
 
-    -- Configure automatic cleanup with multiple failsafes
+    -- Configurar limpieza automática con múltiples failsafes
     textFrame.animGroup:SetScript("OnFinished", function()
         BCT:CleanupFloatingText(textFrame)
     end)
 
-    -- Safety timer for forced cleanup
+    -- Timer de seguridad para limpieza forzada
     textFrame:SetScript("OnUpdate", function(self, elapsed)
         if not self.isActive then return end
         
         local currentTime = GetTime()
         
-        -- Cleanup by maximum time
+        -- Limpieza por tiempo máximo
         if (currentTime - self.cleanupTimer) >= 10 then
             BCT:CleanupFloatingText(self)
             return
         end
         
-        -- Cleanup if animation should have finished
+        -- Limpieza si la animación debería haber terminado
         if (currentTime - self.cleanupTimer) >= (animDuration * 2) and not self.animGroup:IsPlaying() then
             BCT:CleanupFloatingText(self)
             return
         end
     end)
 
-    -- Add to active list
+    -- Añadir a lista de activos
     table.insert(activeTexts, textFrame)
     
-    -- Limit number of active texts
+    -- Limitar número de textos activos
     if #activeTexts > config.maxNumbers then
         local oldest = table.remove(activeTexts, 1)
         if oldest and oldest.isActive then
@@ -1978,21 +907,21 @@ end
 function BCT:CleanupFloatingText(textFrame)
     if not textFrame then return end
     
-    -- Mark as inactive immediately
+    -- Marcar como inactivo inmediatamente
     textFrame.isActive = false
     textFrame.cleanupTimer = 0
     textFrame.lastAnimationTime = nil
     
-    -- Stop all animations
+    -- Detener todas las animaciones
     if textFrame.animGroup then
         textFrame.animGroup:Stop()
         textFrame.animGroup:SetScript("OnFinished", nil)
     end
     
-    -- Clean update scripts
+    -- Limpiar scripts de actualización
     textFrame:SetScript("OnUpdate", nil)
     
-    -- Hide and clean
+    -- Ocultar y limpiar
     textFrame:Hide()
     textFrame:ClearAllPoints()
     textFrame:SetAlpha(1)
@@ -2006,7 +935,7 @@ function BCT:CleanupFloatingText(textFrame)
         textFrame.fontString:SetText("")
     end
     
-    -- Remove from active list if exists
+    -- Remover de la lista de activos si existe
     for i = #activeTexts, 1, -1 do
         if activeTexts[i] == textFrame then
             table.remove(activeTexts, i)
@@ -2017,14 +946,14 @@ end
 
 -- Enhanced text pool management with better cleanup
 function BCT:GetTextFromPool()
-    -- Look for inactive text
+    -- Buscar texto inactivo
     for i, text in ipairs(textPool) do
         if not text.isActive and not text:IsShown() then
             return text
         end
     end
     
-    -- If no texts available, clean the oldest
+    -- Si no hay textos disponibles, limpiar el más antiguo
     local oldestText = nil
     local oldestTime = GetTime()
     
@@ -2047,7 +976,7 @@ function BCT:GetTextFromPool()
         return newText
     end
     
-    -- Force cleanup of first text
+    -- Forzar limpieza del primer texto
     local firstText = textPool[1]
     self:CleanupFloatingText(firstText)
     return firstText
@@ -2062,7 +991,7 @@ function BCT:CleanupAllFloatingText()
     end
 end
 
--- AUTOMATIC CLEANUP SYSTEM ANTI-FREEZE
+-- SISTEMA DE LIMPIEZA AUTOMÁTICA ANTI-CONGELAMIENTO
 local cleanupTimer = nil
 
 function BCT:ForceCleanupStuckText()
@@ -2072,13 +1001,13 @@ function BCT:ForceCleanupStuckText()
     for i = #textPool, 1, -1 do
         local text = textPool[i]
         if text and text.isActive then
-            -- If text has been active for more than 15 seconds, force cleanup
+            -- Si el texto lleva más de 15 segundos activo, forzar limpieza
             if text.cleanupTimer and (currentTime - text.cleanupTimer) > 15 then
                 self:CleanupFloatingText(text)
                 cleaned = cleaned + 1
-            -- If text is visible but has no running animations
+            -- Si el texto está visible pero no tiene animaciones corriendo
             elseif text:IsShown() and not text.animGroup:IsPlaying() then
-                -- Check if it's been without animation for too long
+                -- Verificar si lleva mucho tiempo sin animación
                 if not text.lastAnimationTime then
                     text.lastAnimationTime = currentTime
                 elseif (currentTime - text.lastAnimationTime) > 3 then
@@ -2088,6 +1017,8 @@ function BCT:ForceCleanupStuckText()
             end
         end
     end
+    
+    
 end
 
 -- Enhanced combat event parsing
@@ -2113,9 +1044,8 @@ function BCT:ParseCombatEvent(...)
         
     elseif subevent == "SPELL_HEAL" then
         local spellId, spellName, spellSchool, amount, overhealing, absorbed, critical = select(12, ...)
-        local isOutgoing = (sourceGUID == playerGUID)
         if destGUID == playerGUID or sourceGUID == playerGUID then
-            self:ShowHealingText(amount, critical, overhealing > 0, isOutgoing)
+            self:ShowHealingText(amount, critical, overhealing > 0)
         end
         
     elseif subevent == "SPELL_PERIODIC_DAMAGE" then
@@ -2124,35 +1054,9 @@ function BCT:ParseCombatEvent(...)
     end
 end
 
--- Enhanced damage text display with selective filtering
+-- Show damage text
 function BCT:ShowDamageText(amount, isCrit, school, isOverkill, isOutgoing)
     if not config.showDamage or not amount then return end
-    
-    -- Check selective display options
-    if isOutgoing and not config.showOutgoingDamage then return end
-    if not isOutgoing and not config.showIncomingDamage then return end
-    if isCrit and not config.showCriticalHits then return end
-    if isOverkill and not config.showOverkillDamage then return end
-    
-    -- Check spell vs melee damage
-    if school == 1 and not config.showMeleeDamage then return end -- Physical = melee
-    if school > 1 and not config.showSpellDamage then return end -- Non-physical = spell
-    
-    -- Added critical streak tracking (only if enabled)
-    if config.showCritStreaks then
-        self:UpdateCritStreak(isCrit)
-    end
-    
-    -- Added DPS tracking for damage
-    if isOutgoing then
-        self:UpdateDPSTracker(amount, false)
-    end
-    
-    -- Added advanced statistics tracking
-    self:UpdateAdvancedStats(amount, isCrit, false, school)
-    
-    -- Update threat indicator
-    self:UpdateThreatIndicator()
     
     local color = self:GetDamageColor(school, isCrit, isOverkill, isOutgoing)
     local size = config.fontSize
@@ -2170,32 +1074,16 @@ function BCT:ShowDamageText(amount, isCrit, school, isOverkill, isOutgoing)
     end
 end
 
--- Enhanced healing text display with selective filtering
-function BCT:ShowHealingText(amount, isCrit, isOverheal, isOutgoing)
+-- Show healing text
+function BCT:ShowHealingText(amount, isCrit, isOverheal)
     if not config.showHealing or not amount then return end
-    
-    -- Check selective display options
-    if isOutgoing and not config.showOutgoingHealing then return end
-    if not isOutgoing and not config.showIncomingHealing then return end
-    if isCrit and not config.showCriticalHits then return end
-    
-    -- Added critical streak tracking for healing (only if enabled)
-    if config.showCritStreaks then
-        self:UpdateCritStreak(isCrit)
-    end
-    
-    -- Added HPS tracking
-    self:UpdateDPSTracker(amount, true)
-    
-    -- Added advanced statistics tracking for healing
-    self:UpdateAdvancedStats(amount, isCrit, true, 2) -- Holy school for healing
     
     local color = isCrit and colors.critHealing or colors.healing
     local size = config.fontSize
     
     if isCrit then size = size * config.critMultiplier end
     
-    self:AddToCombatLog(amount, "Healing", isCrit, false, true, isOutgoing or true)
+    self:AddToCombatLog(amount, "Healing", isCrit, false, true, true)
     
     local text = "+" .. self:FormatNumber(amount)
     if isOverheal then text = text .. "*" end
@@ -2203,15 +1091,9 @@ function BCT:ShowHealingText(amount, isCrit, isOverheal, isOutgoing)
     self:DisplayFloatingText(text, color, size, isCrit, false)
 end
 
--- Enhanced periodic damage with selective filtering
+-- Show periodic damage text
 function BCT:ShowPeriodicDamageText(amount, isCrit, school, isOutgoing)
     if not config.showDamage or not amount then return end
-    if not config.showPeriodicDamage then return end -- New filter
-    
-    -- Check selective display options
-    if isOutgoing and not config.showOutgoingDamage then return end
-    if not isOutgoing and not config.showIncomingDamage then return end
-    if isCrit and not config.showCriticalHits then return end
     
     local color = self:GetDamageColor(school, isCrit, false, isOutgoing)
     local size = config.fontSize * 0.8
@@ -2232,8 +1114,8 @@ function BCT:GetDamageColor(school, isCrit, isOverkill, isOutgoing)
     elseif school == 8 then return colors.nature
     elseif school == 16 then return colors.frost
     elseif school == 32 then return colors.shadow
-    elseif school == 64 then return colors.arcane
-    else return isCrit and colors.critDamage or colors.damage
+    else
+        return isCrit and colors.critDamage or colors.damage
     end
 end
 
@@ -2346,7 +1228,7 @@ function BCT:OnLoad()
         table.insert(textPool, text)
     end
     
-    -- Initialize automatic cleanup system
+    -- Inicializar sistema de limpieza automática
     if cleanupTimer then
         cleanupTimer:Cancel()
     end
@@ -2354,14 +1236,11 @@ function BCT:OnLoad()
         BCT:ForceCleanupStuckText()
     end)
     
-    -- Initialize character profiles
-    self:AutoSwitchProfile()
-    
     -- Create UI components
     self:CreateCombatLogPanel()
     
     print("|cff00ff00Better Combat Text Enhanced|r loaded successfully!")
-    print("|cff00ff00BCT Fix:|r Anti-freeze system activated")
+    print("|cff00ff00BCT Fix:|r Sistema anti-congelamiento activado")
     print("|cff00ff00Minimum panel size:|r 450x400 pixels for optimal text display")
     
     -- Load saved settings
@@ -2371,16 +1250,6 @@ function BCT:OnLoad()
                 config[key] = value
             end
         end
-    end
-    
-    -- Force reset display after each reload
-    config.dpsDisplayManuallyEnabled = false
-    config.showDPS = false
-    config.showHPS = false
-    
-    -- Load character profiles
-    if BCT_CharacterProfiles then
-        characterProfiles = BCT_CharacterProfiles
     end
 end
 
@@ -2401,29 +1270,17 @@ BCT:SetScript("OnEvent", function(self, event, ...)
             self:CleanupAllFloatingText()
         end)
     elseif event == "PLAYER_REGEN_DISABLED" then
-        -- Clean old numbers when entering combat
+        -- Limpiar números antiguos al entrar en combate
         self:ForceCleanupStuckText()
-    elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
-        -- Auto switch profile when spec changes
-        self:AutoSwitchProfile()
     elseif event == "PLAYER_LOGOUT" then
         -- Save settings and cleanup
         BCT_SavedSettings = {}
         for key, value in pairs(config) do
             BCT_SavedSettings[key] = value
         end
-        
-        -- Save character profiles
-        BCT_CharacterProfiles = characterProfiles
-        
         self:CleanupAllFloatingText()
         if cleanupTimer then
             cleanupTimer:Cancel()
-        end
-        
-        -- Stop practice mode
-        if practiceMode.running then
-            self:StopPracticeMode()
         end
     end
 end)
@@ -2433,10 +1290,9 @@ BCT:RegisterEvent("ADDON_LOADED")
 BCT:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 BCT:RegisterEvent("PLAYER_REGEN_ENABLED")  -- Combat ended
 BCT:RegisterEvent("PLAYER_REGEN_DISABLED") -- Combat started
-BCT:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED") -- Spec change for profile switching
 BCT:RegisterEvent("PLAYER_LOGOUT")
 
--- Enhanced slash commands with new options
+-- Enhanced slash commands with cleanup
 SLASH_BCT1 = "/bct"
 SLASH_BCT2 = "/bettercombattext"
 SlashCmdList["BCT"] = function(msg)
@@ -2451,73 +1307,6 @@ SlashCmdList["BCT"] = function(msg)
         
     elseif cmd == "config" or cmd == "options" then
         BCT:ShowConfigFrame()
-        
-    elseif cmd == "stats" or cmd == "statistics" then
-        BCT:ToggleAdvancedStatsPanel()
-        
-    elseif cmd == "resetstats" then
-        BCT:ResetAdvancedStats()
-        
-    elseif cmd == "practice" then
-        if practiceMode.running then
-            BCT:StopPracticeMode()
-        else
-            BCT:StartPracticeMode()
-        end
-        
-    elseif cmd == "stoppractice" then
-        BCT:StopPracticeMode()
-        
-    elseif cmd == "saveprofile" then
-        BCT:SaveCurrentProfile()
-        
-    elseif cmd == "profiles" then
-        print("|cff00ff00BCT:|r Available Profiles:")
-        for key, profile in pairs(characterProfiles.profiles) do
-            local current = (key == characterProfiles.currentProfile) and " (Current)" or ""
-            print("  |cff00ffff" .. key .. "|r" .. current)
-        end
-        
-    -- NEW COMMANDS FOR SELECTIVE DISPLAY
-    elseif cmd == "streaks" then
-        config.showCritStreaks = not config.showCritStreaks
-        print("|cff00ff00BCT:|r Crit streaks " .. (config.showCritStreaks and "enabled" or "disabled"))
-        
-    elseif cmd == "outdamage" then
-        config.showOutgoingDamage = not config.showOutgoingDamage
-        print("|cff00ff00BCT:|r Outgoing damage " .. (config.showOutgoingDamage and "enabled" or "disabled"))
-        
-    elseif cmd == "indamage" then
-        config.showIncomingDamage = not config.showIncomingDamage
-        print("|cff00ff00BCT:|r Incoming damage " .. (config.showIncomingDamage and "enabled" or "disabled"))
-        
-    elseif cmd == "outheal" then
-        config.showOutgoingHealing = not config.showOutgoingHealing
-        print("|cff00ff00BCT:|r Outgoing healing " .. (config.showOutgoingHealing and "enabled" or "disabled"))
-        
-    elseif cmd == "inheal" then
-        config.showIncomingHealing = not config.showIncomingHealing
-        print("|cff00ff00BCT:|r Incoming healing " .. (config.showIncomingHealing and "enabled" or "disabled"))
-        
-    elseif cmd == "melee" then
-        config.showMeleeDamage = not config.showMeleeDamage
-        print("|cff00ff00BCT:|r Melee damage " .. (config.showMeleeDamage and "enabled" or "disabled"))
-        
-    elseif cmd == "spell" then
-        config.showSpellDamage = not config.showSpellDamage
-        print("|cff00ff00BCT:|r Spell damage " .. (config.showSpellDamage and "enabled" or "disabled"))
-        
-    elseif cmd == "crits" then
-        config.showCriticalHits = not config.showCriticalHits
-        print("|cff00ff00BCT:|r Critical hits " .. (config.showCriticalHits and "enabled" or "disabled"))
-        
-    elseif cmd == "overkill" then
-        config.showOverkillDamage = not config.showOverkillDamage
-        print("|cff00ff00BCT:|r Overkill damage " .. (config.showOverkillDamage and "enabled" or "disabled"))
-        
-    elseif cmd == "dots" then
-        config.showPeriodicDamage = not config.showPeriodicDamage
-        print("|cff00ff00BCT:|r DoT/HoT effects " .. (config.showPeriodicDamage and "enabled" or "disabled"))
         
     elseif cmd == "test" then
         BCT:DisplayFloatingText("1337", colors.critDamage, config.fontSize * config.critMultiplier, true, false)
@@ -2537,11 +1326,11 @@ SlashCmdList["BCT"] = function(msg)
     elseif cmd == "cleanup" or cmd == "clean" then
         BCT:CleanupAllFloatingText()
         BCT:ForceCleanupStuckText()
-        print("|cff00ff00BCT:|r Forced cleanup completed")
+        print("|cff00ff00BCT:|r Limpieza forzada completada")
         
     elseif cmd == "reset" then
-        -- Reset all settings to defaults including new options
-        for key, value in pairs({
+        -- Reset all settings to defaults
+        config = {
             enabled = true,
             showDamage = true,
             showHealing = true,
@@ -2561,52 +1350,9 @@ SlashCmdList["BCT"] = function(msg)
             showIcons = true,
             compactMode = false,
             autoHide = false,
-            autoHideDelay = 5.0,
-            showDPS = false,
-            showHPS = false,
-            dpsDisplayManuallyEnabled = false,
-            showThreatIndicator = true,
-            showCritStreaks = true,
-            dpsUpdateInterval = 0.5,
-            practiceMode = false,
-            animationType = "default",
-            particleEffects = true,
-            rotationEffects = false,
-            showOutgoingDamage = true,
-            showIncomingDamage = true,
-            showOutgoingHealing = true,
-            showIncomingHealing = true,
-            showPeriodicDamage = true,
-            showMeleeDamage = true,
-            showSpellDamage = true,
-            showCriticalHits = true,
-            showOverkillDamage = true,
-            showPetDamage = false,
-            showEnvironmentalDamage = true
-        }) do
-            config[key] = value
-        end
+            autoHideDelay = 5.0
+        }
         print("|cff00ff00BCT:|r Settings reset to defaults")
-        
-    elseif cmd == "dps" then
-        config.showDPS = not config.showDPS
-        if config.showDPS then
-            config.dpsDisplayManuallyEnabled = true
-        elseif not config.showHPS then
-            config.dpsDisplayManuallyEnabled = false
-        end
-        BCT:UpdateDPSDisplay()
-        print("|cff00ff00BCT:|r DPS " .. (config.showDPS and "enabled" or "disabled"))
-
-    elseif cmd == "hps" then
-        config.showHPS = not config.showHPS
-        if config.showHPS then
-            config.dpsDisplayManuallyEnabled = true
-        elseif not config.showDPS then
-            config.dpsDisplayManuallyEnabled = false
-        end
-        BCT:UpdateDPSDisplay()
-        print("|cff00ff00BCT:|r HPS " .. (config.showHPS and "enabled" or "disabled"))
         
     elseif cmd == "help" or cmd == "" then
         print("|cff00ff00Better Combat Text Enhanced|r - Command List:")
@@ -2614,26 +1360,15 @@ SlashCmdList["BCT"] = function(msg)
         print("  |cff00ffff/bct toggle|r - Enable/disable addon")
         print("  |cff00ffff/bct panel|r - Toggle combat log panel")
         print("  |cff00ffff/bct config|r - Open configuration window")
-        print("  |cff00ffff/bct stats|r - Toggle advanced statistics panel")
         print("  |cff00ffff/bct test|r - Show test combat numbers")
-        print("|cffFFFF00Display Control:|r")
-        print("  |cff00ffff/bct streaks|r - Toggle crit streak display")
-        print("  |cff00ffff/bct outdamage|r - Toggle outgoing damage")
-        print("  |cff00ffff/bct indamage|r - Toggle incoming damage")
-        print("  |cff00ffff/bct outheal|r - Toggle outgoing healing")
-        print("  |cff00ffff/bct inheal|r - Toggle incoming healing")
-        print("  |cff00ffff/bct melee|r - Toggle melee damage")
-        print("  |cff00ffff/bct spell|r - Toggle spell damage")
-        print("  |cff00ffff/bct crits|r - Toggle critical hits")
-        print("  |cff00ffff/bct overkill|r - Toggle overkill damage")
-        print("  |cff00ffff/bct dots|r - Toggle DoT/HoT effects")
         print("|cffFFFF00Utility Commands:|r")
         print("  |cff00ffff/bct clear|r - Clear combat log and cleanup floating text")
         print("  |cff00ffff/bct cleanup|r - Force cleanup stuck numbers")
         print("  |cff00ffff/bct reset|r - Reset all settings")
-        print("  |cff00ffff/bct resetstats|r - Reset advanced statistics")
-        print("  |cff00ffff/bct dps|r - Toggle DPS display")
-        print("  |cff00ffff/bct hps|r - Toggle HPS display")
+        print("|cffFFFF00Panel Info:|r")
+        print("  |cff00ffff Minimum size:|r 450x400 pixels for optimal display")
+        print("  |cff00ffff Auto-cleanup:|r Floating text clears after combat ends")
+        print("  |cff00ffff Anti-freeze:|r Automatic cleanup every 5 seconds")
         
     else
         print("|cffFF0000BCT:|r Unknown command '" .. cmd .. "'. Type |cff00ffff/bct help|r for available commands.")
