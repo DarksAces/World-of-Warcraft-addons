@@ -1,4 +1,4 @@
-## Interface: 110002
+## Interface: 110200
 ## Title: Time Tracker
 ## Notes: Rastrea el tiempo jugado por día, semana, mes y total para todos los personajes
 ## Author: DarkAce

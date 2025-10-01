@@ -1,4 +1,4 @@
-## Interface: 11405
+## Interface: 110200
 ## Title: Personal Notes
 ## Author: DarkAce
 ## Version: 1.02

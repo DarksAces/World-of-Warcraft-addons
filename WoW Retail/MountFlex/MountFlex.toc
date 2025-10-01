@@ -1,4 +1,4 @@
-## Interface: 112000
+## Interface: 110200
 ## Title: MountFlex
 ## Notes: Frases automáticas RP al usar monturas (multilenguaje)
 ## Author: Daniel

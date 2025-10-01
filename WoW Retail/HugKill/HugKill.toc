@@ -1,4 +1,4 @@
-## Interface: 11405
+## Interface: 110200
 ## Title: HugKill
 ## Notes: Realiza una la emocion /amor cada vez que matas a un NPC o jugador.
 ## Version: 1.02

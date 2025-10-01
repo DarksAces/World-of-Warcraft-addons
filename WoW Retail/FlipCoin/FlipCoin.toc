@@ -1,4 +1,4 @@
-## Interface: 100007
+## Interface: 110200
 ## Title: FlipCoin
 ## Notes: Tira una moneda con /flip o haz duelos con /flip Nombre1 CARA/CRUZ Nombre2 CARA/CRUZ [canal]
 ## Author: Daniel

@@ -1,4 +1,4 @@
-## Interface: 30400
+## Interface: 110200
 ## Title: CursorTrail
 ## Notes: Deja un rastro detrás del cursor
 ## Author: Daniel

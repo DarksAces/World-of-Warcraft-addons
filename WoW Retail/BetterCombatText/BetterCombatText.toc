@@ -1,4 +1,4 @@
-## Interface: 110002
+## Interface: 110200
 ## Title: Better Combat Text Enhanced
 ## Notes: Enhanced combat text with modern UI and improved functionality
 ## Author: DarkAce

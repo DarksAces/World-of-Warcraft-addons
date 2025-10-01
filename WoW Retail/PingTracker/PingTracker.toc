@@ -1,4 +1,4 @@
-## Interface: 100207
+## Interface: 110200
 ## Title: PingTracker
 ## Notes: Mide tu latencia actual y detecta picos de lag.
 ## Author: Daniel

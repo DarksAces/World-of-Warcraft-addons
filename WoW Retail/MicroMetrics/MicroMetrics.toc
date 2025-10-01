@@ -1,4 +1,4 @@
-## Interface: 100207
+## Interface: 110200
 ## Title: MicroMetrics
 ## Notes: Estadísticas rápidas al salir de combate
 ## Author: Daniel

@@ -1,4 +1,4 @@
-## Interface: 113000
+## Interface: 110200
 ## Title: RandomColor
 ## Notes: Cambia el color de la barra de vida según tipo de unidad con color aleatorio fijo y sin repetir por sesión
 ## Author: Daniel

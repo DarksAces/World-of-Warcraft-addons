@@ -1,4 +1,4 @@
-## Interface: 100207
+## Interface: 110200
 ## Title: BloodHunt
 ## Notes: Sistema de objetivos PvP con venganza y puntuación persistente
 ## Author: BloodHunt Team

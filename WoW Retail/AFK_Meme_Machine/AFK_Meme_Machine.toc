@@ -1,4 +1,4 @@
-## Interface: 112000
+## Interface: 110200
 ## Title: AFK Meme Machine
 ## Notes: Mensajes AFK personalizados y multilenguaje.
 ## Author: Daniel

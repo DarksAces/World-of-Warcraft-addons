@@ -1,4 +1,4 @@
-## Interface: 11403
+## Interface: 110200
 ## Title: LostAggro
 ## Notes: Avisos visuales y en chat cuando pierdes el agro y a quién se lo pasó.
 ## Author: Daniel

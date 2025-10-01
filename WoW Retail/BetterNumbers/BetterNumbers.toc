@@ -1,4 +1,4 @@
-## Interface: 100207
+## Interface: 110200
 ## Title: BetterNumbers
 ## Notes: Muestra vida y maná/poder con números acortados (K/M/B). Añadida configuración para decimales con comandos /decimals y /decimales.
 ## Version: 1.0.05

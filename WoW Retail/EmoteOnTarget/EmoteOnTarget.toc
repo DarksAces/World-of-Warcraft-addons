@@ -1,4 +1,4 @@
-## Interface: 100105  -- Versión de la interfaz de WoW (ajusta según la versión actual)
+## Interface: 110200
 ## Title: EmoteOnTarget
 ## Notes: ¡Ejecuta emotes personalizados al seleccionar un objetivo!
 ## Author: DarkAce
