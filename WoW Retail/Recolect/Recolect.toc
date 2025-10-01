@@ -5,4 +5,4 @@
 ## Version: 0.1
 ## SavedVariables: RecollectDB
 
-Recollect.lua
+Recolect.lua
