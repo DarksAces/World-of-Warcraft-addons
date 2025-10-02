@@ -138,15 +138,18 @@ function BCT:DisplayFloatingText(text, color, size, isCrit, isOverkill, isDot, i
     textFrame.fadeAnim:SetDuration(animDuration)
     textFrame.fadeAnim:SetStartDelay(animDuration * 0.4)
 
-    if isCrit or isOverkill then
-        local scaleAmount = isCrit and 1.4 or 1.6
-        textFrame.scaleAnim:SetScale(scaleAmount, scaleAmount)
-        textFrame.scaleAnim:SetDuration(0.4)
-        textFrame.scaleAnim:SetSmoothing("BOUNCE")
-    else
-        textFrame.scaleAnim:SetScale(1, 1)
-        textFrame.scaleAnim:SetDuration(0)
-    end
+if isCrit or isOverkill then
+    local scaleAmount = isCrit and 1.4 or 1.6
+    textFrame.scaleAnim:SetScale(scaleAmount, scaleAmount)
+    textFrame.scaleAnim:SetDuration(0.4)
+
+    -- Animación de rebote usando tabla de pesos en vez de "BOUNCE"
+    textFrame.scaleAnim:SetSmoothing({0.25, 0.5, 0.75, 1})
+else
+    textFrame.scaleAnim:SetScale(1, 1)
+    textFrame.scaleAnim:SetDuration(0)
+end
+
 
     -- Sound effects
     if self.config.soundEnabled then
