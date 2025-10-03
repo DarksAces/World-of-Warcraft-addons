@@ -131,25 +131,24 @@ function BCT:DisplayFloatingText(text, color, size, isCrit, isOverkill, isDot, i
     
     textFrame.moveAnim:SetOffset(0, moveDistance)
     textFrame.moveAnim:SetDuration(animDuration)
-    textFrame.moveAnim:SetSmoothing("OUT")
+    textFrame.moveAnim:SetSmoothing("NONE")  -- Fixed: Use valid smoothing type
 
     textFrame.fadeAnim:SetFromAlpha(1)
     textFrame.fadeAnim:SetToAlpha(0)
     textFrame.fadeAnim:SetDuration(animDuration)
     textFrame.fadeAnim:SetStartDelay(animDuration * 0.4)
+    textFrame.fadeAnim:SetSmoothing("NONE")  -- Added for consistency
 
-if isCrit or isOverkill then
-    local scaleAmount = isCrit and 1.4 or 1.6
-    textFrame.scaleAnim:SetScale(scaleAmount, scaleAmount)
-    textFrame.scaleAnim:SetDuration(0.4)
-
-    -- Animación de rebote usando tabla de pesos en vez de "BOUNCE"
-    textFrame.scaleAnim:SetSmoothing({0.25, 0.5, 0.75, 1})
-else
-    textFrame.scaleAnim:SetScale(1, 1)
-    textFrame.scaleAnim:SetDuration(0)
-end
-
+    if isCrit or isOverkill then
+        local scaleAmount = isCrit and 1.4 or 1.6
+        textFrame.scaleAnim:SetScale(scaleAmount, scaleAmount)
+        textFrame.scaleAnim:SetDuration(0.4)
+        textFrame.scaleAnim:SetSmoothing("IN_OUT")  -- Fixed: Use valid smoothing type instead of weights table
+    else
+        textFrame.scaleAnim:SetScale(1, 1)
+        textFrame.scaleAnim:SetDuration(0)
+        textFrame.scaleAnim:SetSmoothing("NONE")  -- Added for consistency
+    end
 
     -- Sound effects
     if self.config.soundEnabled then
