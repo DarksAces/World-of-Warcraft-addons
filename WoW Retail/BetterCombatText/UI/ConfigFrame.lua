@@ -197,6 +197,72 @@ end
 function BCT:CreateDisplayTab(parent)
     local yOffset = -20
     
+    -- Escala de números (NUEVO)
+    -- Inicializar si no existe
+    if not self.config.textScale then
+        self.config.textScale = 1.0
+    end
+    
+    local scaleLabel = parent:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    scaleLabel:SetPoint("TOPLEFT", parent, "TOPLEFT", 20, yOffset)
+    scaleLabel:SetText("Escala de Números:")
+    scaleLabel:SetTextColor(1, 0.82, 0, 1)
+    
+    local scaleValue = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    scaleValue:SetPoint("LEFT", scaleLabel, "RIGHT", 10, 0)
+    scaleValue:SetText(string.format("%.1fx", self.config.textScale))
+    yOffset = yOffset - 30
+    
+    local scaleSlider = CreateFrame("Slider", "BCT_ScaleSlider", parent, "OptionsSliderTemplate")
+    scaleSlider:SetPoint("TOPLEFT", parent, "TOPLEFT", 20, yOffset)
+    scaleSlider:SetMinMaxValues(0.5, 3.0)
+    scaleSlider:SetValue(self.config.textScale)
+    scaleSlider:SetValueStep(0.1)
+    scaleSlider:SetWidth(300)
+    scaleSlider:SetHeight(20)
+    
+    local sliderName = scaleSlider:GetName()
+    if sliderName then
+        _G[sliderName.."Low"]:SetText("0.5x")
+        _G[sliderName.."High"]:SetText("3.0x")
+        _G[sliderName.."Text"]:SetText("")
+    end
+    
+    scaleSlider:SetScript("OnValueChanged", function(s, value)
+        value = math.floor(value * 10 + 0.5) / 10
+        BCT.config.textScale = value
+        scaleValue:SetText(string.format("%.1fx", value))
+    end)
+    yOffset = yOffset - 30
+    
+    -- Botón de prueba de escala
+    local testScaleButton = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
+    testScaleButton:SetSize(150, 30)
+    testScaleButton:SetPoint("TOPLEFT", parent, "TOPLEFT", 20, yOffset)
+    testScaleButton:SetText("Probar Escala")
+    testScaleButton:SetScript("OnClick", function()
+        local scale = BCT.config.textScale or 1.0
+        local testAmount = math.random(1000, 5000)
+        BCT:DisplayFloatingText(
+            tostring(testAmount),
+            BCT.Colors.critDamage or {1, 0.5, 0},
+            BCT.config.fontSize * scale,
+            true,
+            false,
+            false,
+            false
+        )
+        print("|cff00ff00BCT:|r Probando escala " .. string.format("%.1fx", scale) .. " con número " .. testAmount)
+    end)
+    yOffset = yOffset - 50
+    
+    -- Separador
+    local separator = parent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    separator:SetPoint("TOPLEFT", parent, "TOPLEFT", 20, yOffset)
+    separator:SetText("─────────────────────────────")
+    separator:SetTextColor(0.5, 0.5, 0.5, 1)
+    yOffset = yOffset - 30
+    
     -- Compact Mode
     local compactCheck = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
     compactCheck:SetPoint("TOPLEFT", parent, "TOPLEFT", 20, yOffset)

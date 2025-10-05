@@ -103,9 +103,13 @@ function BCT:DisplayFloatingText(text, color, size, isCrit, isOverkill, isDot, i
     textFrame.isActive = true
     textFrame.lastAnimationTime = GetTime()
 
+    -- Aplicar escala configurada
+    local textScale = self.config.textScale or 1.0
+    local scaledSize = size * textScale
+
     textFrame.fontString:SetText(text)
     textFrame.fontString:SetTextColor(unpack(color))
-    textFrame.fontString:SetFont("Fonts\\FRIZQT__.TTF", size, "OUTLINE")
+    textFrame.fontString:SetFont("Fonts\\FRIZQT__.TTF", scaledSize, "OUTLINE")
 
     -- Position
     local screenWidth = GetScreenWidth()
@@ -131,23 +135,23 @@ function BCT:DisplayFloatingText(text, color, size, isCrit, isOverkill, isDot, i
     
     textFrame.moveAnim:SetOffset(0, moveDistance)
     textFrame.moveAnim:SetDuration(animDuration)
-    textFrame.moveAnim:SetSmoothing("NONE")  -- Fixed: Use valid smoothing type
+    textFrame.moveAnim:SetSmoothing("NONE")
 
     textFrame.fadeAnim:SetFromAlpha(1)
     textFrame.fadeAnim:SetToAlpha(0)
     textFrame.fadeAnim:SetDuration(animDuration)
     textFrame.fadeAnim:SetStartDelay(animDuration * 0.4)
-    textFrame.fadeAnim:SetSmoothing("NONE")  -- Added for consistency
+    textFrame.fadeAnim:SetSmoothing("NONE")
 
     if isCrit or isOverkill then
         local scaleAmount = isCrit and 1.4 or 1.6
         textFrame.scaleAnim:SetScale(scaleAmount, scaleAmount)
         textFrame.scaleAnim:SetDuration(0.4)
-        textFrame.scaleAnim:SetSmoothing("IN_OUT")  -- Fixed: Use valid smoothing type instead of weights table
+        textFrame.scaleAnim:SetSmoothing("IN_OUT")
     else
         textFrame.scaleAnim:SetScale(1, 1)
         textFrame.scaleAnim:SetDuration(0)
-        textFrame.scaleAnim:SetSmoothing("NONE")  -- Added for consistency
+        textFrame.scaleAnim:SetSmoothing("NONE")
     end
 
     -- Sound effects

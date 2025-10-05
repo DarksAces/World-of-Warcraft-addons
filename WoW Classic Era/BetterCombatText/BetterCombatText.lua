@@ -54,20 +54,20 @@ local themes = {
 }
 
 local colors = {
-    damage = {1, 1, 0, 1},
-    critDamage = {1, 0.5, 0, 1},
-    healing = {0, 1, 0, 1},
-    critHealing = {0, 1, 0.5, 1},
-    damageTaken = {1, 0, 0, 1},
-    physical = {1, 0.8, 0.4, 1},
-    magic = {0.4, 0.8, 1, 1},
-    fire = {1, 0.2, 0.2, 1},
-    frost = {0.5, 0.8, 1, 1},
-    nature = {0.3, 1, 0.3, 1},
-    shadow = {0.7, 0.3, 1, 1},
-    holy = {1, 1, 0.8, 1},
-    pvpDamage = {1, 0.3, 0.3, 1},
-    overkill = {1, 0, 1, 1}
+    damage = {1, 1, 0, 1},          -- Amarillo para daño normal
+    critDamage = {1, 0.5, 0, 1},    -- Naranja para crítico de daño
+    healing = {0, 1, 0, 1},         -- Verde puro para curación normal
+    critHealing = {0, 1, 0, 1},     -- Verde puro para curación crítica (sin azul)
+    damageTaken = {1, 0, 0, 1},     -- Rojo para daño recibido
+    physical = {1, 0.8, 0.4, 1},    -- Amarillo cálido para físico
+    magic = {0.4, 0.8, 1, 1},       -- Azul para mágico
+    fire = {1, 0.2, 0.2, 1},        -- Rojo fuego
+    frost = {0.5, 0.8, 1, 1},       -- Azul hielo
+    nature = {0.3, 1, 0.3, 1},      -- Verde naturaleza
+    shadow = {0.7, 0.3, 1, 1},      -- Púrpura sombra
+    holy = {1, 1, 0.8, 1},          -- Amarillo dorado sagrado
+    pvpDamage = {1, 0.3, 0.3, 1},   -- Rojo intenso para PvP
+    overkill = {1, 0, 1, 1}         -- Magenta para overkill
 }
 
 -- UI Frames
