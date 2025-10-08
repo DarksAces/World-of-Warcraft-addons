@@ -1,0 +1,8 @@
+## Interface: 110200
+## Title: Better Gold Text
+## Notes: Muestra oro ganado como texto flotante. Integración opcional con Better Combat Text.
+## Author: Daniel
+## Version: 1.0.0
+## OptionalDeps: BetterCombatText
+
+core.lua
