@@ -157,11 +157,12 @@ function BCT:DisplayFloatingText(text, color, size, isCrit, isOverkill, isDot, i
     -- Sound effects
     if self.config.soundEnabled then
         if isOverkill then
-            PlaySound(37666)
+            PlaySound(SOUNDKIT.UI_RAID_BOSS_WHISPER_WARNING)
         elseif isCrit then
-            PlaySound(35675)
+            PlaySound(SOUNDKIT.UI_BNET_TOAST)
         end
     end
+
 
     -- Cleanup handling
     textFrame.animGroup:SetScript("OnFinished", function()
