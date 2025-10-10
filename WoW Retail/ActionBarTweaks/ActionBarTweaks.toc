@@ -1,6 +1,6 @@
-## Interface: 110100
+## Interface: 110200
 ## Title: Action Bar Tweaks
-## Notes: Cambia la posición y tamaño de la barra principal
+## Notes: Cambia la posición y tamaño de la barra principal.
 ## Author: TuNombre
 ## Version: 1.0
 ActionBarTweaks.lua
