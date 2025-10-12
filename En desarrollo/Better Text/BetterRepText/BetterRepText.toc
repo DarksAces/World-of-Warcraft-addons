@@ -1,8 +1,0 @@
-## Interface: 110200
-## Title: Better Rep Text
-## Notes: Muestra cambios de reputación flotantes. Integración opcional con Better Combat Text.
-## Author: Daniel
-## Version: 1.0.0
-## OptionalDeps: BetterCombatText
-
-core.lua

@@ -1,8 +1,0 @@
-## Interface: 110200
-## Title: Better Combo Text
-## Notes: Muestra contadores de combos críticos como texto flotante. Integración opcional con Better Combat Text.
-## Author: Daniel
-## Version: 1.0.0
-## OptionalDeps: BetterCombatText
-
-core.lua
