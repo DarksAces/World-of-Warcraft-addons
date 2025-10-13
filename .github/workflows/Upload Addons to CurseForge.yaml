@@ -49,19 +49,22 @@ jobs:
     needs: find-addons
     if: needs.find-addons.outputs.alpha-addons != '[]'
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        addon: ${{ fromJson(needs.find-addons.outputs.alpha-addons) }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: Package and upload Alpha addons
-        run: |
-          for addon in $(echo '${{ needs.find-addons.outputs.alpha-addons }}' | jq -r '.[]'); do
-            echo "Packaging $addon as alpha..."
-            cp -r Alpha/$addon/. .
-            $GITHUB_ACTION_PATH/release.sh -g 11.0.5 -w 11.0.5 -p 1360857 -m .pkgmeta -n $addon --build-type alpha
-          done
+      - name: Copy Alpha addon to root
+        run: cp -r Alpha/${{ matrix.addon }}/. .
+
+      - name: Run BigWigs Packager (Alpha)
+        uses: BigWigsMods/packager@v2
+        with:
+          args: -g 11.0.5 -w 11.0.5 -p 1360857 -m .pkgmeta -n ${{ matrix.addon }} --build-type alpha
         env:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
@@ -70,19 +73,22 @@ jobs:
     needs: find-addons
     if: needs.find-addons.outputs.beta-addons != '[]'
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        addon: ${{ fromJson(needs.find-addons.outputs.beta-addons) }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: Package and upload Beta addons
-        run: |
-          for addon in $(echo '${{ needs.find-addons.outputs.beta-addons }}' | jq -r '.[]'); do
-            echo "Packaging $addon as beta..."
-            cp -r Beta/$addon/. .
-            $GITHUB_ACTION_PATH/release.sh -g 11.0.5 -w 11.0.5 -p 1360857 -m .pkgmeta -n $addon --build-type beta
-          done
+      - name: Copy Beta addon to root
+        run: cp -r Beta/${{ matrix.addon }}/. .
+
+      - name: Run BigWigs Packager (Beta)
+        uses: BigWigsMods/packager@v2
+        with:
+          args: -g 11.0.5 -w 11.0.5 -p 1360857 -m .pkgmeta -n ${{ matrix.addon }} --build-type beta
         env:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
