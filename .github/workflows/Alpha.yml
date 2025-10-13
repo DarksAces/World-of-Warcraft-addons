@@ -3,20 +3,17 @@ name: Upload Alpha Addons
 on:
   push:
     paths:
-      - 'Alpha/**'   # Solo se ejecuta si hay cambios en la carpeta Alpha
+      - 'Alpha/**'
   workflow_dispatch:
 
 jobs:
-  release-alpha:
+  detect-alpha:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        addon: ${{ fromJson('[]') }} # Será reemplazado dinámicamente
+    outputs:
+      addons: ${{ steps.detect.outputs.addons }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
 
       - name: Detect Alpha addons
         id: detect
@@ -30,20 +27,22 @@ jobs:
             fi
           done
           echo "addons=$addons" >> $GITHUB_OUTPUT
-          echo "matrix_addons=$addons" >> $GITHUB_OUTPUT
 
-      - name: Set matrix for addons
-        run: echo "Matrix addons detected"
-        # Reescribimos la estrategia de matrix con los addons detectados
-        # Esto requiere usar un output en steps y luego en matrix, lo dejamos más simple usando el BigWigs directamente
+  release-alpha:
+    needs: detect-alpha
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        addon: ${{ fromJson(needs.detect-alpha.outputs.addons) }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Run BigWigs Packager for Alpha
-        uses: BigWigsMods/packager@v2
-        run: |
-          for addon in $(echo '${{ steps.detect.outputs.addons }}' | jq -r '.[]'); do
-            cp -r Alpha/$addon/. . 
-            echo "Packaging $addon as alpha..."
-            $GITHUB_ACTION_PATH/release.sh -g 11.0.5 -w 11.0.5 -p 1360857 -m .pkgmeta -n $addon --build-type alpha
-          done
+      - name: Copy addon to root
+        run: cp -r Alpha/${{ matrix.addon }}/. .
+
+      - name: Run BigWigs Packager
+        run: $GITHUB_ACTION_PATH/release.sh -g 11.0.5 -w 11.0.5 -p 1360857 -m .pkgmeta -n ${{ matrix.addon }} --build-type alpha
         env:
-          CF_API_KEY: ${{ secrets.CF_API_KEY
+          CF_API_KEY: ${{ secrets.CF_API_KEY }}
+          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
