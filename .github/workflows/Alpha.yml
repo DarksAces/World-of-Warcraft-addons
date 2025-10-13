@@ -3,32 +3,29 @@ name: Upload Alpha Addons
 on:
   push:
     paths:
-      - 'Alpha/**'   # solo se ejecuta si hay cambios en la carpeta Alpha
+      - 'Alpha/**'
   workflow_dispatch:
 
 jobs:
   release-alpha:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        addon: ${{ fromJson('["ActionBarTweaks","OtroAddon"]') }}  # o dinámico con jq
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: Detect Alpha addons
-        id: set-alpha
+      - name: Copy addon to root
         run: |
-          addons="[]"
-          for dir in Alpha/*/; do
-            if [ -f "$dir/.pkgmeta" ]; then
-              addon_name=$(basename "$dir")
-              addons=$(echo "$addons" | jq -c ". += [\"$addon_name\"]")
-              echo "Found Alpha addon: $addon_name"
-            fi
-          done
-          echo "addons=$addons" >> $GITHUB_OUTPUT
+          cp -r Alpha/${{ matrix.addon }}/. .
+          ls -la
+          cat .pkgmeta
+          cat *.toc
 
-      - name: Run BigWigs Packager for Alpha
+      - name: Run BigWigs Packager
         uses: BigWigsMods/packager@v2
         with:
           args: -g 11.0.5 -w 11.0.5 -p 1360857 -m .pkgmeta -n ${{ matrix.addon }}
