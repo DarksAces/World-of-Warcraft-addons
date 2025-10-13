@@ -60,12 +60,10 @@ jobs:
       - name: Prepare Alpha addon for packaging
         run: |
           TEMP_DIR=$(mktemp -d)
-          cp Alpha/${{ matrix.addon }}/*.toc "$TEMP_DIR/"
-          cp Alpha/${{ matrix.addon }}/.pkgmeta "$TEMP_DIR/"
-          cp Alpha/${{ matrix.addon }}/*.lua "$TEMP_DIR/"
-          cp Alpha/${{ matrix.addon }}/*.xml "$TEMP_DIR/" 2>/dev/null || true
+          cp -r Alpha/${{ matrix.addon }}/* "$TEMP_DIR/"
           cd "$TEMP_DIR"
-          ls -la  # Verificar que toc y pkgmeta estén en la raíz
+          ls -la  # verifica que .toc y .pkgmeta estén en la raíz
+
 
       - name: Package and upload Alpha addon
         uses: BigWigsMods/packager@v2
