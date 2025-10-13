@@ -20,4 +20,4 @@ ignore:
 curse-project-id: 1360857
 
 version: "0.1.0-beta1"
-ReleaseType: Beta
+ReleaseType: beta
