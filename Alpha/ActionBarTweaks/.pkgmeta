@@ -1,0 +1,5 @@
+package-as: action-bar-tweaks
+
+manual-changelog:
+  filename: CHANGELOG.md
+  markup-type: markdown
