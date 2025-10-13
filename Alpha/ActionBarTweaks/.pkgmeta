@@ -1,6 +1,4 @@
-{
-  "package-as": "ActionBarTweaks"
-}
+package-as: ActionBarTweaks
 
 enable-nolib-creation: no
 
