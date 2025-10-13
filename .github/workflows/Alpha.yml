@@ -1,0 +1,37 @@
+name: Upload Alpha Addons
+
+on:
+  push:
+    paths:
+      - 'Alpha/**'   # solo se ejecuta si hay cambios en la carpeta Alpha
+  workflow_dispatch:
+
+jobs:
+  release-alpha:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Detect Alpha addons
+        id: set-alpha
+        run: |
+          addons="[]"
+          for dir in Alpha/*/; do
+            if [ -f "$dir/.pkgmeta" ]; then
+              addon_name=$(basename "$dir")
+              addons=$(echo "$addons" | jq -c ". += [\"$addon_name\"]")
+              echo "Found Alpha addon: $addon_name"
+            fi
+          done
+          echo "addons=$addons" >> $GITHUB_OUTPUT
+
+      - name: Run BigWigs Packager for Alpha
+        uses: BigWigsMods/packager@v2
+        with:
+          args: -g 11.0.5 -w 11.0.5 -p 1360857 -m .pkgmeta -n ${{ matrix.addon }}
+        env:
+          CF_API_KEY: ${{ secrets.CF_API_KEY }}
+          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
