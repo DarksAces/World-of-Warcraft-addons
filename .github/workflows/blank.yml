@@ -47,9 +47,9 @@ jobs:
         run: |
           echo "Packaging addon: ${{ matrix.addon }}"
           TEMP_DIR=$(mktemp -d)
-          # Copiamos solo el addon actual a un directorio temporal
-          cp -r Alpha/${{ matrix.addon }}/* "$TEMP_DIR"
-          cd "$TEMP_DIR"
+          cp -r Alpha/${{ matrix.addon }} "$TEMP_DIR/"
+          cd "$TEMP_DIR/${{ matrix.addon }}"
+
           ls -la
 
       - name: Package and upload to CurseForge
