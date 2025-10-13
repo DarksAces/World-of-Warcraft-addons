@@ -20,7 +20,7 @@ jobs:
         run: |
           addons="[]"
           for dir in Alpha/*/; do
-            if [ -d "$dir" ] && [ -f "${dir}.pkgmeta" ]; then
+            if [ -d "$dir" ] && ls "$dir"/*.pkgmc 1> /dev/null 2>&1; then
               addon_name=$(basename "$dir")
               addons=$(echo "$addons" | jq -c ". += [\"$addon_name\"]")
               echo "Found addon: $addon_name"
