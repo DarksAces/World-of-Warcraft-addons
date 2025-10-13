@@ -74,6 +74,7 @@ jobs:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
 
+
   release-beta:
     needs: find-addons
     if: needs.find-addons.outputs.beta-addons != '[]'
