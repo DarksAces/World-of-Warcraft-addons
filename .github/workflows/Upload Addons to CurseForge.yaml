@@ -63,12 +63,13 @@ jobs:
 
       - name: Set Release Type for Alpha
         run: |
-          sed -i 's/^ReleaseType:.*$/ReleaseType: Alpha/' .pkgmeta
+          sed -i 's/^ReleaseType:.*$/ReleaseType: alpha/' .pkgmeta
+          cat .pkgmeta
 
       - name: Run BigWigs Packager (Alpha)
         uses: BigWigsMods/packager@v2
         with:
-          args: -g 11.0.5 -w 11.0.5 -p 1360857 -m .pkgmeta -n ${{ matrix.addon }}-Alpha
+          args: -g 11.0.5 -w 11.0.5 -m .pkgmeta
         env:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
@@ -91,12 +92,13 @@ jobs:
 
       - name: Set Release Type for Beta
         run: |
-          sed -i 's/^ReleaseType:.*$/ReleaseType: Beta/' .pkgmeta
+          sed -i 's/^ReleaseType:.*$/ReleaseType: beta/' .pkgmeta
+          cat .pkgmeta
 
       - name: Run BigWigs Packager (Beta)
         uses: BigWigsMods/packager@v2
         with:
-          args: -g 11.0.5 -w 11.0.5 -p 1360857 -m .pkgmeta -n ${{ matrix.addon }}-Beta
+          args: -g 11.0.5 -w 11.0.5 -m .pkgmeta
         env:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
