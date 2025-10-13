@@ -1,4 +1,4 @@
-name: Upload to CurseForge
+name: Upload Alpha to CurseForge
 
 on:
   push:
@@ -11,8 +11,88 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Package and upload to CurseForge
-        uses: BigWigsMods/packager@v2
+      
+      - name: Find all alpha addons
+        id: find-addons
+        run: |
+          # Encuentra todas las carpetas en /alpha que contengan un archivo .toc
+          addons=""
+          for dir in alpha/*/; do
+            if [ -d "$dir" ] && ls "$dir"*.toc 1> /dev/null 2>&1; then
+              addons="$addons${dir%/}"
+      
+      - name: Package and upload each addon
+        run: |
+          # Procesa cada addon encontrado
+          echo "${{ steps.find-addons.outputs.addons }}" | while read -r addon_path; do
+            if [ -n "$addon_path" ]; then
+              addon_name=$(basename "$addon_path")
+              echo "Processing addon: $addon_name from $addon_path"
+              
+              # Crea un directorio temporal para el addon
+              mkdir -p "/tmp/$addon_name"
+              cp -r "$addon_path"/* "/tmp/$addon_name/"
+              
+              # Crea un .pkgmeta básico si no existe
+              if [ ! -f "/tmp/$addon_name/.pkgmeta" ]; then
+                echo "Creating default .pkgmeta for $addon_name"
+                cat > "/tmp/$addon_name/.pkgmeta" << 'EOL'
+package-as: ADDON_NAME
+enable-nolib-creation: no
+EOL
+                sed -i "s/ADDON_NAME/$addon_name/g" "/tmp/$addon_name/.pkgmeta"
+              fi
+              
+              # Ejecuta el packager desde el directorio del addon
+              cd "/tmp/$addon_name"
+              
+              docker run --rm \
+                -v "$(pwd):/addon" \
+                -e CF_API_KEY="${{ secrets.CF_API_KEY }}" \
+                -e GITHUB_OAUTH="${{ secrets.GITHUB_TOKEN }}" \
+                bigwigsmods/packager:latest \
+                -g alpha \
+                -m .pkgmeta
+              
+              cd -
+            fi
+          done
+        env:
+          CF_API_KEY: ${{ secrets.CF_API_KEY }}
+\n'
+            fi
+          done
+          echo "Found addons with .toc files:"
+          echo "$addons"
+          echo "addons<<EOF" >> $GITHUB_OUTPUT
+          echo "$addons" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      
+      - name: Package and upload each addon
+        run: |
+          # Procesa cada addon encontrado
+          echo "${{ steps.find-addons.outputs.addons }}" | while read -r addon_path; do
+            if [ -n "$addon_path" ]; then
+              addon_name=$(basename "$addon_path")
+              echo "Processing addon: $addon_name from $addon_path"
+              
+              # Crea un directorio temporal para el addon
+              mkdir -p "/tmp/$addon_name"
+              cp -r "$addon_path"/* "/tmp/$addon_name/"
+              
+              # Ejecuta el packager desde el directorio del addon
+              cd "/tmp/$addon_name"
+              
+              docker run --rm \
+                -v "$(pwd):/addon" \
+                -e CF_API_KEY="${{ secrets.CF_API_KEY }}" \
+                -e GITHUB_OAUTH="${{ secrets.GITHUB_TOKEN }}" \
+                bigwigsmods/packager:latest \
+                -g alpha \
+                -m .pkgmeta
+              
+              cd -
+            fi
+          done
         env:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
