@@ -3,32 +3,37 @@ name: Upload Beta Addons
 on:
   push:
     paths:
-      - 'Beta/**'
+      - 'Beta/**'   # Solo se ejecuta si hay cambios en la carpeta Beta
   workflow_dispatch:
 
 jobs:
-  release-beta:   # <--- cambiar aquí
+  release-beta:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        addon: ${{ fromJson('["ActionBarTweaks","OtroAddon"]') }}  # o dinámico con jq
+    outputs:
+      addons: ${{ steps.detect.outputs.addons }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: Copy addon to root
+      - name: Detect Beta addons
+        id: detect
         run: |
-          cp -r Beta/${{ matrix.addon }}/. .
-          ls -la
-          cat .pkgmeta
-          cat *.toc
+          addons="[]"
+          for dir in Beta/*/; do
+            if [ -f "$dir/.pkgmeta" ]; then
+              addon_name=$(basename "$dir")
+              addons=$(echo "$addons" | jq -c ". += [\"$addon_name\"]")
+              echo "Found Beta addon: $addon_name"
+            fi
+          done
+          echo "addons=$addons" >> $GITHUB_OUTPUT
 
-      - name: Run BigWigs Packager
+      - name: Upload Beta addons
         uses: BigWigsMods/packager@v2
         with:
-          args: -g 11.0.5 -w 11.0.5 -p 1360857 -m .pkgmeta -n ${{ matrix.addon }}
+          args: ${{ join(fromJson(steps.detect.outputs.addons), " ") }}
         env:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
