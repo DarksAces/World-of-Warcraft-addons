@@ -39,11 +39,22 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Prepare addon for packaging
+        run: |
+          # Mueve los archivos del addon a la raíz
+          shopt -s dotglob
+          mv Alpha/${{ matrix.addon }}/* .
+          # Limpia las carpetas que no queremos empaquetar
+          rm -rf Alpha Beta "WoW Classic" "WoW Classic Era" "WoW Retail"
+          ls -la
       
       - name: Package and upload to CurseForge
         uses: BigWigsMods/packager@v2
         with:
-          args: -g 11.0.5 -t Alpha/${{ matrix.addon }}
+          args: -g 11.0.5
         env:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
