@@ -12,8 +12,6 @@ ignore:
   - .git
   - .gitignore
   - "*.lnk"
-  - Alpha
-  - Beta
   - "WoW Classic"
   - "WoW Classic Era"
   - "WoW Retail"
