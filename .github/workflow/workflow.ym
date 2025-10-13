@@ -1,0 +1,110 @@
+name: Upload Addons to CurseForge
+
+on:
+  push:
+    paths:
+      - 'Alpha/**'
+      - 'Beta/**'
+  workflow_dispatch:
+
+jobs:
+  find-addons:
+    runs-on: ubuntu-latest
+    outputs:
+      alpha-addons: ${{ steps.set-alpha.outputs.addons }}
+      beta-addons: ${{ steps.set-beta.outputs.addons }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Detectar addons Alpha
+      - name: Find Alpha addons
+        id: set-alpha
+        run: |
+          addons="[]"
+          for dir in Alpha/*/; do
+            if [ -f "$dir/.pkgmeta" ]; then
+              addon_name=$(basename "$dir")
+              addons=$(echo "$addons" | jq -c ". += [\"$addon_name\"]")
+              echo "Found Alpha addon: $addon_name"
+            fi
+          done
+          echo "addons=$addons" >> $GITHUB_OUTPUT
+
+      # Detectar addons Beta
+      - name: Find Beta addons
+        id: set-beta
+        run: |
+          addons="[]"
+          for dir in Beta/*/; do
+            if [ -f "$dir/.pkgmeta" ]; then
+              addon_name=$(basename "$dir")
+              addons=$(echo "$addons" | jq -c ". += [\"$addon_name\"]")
+              echo "Found Beta addon: $addon_name"
+            fi
+          done
+          echo "addons=$addons" >> $GITHUB_OUTPUT
+
+  release-alpha:
+    needs: find-addons
+    if: needs.find-addons.outputs.alpha-addons != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        addon: ${{ fromJson(needs.find-addons.outputs.alpha-addons) }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Copy Alpha addon to root
+        run: cp -r Alpha/${{ matrix.addon }}/. .
+
+      - name: Set Release Type for Alpha
+        run: |
+          if grep -q "^ReleaseType=" .pkgmeta; then
+            sed -i 's/^ReleaseType=.*/ReleaseType=Alpha/' .pkgmeta
+          else
+            echo "ReleaseType=Alpha" >> .pkgmeta
+          fi
+
+      - name: Upload Alpha to CurseForge
+        uses: BigWigsMods/packager@v2
+        with:
+          args: -p 1360857 -m .pkgmeta -n ${{ matrix.addon }}-Alpha
+        env:
+          CF_API_KEY: ${{ secrets.CF_API_KEY }}
+          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+
+  release-beta:
+    needs: find-addons
+    if: needs.find-addons.outputs.beta-addons != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        addon: ${{ fromJson(needs.find-addons.outputs.beta-addons) }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Copy Beta addon to root
+        run: cp -r Beta/${{ matrix.addon }}/. .
+
+      - name: Set Release Type for Beta
+        run: |
+          if grep -q "^ReleaseType=" .pkgmeta; then
+            sed -i 's/^ReleaseType=.*/ReleaseType=Beta/' .pkgmeta
+          else
+            echo "ReleaseType=Beta" >> .pkgmeta
+          fi
+
+      - name: Upload Beta to CurseForge
+        uses: BigWigsMods/packager@v2
+        with:
+          args: -p 1360857 -m .pkgmeta -n ${{ matrix.addon }}-Beta
+        env:
+          CF_API_KEY: ${{ secrets.CF_API_KEY }}
+          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
