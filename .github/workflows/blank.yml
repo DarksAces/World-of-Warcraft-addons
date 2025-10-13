@@ -23,10 +23,14 @@ jobs:
             if [ -f "$dir/.pkgmc" ]; then
               addon_name=$(basename "$dir")
 
-              # Añadir package-as si no existe
+              # Detectar el TOC
+              TOC_FILE=$(ls "$dir"/*.toc | head -n 1)
+              TOC_NAME=$(basename "$TOC_FILE" .toc)
+
+              # Añadir package-as si no existe o es diferente
               if ! grep -q '"package-as"' "$dir/.pkgmc"; then
-                echo "{\"package-as\": \"$addon_name\"}" > "$dir/.pkgmc"
-                echo "Added package-as to $addon_name/.pkgmc"
+                echo "{\"package-as\": \"$TOC_NAME\"}" > "$dir/.pkgmc"
+                echo "Added package-as=$TOC_NAME to $dir/.pkgmc"
               fi
 
               addons=$(echo "$addons" | jq -c ". += [\"$addon_name\"]")
@@ -53,11 +57,11 @@ jobs:
         run: |
           echo "Packaging addon: ${{ matrix.addon }}"
           TEMP_DIR=$(mktemp -d)
-          # Copiamos la carpeta completa
+          # Copiar la carpeta completa
           cp -r Alpha/${{ matrix.addon }} "$TEMP_DIR/"
           cd "$TEMP_DIR/${{ matrix.addon }}"
-          ls -la  # debug para confirmar archivos
-          
+          ls -la  # debug para confirmar que .pkgmc y .toc están presentes
+
       - name: Package and upload to CurseForge
         uses: BigWigsMods/packager@v2
         with:
