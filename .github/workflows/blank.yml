@@ -12,9 +12,9 @@ jobs:
     outputs:
       addons: ${{ steps.set-matrix.outputs.addons }}
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
-      
+
       - name: Find all addons with .pkgmc
         id: set-matrix
         run: |
@@ -22,13 +22,19 @@ jobs:
           for dir in Alpha/*/; do
             if [ -f "$dir/.pkgmc" ]; then
               addon_name=$(basename "$dir")
+
+              # Añadir package-as si no existe
+              if ! grep -q '"package-as"' "$dir/.pkgmc"; then
+                echo "{\"package-as\": \"$addon_name\"}" > "$dir/.pkgmc"
+                echo "Added package-as to $addon_name/.pkgmc"
+              fi
+
               addons=$(echo "$addons" | jq -c ". += [\"$addon_name\"]")
               echo "Found addon: $addon_name"
             fi
           done
           echo "All addons: $addons"
           echo "addons=$addons" >> $GITHUB_OUTPUT
-
 
   release:
     needs: find-addons
@@ -38,7 +44,7 @@ jobs:
       matrix:
         addon: ${{ fromJson(needs.find-addons.outputs.addons) }}
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -47,11 +53,11 @@ jobs:
         run: |
           echo "Packaging addon: ${{ matrix.addon }}"
           TEMP_DIR=$(mktemp -d)
+          # Copiamos la carpeta completa
           cp -r Alpha/${{ matrix.addon }} "$TEMP_DIR/"
           cd "$TEMP_DIR/${{ matrix.addon }}"
-
-          ls -la
-
+          ls -la  # debug para confirmar archivos
+          
       - name: Package and upload to CurseForge
         uses: BigWigsMods/packager@v2
         with:
