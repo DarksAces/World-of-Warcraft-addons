@@ -11,5 +11,4 @@ ignore:
   - .github
   - "*.lnk"
 
-# IDs de CurseForge y otras plataformas
 curse-project-id: 1360857

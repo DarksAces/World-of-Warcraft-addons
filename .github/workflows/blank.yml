@@ -86,9 +86,9 @@ jobs:
           cp Alpha/${{ matrix.addon }}/.pkgmeta "$TEMP_DIR/"
           cp Alpha/${{ matrix.addon }}/*.lua "$TEMP_DIR/"
           cp Alpha/${{ matrix.addon }}/*.xml "$TEMP_DIR/" 2>/dev/null || true
-          cp Alpha/${{ matrix.addon }}/*.txt "$TEMP_DIR/" 2>/dev/null || true
           cd "$TEMP_DIR"
-          ls -la
+          ls -la  # verificar que toc y pkgmeta estén en la raíz
+
 
       - name: Package and upload Alpha addon
         uses: BigWigsMods/packager@v2
