@@ -57,7 +57,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Copy Alpha addon to root
+      - name: Copy addon to root for packaging
         run: |
           cp -r Alpha/${{ matrix.addon }}/. .
           ls -la
@@ -69,7 +69,7 @@ jobs:
       - name: Run BigWigs Packager (Alpha)
         uses: BigWigsMods/packager@v2
         with:
-          args: -g 11.0.5 -w 11.0.5 --curse-project-id 1360857 --build-type alpha
+          args: -g 11.0.5 -w 11.0.5 -p 1360857 -m .pkgmeta -n alpha
         env:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
@@ -87,7 +87,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Copy Beta addon to root
+      - name: Copy addon to root for packaging
         run: |
           cp -r Beta/${{ matrix.addon }}/. .
           ls -la
@@ -99,7 +99,7 @@ jobs:
       - name: Run BigWigs Packager (Beta)
         uses: BigWigsMods/packager@v2
         with:
-          args: -g 11.0.5 -w 11.0.5 --curse-project-id 1360857 --build-type beta
+          args: -g 11.0.5 -w 11.0.5 -p 1360857 -m .pkgmeta -n beta
         env:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
