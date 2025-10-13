@@ -60,10 +60,10 @@ jobs:
       - name: Prepare Alpha addon for packaging
         run: |
           TEMP_DIR=$(mktemp -d)
-          cp -r Alpha/${{ matrix.addon }}/* "$TEMP_DIR/"
+          cp -r Alpha/${{ matrix.addon }}/. "$TEMP_DIR/"
           cd "$TEMP_DIR"
-          ls -la  # verifica que .toc y .pkgmeta estén en la raíz
-
+          ls -la
+          echo "ADDON_PATH=$TEMP_DIR" >> $GITHUB_ENV
 
       - name: Package and upload Alpha addon
         uses: BigWigsMods/packager@v2
@@ -72,6 +72,7 @@ jobs:
         env:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+        working-directory: ${{ env.ADDON_PATH }}
 
   release-beta:
     needs: find-addons
@@ -89,13 +90,10 @@ jobs:
       - name: Prepare Beta addon for packaging
         run: |
           TEMP_DIR=$(mktemp -d)
-          cp Beta/${{ matrix.addon }}/*.toc "$TEMP_DIR/"
-          cp Beta/${{ matrix.addon }}/.pkgmeta "$TEMP_DIR/"
-          cp Beta/${{ matrix.addon }}/*.lua "$TEMP_DIR/"
-          cp Beta/${{ matrix.addon }}/*.xml "$TEMP_DIR/" 2>/dev/null || true
-          cp Beta/${{ matrix.addon }}/*.txt "$TEMP_DIR/" 2>/dev/null || true
+          cp -r Beta/${{ matrix.addon }}/. "$TEMP_DIR/"
           cd "$TEMP_DIR"
-          ls -la  # Verificar que toc y pkgmeta estén en la raíz
+          ls -la
+          echo "ADDON_PATH=$TEMP_DIR" >> $GITHUB_ENV
 
       - name: Package and upload Beta addon
         uses: BigWigsMods/packager@v2
@@ -104,3 +102,4 @@ jobs:
         env:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+        working-directory: ${{ env.ADDON_PATH }}
