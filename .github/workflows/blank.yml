@@ -57,12 +57,16 @@ jobs:
         run: |
           echo "Packaging addon: ${{ matrix.addon }}"
           TEMP_DIR=$(mktemp -d)
+
+          # Copia todos los archivos directamente al directorio temporal
           cp Alpha/${{ matrix.addon }}/*.toc "$TEMP_DIR/"
           cp Alpha/${{ matrix.addon }}/.pkgmeta "$TEMP_DIR/"
           cp Alpha/${{ matrix.addon }}/*.lua "$TEMP_DIR/"
-          # cualquier otro archivo que necesites incluir
+          # si hay otros archivos necesarios, también copiarlos
+
           cd "$TEMP_DIR"
-          ls -la  # Verifica que .toc y .pkgmeta estén aquí
+          ls -la  # verifica que .toc y .pkgmeta están en la raíz
+
 
 
 
