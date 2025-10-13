@@ -60,8 +60,10 @@ jobs:
           cp Alpha/${{ matrix.addon }}/*.toc "$TEMP_DIR/"
           cp Alpha/${{ matrix.addon }}/.pkgmeta "$TEMP_DIR/"
           cp Alpha/${{ matrix.addon }}/*.lua "$TEMP_DIR/"
+          # cualquier otro archivo que necesites incluir
           cd "$TEMP_DIR"
           ls -la  # Verifica que .toc y .pkgmeta estén aquí
+
 
 
       - name: Package and upload to CurseForge
