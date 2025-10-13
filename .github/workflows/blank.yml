@@ -69,10 +69,10 @@ jobs:
         uses: BigWigsMods/packager@v2
         with:
           args: -g 11.0.5
+          working-directory: ${{ env.ADDON_PATH }}
         env:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
-        working-directory: ${{ env.ADDON_PATH }}
 
   release-beta:
     needs: find-addons
@@ -99,7 +99,7 @@ jobs:
         uses: BigWigsMods/packager@v2
         with:
           args: -g 11.0.5
+          working-directory: ${{ env.ADDON_PATH }}
         env:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
-        working-directory: ${{ env.ADDON_PATH }}
