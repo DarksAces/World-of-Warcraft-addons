@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       # Detectar addons Alpha
       - name: Find Alpha addons
@@ -61,10 +63,19 @@ jobs:
       - name: Copy Alpha addon to root
         run: cp -r Alpha/${{ matrix.addon }}/. .
 
-      - name: Set Release Type for Alpha
+      - name: Get version from .pkgmeta
+        id: get-version
         run: |
-          sed -i 's/^ReleaseType:.*$/ReleaseType: alpha/' .pkgmeta
-          cat .pkgmeta
+          version=$(grep "^version:" .pkgmeta | sed 's/version: *"\(.*\)"/\1/')
+          echo "version=$version" >> $GITHUB_OUTPUT
+          echo "Detected version: $version"
+
+      - name: Create temporary alpha tag
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git tag -a "v${{ steps.get-version.outputs.version }}-alpha" -m "Alpha release ${{ steps.get-version.outputs.version }}"
+          echo "Created tag: v${{ steps.get-version.outputs.version }}-alpha"
 
       - name: Run BigWigs Packager (Alpha)
         uses: BigWigsMods/packager@v2
@@ -90,10 +101,19 @@ jobs:
       - name: Copy Beta addon to root
         run: cp -r Beta/${{ matrix.addon }}/. .
 
-      - name: Set Release Type for Beta
+      - name: Get version from .pkgmeta
+        id: get-version
         run: |
-          sed -i 's/^ReleaseType:.*$/ReleaseType: beta/' .pkgmeta
-          cat .pkgmeta
+          version=$(grep "^version:" .pkgmeta | sed 's/version: *"\(.*\)"/\1/')
+          echo "version=$version" >> $GITHUB_OUTPUT
+          echo "Detected version: $version"
+
+      - name: Create temporary beta tag
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git tag -a "v${{ steps.get-version.outputs.version }}-beta" -m "Beta release ${{ steps.get-version.outputs.version }}"
+          echo "Created tag: v${{ steps.get-version.outputs.version }}-beta"
 
       - name: Run BigWigs Packager (Beta)
         uses: BigWigsMods/packager@v2
