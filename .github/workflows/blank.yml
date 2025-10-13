@@ -57,16 +57,16 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Package and upload Alpha addon
+      - name: Copy addon to root for packaging
         run: |
-          cd Alpha/${{ matrix.addon }}
+          cp -r Alpha/${{ matrix.addon }}/. .
           ls -la
-        shell: bash
+          cat .pkgmeta
 
       - name: Run BigWigs Packager
         uses: BigWigsMods/packager@v2
         with:
-          args: -d Alpha/${{ matrix.addon }} -g 11.0.5
+          args: -g 11.0.5
         env:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
@@ -84,16 +84,16 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Package and upload Beta addon
+      - name: Copy addon to root for packaging
         run: |
-          cd Beta/${{ matrix.addon }}
+          cp -r Beta/${{ matrix.addon }}/. .
           ls -la
-        shell: bash
+          cat .pkgmeta
 
       - name: Run BigWigs Packager
         uses: BigWigsMods/packager@v2
         with:
-          args: -d Beta/${{ matrix.addon }} -g 11.0.5
+          args: -g 11.0.5
         env:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
