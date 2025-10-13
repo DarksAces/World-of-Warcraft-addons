@@ -3,14 +3,12 @@ name: Upload Beta Addons
 on:
   push:
     paths:
-      - 'Beta/**'
+      - 'Beta/**'   # Solo se ejecuta si hay cambios en la carpeta Beta
   workflow_dispatch:
 
 jobs:
-  detect-beta:
+  release-beta:
     runs-on: ubuntu-latest
-    outputs:
-      addons: ${{ steps.set.outputs.addons }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -18,7 +16,7 @@ jobs:
           fetch-depth: 0
 
       - name: Detect Beta addons
-        id: set
+        id: detect
         run: |
           addons="[]"
           for dir in Beta/*/; do
@@ -30,29 +28,14 @@ jobs:
           done
           echo "addons=$addons" >> $GITHUB_OUTPUT
 
-  release-beta:
-    needs: detect-beta
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        addon: ${{ fromJson(needs.detect-beta.outputs.addons) }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Copy addon to root
-        run: |
-          cp -r Beta/${{ matrix.addon }}/. .
-          ls -la
-          cat .pkgmeta
-          cat *.toc
-
-      - name: Run BigWigs Packager
+      - name: Run BigWigs Packager for Beta
         uses: BigWigsMods/packager@v2
-        with:
-          args: -g 11.0.5 -w 11.0.5 -p 1360857 -m .pkgmeta -n ${{ matrix.addon }}
+        run: |
+          for addon in $(echo '${{ steps.detect.outputs.addons }}' | jq -r '.[]'); do
+            cp -r Beta/$addon/. .
+            echo "Packaging $addon as beta..."
+            $GITHUB_ACTION_PATH/release.sh -g 11.0.5 -w 11.0.5 -p 1360857 -m .pkgmeta -n $addon --build-type beta
+          done
         env:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}

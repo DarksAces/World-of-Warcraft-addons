@@ -3,14 +3,15 @@ name: Upload Alpha Addons
 on:
   push:
     paths:
-      - 'Alpha/**'
+      - 'Alpha/**'   # Solo se ejecuta si hay cambios en la carpeta Alpha
   workflow_dispatch:
 
 jobs:
-  detect-alpha:
+  release-alpha:
     runs-on: ubuntu-latest
-    outputs:
-      addons: ${{ steps.set.outputs.addons }}
+    strategy:
+      matrix:
+        addon: ${{ fromJson('[]') }} # Será reemplazado dinámicamente
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -18,7 +19,7 @@ jobs:
           fetch-depth: 0
 
       - name: Detect Alpha addons
-        id: set
+        id: detect
         run: |
           addons="[]"
           for dir in Alpha/*/; do
@@ -29,30 +30,20 @@ jobs:
             fi
           done
           echo "addons=$addons" >> $GITHUB_OUTPUT
+          echo "matrix_addons=$addons" >> $GITHUB_OUTPUT
 
-  release-alpha:
-    needs: detect-alpha
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        addon: ${{ fromJson(needs.detect-alpha.outputs.addons) }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+      - name: Set matrix for addons
+        run: echo "Matrix addons detected"
+        # Reescribimos la estrategia de matrix con los addons detectados
+        # Esto requiere usar un output en steps y luego en matrix, lo dejamos más simple usando el BigWigs directamente
 
-      - name: Copy addon to root
-        run: |
-          cp -r Alpha/${{ matrix.addon }}/. .
-          ls -la
-          cat .pkgmeta
-          cat *.toc
-
-      - name: Run BigWigs Packager
+      - name: Run BigWigs Packager for Alpha
         uses: BigWigsMods/packager@v2
-        with:
-          args: -g 11.0.5 -w 11.0.5 -p 1360857 -m .pkgmeta -n ${{ matrix.addon }}
+        run: |
+          for addon in $(echo '${{ steps.detect.outputs.addons }}' | jq -r '.[]'); do
+            cp -r Alpha/$addon/. . 
+            echo "Packaging $addon as alpha..."
+            $GITHUB_ACTION_PATH/release.sh -g 11.0.5 -w 11.0.5 -p 1360857 -m .pkgmeta -n $addon --build-type alpha
+          done
         env:
-          CF_API_KEY: ${{ secrets.CF_API_KEY }}
-          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+          CF_API_KEY: ${{ secrets.CF_API_KEY
