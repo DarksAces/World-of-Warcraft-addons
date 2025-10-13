@@ -7,57 +7,44 @@ on:
   workflow_dispatch:
 
 jobs:
-  release:
+  find-addons:
     runs-on: ubuntu-latest
+    outputs:
+      addons: ${{ steps.set-matrix.outputs.addons }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
       
-      - name: Find all alpha addons
-        id: find-addons
+      - name: Find all addons with .pkgmeta
+        id: set-matrix
         run: |
-          addons=""
+          addons="[]"
           for dir in Alpha/*/; do
-            if [ -d "$dir" ] && ls "$dir"*.toc 1> /dev/null 2>&1; then
-              addons="$addons${dir%/}"$'\n'
+            if [ -d "$dir" ] && [ -f "${dir}.pkgmeta" ]; then
+              addon_name=$(basename "$dir")
+              addons=$(echo "$addons" | jq -c ". += [\"$addon_name\"]")
+              echo "Found addon: $addon_name"
             fi
           done
-          echo "Found addons with .toc files:"
-          echo "$addons"
-          echo "addons<<EOF" >> $GITHUB_OUTPUT
-          echo "$addons" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          echo "All addons: $addons"
+          echo "addons=$addons" >> $GITHUB_OUTPUT
+
+  release:
+    needs: find-addons
+    if: needs.find-addons.outputs.addons != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        addon: ${{ fromJson(needs.find-addons.outputs.addons) }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
       
-      - name: Package and upload each addon
-        run: |
-          echo "${{ steps.find-addons.outputs.addons }}" | while read -r addon_path; do
-            if [ -n "$addon_path" ]; then
-              addon_name=$(basename "$addon_path")
-              echo "Processing addon: $addon_name from $addon_path"
-              
-              mkdir -p "/tmp/$addon_name"
-              cp -r "$addon_path"/* "/tmp/$addon_name/"
-              
-              if [ ! -f "/tmp/$addon_name/.pkgmeta" ]; then
-                echo "Creating default .pkgmeta for $addon_name"
-                cat > "/tmp/$addon_name/.pkgmeta" <<PKGMETA
-          package-as: $addon_name
-          enable-nolib-creation: no
-          PKGMETA
-              fi
-              
-              cd "/tmp/$addon_name"
-              
-              docker run --rm \
-                -v "$(pwd):/addon" \
-                -e CF_API_KEY="${{ secrets.CF_API_KEY }}" \
-                -e GITHUB_OAUTH="${{ secrets.GITHUB_TOKEN }}" \
-                bigwigsmods/packager:latest \
-                -g alpha \
-                -m .pkgmeta
-              
-              cd -
-            fi
-          done
+      - name: Package and upload to CurseForge
+        uses: BigWigsMods/packager@v2
+        working-directory: Alpha/${{ matrix.addon }}
+        with:
+          args: -g alpha
         env:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
+          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
