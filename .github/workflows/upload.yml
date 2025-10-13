@@ -1,0 +1,70 @@
+name: Upload Addons to CurseForge
+
+on:
+  push:
+    paths:
+      - 'Alpha/**'
+      - 'Beta/**'
+      - 'Release/**'
+  workflow_dispatch:
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Detect release type
+        id: detect
+        run: |
+          if [[ "$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})" =~ Alpha/ ]]; then
+            echo "type=alpha" >> $GITHUB_OUTPUT
+            echo "folder=Alpha" >> $GITHUB_OUTPUT
+          elif [[ "$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})" =~ Beta/ ]]; then
+            echo "type=beta" >> $GITHUB_OUTPUT
+            echo "folder=Beta" >> $GITHUB_OUTPUT
+          elif [[ "$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})" =~ Release/ ]]; then
+            echo "type=release" >> $GITHUB_OUTPUT
+            echo "folder=Release" >> $GITHUB_OUTPUT
+          else
+            echo "No folder detected"
+            exit 1
+          fi
+
+      - name: Upload each addon
+        env:
+          CF_API_KEY: ${{ secrets.CF_API_KEY }}
+          TYPE: ${{ steps.detect.outputs.type }}
+          BASE: ${{ steps.detect.outputs.folder }}
+        run: |
+          echo "Scanning $BASE for addons..."
+          for addon in $(find "$BASE" -mindepth 1 -maxdepth 1 -type d); do
+            echo "Processing $addon..."
+            cf_config="$addon/.cf.json"
+
+            if [ ! -f "$cf_config" ]; then
+              echo "⚠️ No .cf.json found in $addon, skipping..."
+              continue
+            fi
+
+            projectId=$(jq -r '.projectId' "$cf_config")
+            gameVersions=$(jq -c '.gameVersions' "$cf_config")
+
+            if [ -z "$projectId" ] || [ "$projectId" == "null" ]; then
+              echo "⚠️ No projectId in $addon, skipping..."
+              continue
+            fi
+
+            zipFile="${addon##*/}.zip"
+            zip -r "$zipFile" "$addon" >/dev/null
+
+            echo "⬆️ Uploading $addon ($TYPE) to CurseForge project $projectId..."
+            curl -s -X POST "https://wow.curseforge.com/api/projects/$projectId/upload-file" \
+              -H "x-api-token: $CF_API_KEY" \
+              -F "metadata={\"changelog\":\"Automated $TYPE build\",\"releaseType\":\"$TYPE\",\"gameVersions\":$gameVersions};type=application/json" \
+              -F "file=@$zipFile"
+
+            echo "✅ Uploaded $addon"
+          done
