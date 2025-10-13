@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  release-alpha:
+  release-beta:   # <--- cambiar aquí
     runs-on: ubuntu-latest
     strategy:
       matrix:
