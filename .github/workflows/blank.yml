@@ -1,0 +1,63 @@
+name: Upload Alpha to CurseForge
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Find all alpha addons
+        id: find-addons
+        run: |
+          addons=""
+          for dir in Alpha/*/; do
+            if [ -d "$dir" ] && ls "$dir"*.toc 1> /dev/null 2>&1; then
+              addons="$addons${dir%/}"$'\n'
+            fi
+          done
+          echo "Found addons with .toc files:"
+          echo "$addons"
+          echo "addons<<EOF" >> $GITHUB_OUTPUT
+          echo "$addons" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      
+      - name: Package and upload each addon
+        run: |
+          echo "${{ steps.find-addons.outputs.addons }}" | while read -r addon_path; do
+            if [ -n "$addon_path" ]; then
+              addon_name=$(basename "$addon_path")
+              echo "Processing addon: $addon_name from $addon_path"
+              
+              mkdir -p "/tmp/$addon_name"
+              cp -r "$addon_path"/* "/tmp/$addon_name/"
+              
+              if [ ! -f "/tmp/$addon_name/.pkgmeta" ]; then
+                echo "Creating default .pkgmeta for $addon_name"
+                cat > "/tmp/$addon_name/.pkgmeta" <<PKGMETA
+          package-as: $addon_name
+          enable-nolib-creation: no
+          PKGMETA
+              fi
+              
+              cd "/tmp/$addon_name"
+              
+              docker run --rm \
+                -v "$(pwd):/addon" \
+                -e CF_API_KEY="${{ secrets.CF_API_KEY }}" \
+                -e GITHUB_OAUTH="${{ secrets.GITHUB_TOKEN }}" \
+                bigwigsmods/packager:latest \
+                -g alpha \
+                -m .pkgmeta
+              
+              cd -
+            fi
+          done
+        env:
+          CF_API_KEY: ${{ secrets.CF_API_KEY }}
