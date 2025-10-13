@@ -15,18 +15,28 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Find all addons with .pkgmc
+      - name: Find all addons with .pkgmeta
         id: set-matrix
         run: |
           addons="[]"
           for dir in Alpha/*/; do
             if [ -f "$dir/.pkgmeta" ]; then
               addon_name=$(basename "$dir")
+              
+              # Detect TOC file
+              TOC_FILE=$(ls "$dir"/*.toc | head -n 1)
+              TOC_NAME=$(basename "$TOC_FILE" .toc)
+
+              # Ensure package-as is correct
+              if ! grep -q '"package-as"' "$dir/.pkgmeta"; then
+                echo "{\"package-as\": \"$TOC_NAME\"}" > "$dir/.pkgmeta"
+                echo "Added package-as=$TOC_NAME to $dir/.pkgmeta"
+              fi
+
               addons=$(echo "$addons" | jq -c ". += [\"$addon_name\"]")
+              echo "Found addon: $addon_name"
             fi
           done
-
-        
           echo "All addons: $addons"
           echo "addons=$addons" >> $GITHUB_OUTPUT
 
@@ -47,8 +57,9 @@ jobs:
         run: |
           echo "Packaging addon: ${{ matrix.addon }}"
           TEMP_DIR=$(mktemp -d)
-          cp -r Alpha/${{ matrix.addon }} "$TEMP_DIR/"
-          cd "$TEMP_DIR/${{ matrix.addon }}"
+          # Copiar carpeta completa
+          cp -r Alpha/${{ matrix.addon }}/* "$TEMP_DIR/"
+          cd "$TEMP_DIR"
           ls -la  # debug para verificar .toc y .pkgmeta
 
       - name: Package and upload to CurseForge
