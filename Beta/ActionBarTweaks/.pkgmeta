@@ -1,0 +1,17 @@
+package-as: ActionBarTweaks
+enable-nolib-creation: no
+
+manual-changelog:
+  filename: CHANGELOG.md
+  markup-type: markdown
+
+ignore:
+  - README.md
+  - .github
+  - .git
+  - .gitignore
+
+curse-project-id: 1360857
+
+version: "0.1.0"    # el workflow puede añadir -beta1 si quieres
+ReleaseType: Beta    # inicial, el workflow lo actualizará a Beta
