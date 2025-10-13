@@ -40,15 +40,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       
-      - name: Move addon to root for packager
-        run: |
-          cp -r Alpha/${{ matrix.addon }}/* .
-          ls -la
-      
       - name: Package and upload to CurseForge
         uses: BigWigsMods/packager@v2
         with:
-          args: -g 11.0.5
+          args: -g 11.0.5 -t Alpha/${{ matrix.addon }}
         env:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
