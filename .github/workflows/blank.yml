@@ -1,4 +1,4 @@
-name: Upload Alpha to CurseForge
+name: Upload Addons to CurseForge
 
 on:
   push:
@@ -10,67 +10,119 @@ jobs:
   find-addons:
     runs-on: ubuntu-latest
     outputs:
-      addons: ${{ steps.set-matrix.outputs.addons }}
+      alpha-addons: ${{ steps.set-alpha.outputs.addons }}
+      beta-addons: ${{ steps.set-beta.outputs.addons }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Find all addons with .pkgmeta
-        id: set-matrix
+      # Detectar addons Alpha
+      - name: Find Alpha addons
+        id: set-alpha
         run: |
           addons="[]"
           for dir in Alpha/*/; do
             if [ -f "$dir/.pkgmeta" ]; then
               addon_name=$(basename "$dir")
               
-              # Detect TOC file
+              # Detectar TOC
               TOC_FILE=$(ls "$dir"/*.toc | head -n 1)
               TOC_NAME=$(basename "$TOC_FILE" .toc)
 
-              # Ensure package-as is correct
+              # Asegurar package-as
               if ! grep -q '"package-as"' "$dir/.pkgmeta"; then
                 echo "{\"package-as\": \"$TOC_NAME\"}" > "$dir/.pkgmeta"
                 echo "Added package-as=$TOC_NAME to $dir/.pkgmeta"
               fi
 
               addons=$(echo "$addons" | jq -c ". += [\"$addon_name\"]")
-              echo "Found addon: $addon_name"
+              echo "Found Alpha addon: $addon_name"
             fi
           done
-          echo "All addons: $addons"
           echo "addons=$addons" >> $GITHUB_OUTPUT
 
-  release:
+      # Detectar addons Beta
+      - name: Find Beta addons
+        id: set-beta
+        run: |
+          addons="[]"
+          for dir in Beta/*/; do
+            if [ -f "$dir/.pkgmeta" ]; then
+              addon_name=$(basename "$dir")
+              
+              # Detectar TOC
+              TOC_FILE=$(ls "$dir"/*.toc | head -n 1)
+              TOC_NAME=$(basename "$TOC_FILE" .toc)
+
+              # Asegurar package-as
+              if ! grep -q '"package-as"' "$dir/.pkgmeta"; then
+                echo "{\"package-as\": \"$TOC_NAME\"}" > "$dir/.pkgmeta"
+                echo "Added package-as=$TOC_NAME to $dir/.pkgmeta"
+              fi
+
+              addons=$(echo "$addons" | jq -c ". += [\"$addon_name\"]")
+              echo "Found Beta addon: $addon_name"
+            fi
+          done
+          echo "addons=$addons" >> $GITHUB_OUTPUT
+
+  release-alpha:
     needs: find-addons
-    if: needs.find-addons.outputs.addons != '[]'
+    if: needs.find-addons.outputs.alpha-addons != '[]'
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        addon: ${{ fromJson(needs.find-addons.outputs.addons) }}
+        addon: ${{ fromJson(needs.find-addons.outputs.alpha-addons) }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: Prepare addon for packaging
+      - name: Prepare Alpha addon for packaging
         run: |
           TEMP_DIR=$(mktemp -d)
-
-          # Copiar los archivos esenciales a la raíz del temp
           cp Alpha/${{ matrix.addon }}/*.toc "$TEMP_DIR/"
           cp Alpha/${{ matrix.addon }}/.pkgmeta "$TEMP_DIR/"
           cp Alpha/${{ matrix.addon }}/*.lua "$TEMP_DIR/"
-          # agregar cualquier otro archivo necesario (XML, etc.)
-
+          cp Alpha/${{ matrix.addon }}/*.xml "$TEMP_DIR/" 2>/dev/null || true
+          cp Alpha/${{ matrix.addon }}/*.txt "$TEMP_DIR/" 2>/dev/null || true
           cd "$TEMP_DIR"
-          ls -la  # Verifica que .toc y .pkgmeta estén en la raíz
+          ls -la
 
+      - name: Package and upload Alpha addon
+        uses: BigWigsMods/packager@v2
+        with:
+          args: -g 11.0.5
+        env:
+          CF_API_KEY: ${{ secrets.CF_API_KEY }}
+          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
 
+  release-beta:
+    needs: find-addons
+    if: needs.find-addons.outputs.beta-addons != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        addon: ${{ fromJson(needs.find-addons.outputs.beta-addons) }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
+      - name: Prepare Beta addon for packaging
+        run: |
+          TEMP_DIR=$(mktemp -d)
+          cp Beta/${{ matrix.addon }}/*.toc "$TEMP_DIR/"
+          cp Beta/${{ matrix.addon }}/.pkgmeta "$TEMP_DIR/"
+          cp Beta/${{ matrix.addon }}/*.lua "$TEMP_DIR/"
+          cp Beta/${{ matrix.addon }}/*.xml "$TEMP_DIR/" 2>/dev/null || true
+          cp Beta/${{ matrix.addon }}/*.txt "$TEMP_DIR/" 2>/dev/null || true
+          cd "$TEMP_DIR"
+          ls -la
 
-
-      - name: Package and upload to CurseForge
+      - name: Package and upload Beta addon
         uses: BigWigsMods/packager@v2
         with:
           args: -g 11.0.5
