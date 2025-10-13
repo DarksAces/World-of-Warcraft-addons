@@ -61,12 +61,15 @@ jobs:
         run: |
           cp -r Alpha/${{ matrix.addon }}/. .
           ls -la
+          echo "Contenido de .pkgmeta:"
           cat .pkgmeta
+          echo "Contenido de .toc:"
+          cat *.toc
 
       - name: Run BigWigs Packager
         uses: BigWigsMods/packager@v2
         with:
-          args: -g 11.0.5
+          args: -g 11.0.5 -w 11.0.5
         env:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
@@ -88,12 +91,15 @@ jobs:
         run: |
           cp -r Beta/${{ matrix.addon }}/. .
           ls -la
+          echo "Contenido de .pkgmeta:"
           cat .pkgmeta
+          echo "Contenido de .toc:"
+          cat *.toc
 
       - name: Run BigWigs Packager
         uses: BigWigsMods/packager@v2
         with:
-          args: -g 11.0.5
+          args: -g 11.0.5 -w 11.0.5
         env:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}

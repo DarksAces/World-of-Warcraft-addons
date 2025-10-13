@@ -1,10 +1,21 @@
 package-as: ActionBarTweaks
 enable-nolib-creation: no
+
 manual-changelog:
   filename: CHANGELOG.md
   markup-type: markdown
+
 ignore:
   - README.md
+  - Readme.md
   - .github
+  - .git
+  - .gitignore
   - "*.lnk"
+  - Alpha
+  - Beta
+  - "WoW Classic"
+  - "WoW Classic Era"
+  - "WoW Retail"
+
 curse-project-id: 1360857
