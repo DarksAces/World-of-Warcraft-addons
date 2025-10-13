@@ -62,7 +62,8 @@ jobs:
         run: cp -r Alpha/${{ matrix.addon }}/. .
 
       - name: Set Release Type for Alpha
-        run: sed -i 's/^ReleaseType:.*$/ReleaseType: Alpha/' .pkgmeta
+        run: |
+          sed -i 's/^ReleaseType:.*$/ReleaseType: Alpha/' .pkgmeta
 
       - name: Run BigWigs Packager (Alpha)
         uses: BigWigsMods/packager@v2
@@ -89,7 +90,8 @@ jobs:
         run: cp -r Beta/${{ matrix.addon }}/. .
 
       - name: Set Release Type for Beta
-        run: sed -i 's/^ReleaseType:.*$/ReleaseType: Beta/' .pkgmeta
+        run: |
+          sed -i 's/^ReleaseType:.*$/ReleaseType: Beta/' .pkgmeta
 
       - name: Run BigWigs Packager (Beta)
         uses: BigWigsMods/packager@v2
