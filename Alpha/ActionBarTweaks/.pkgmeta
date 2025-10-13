@@ -2,7 +2,14 @@ package-as: ActionBarTweaks
 
 enable-nolib-creation: no
 
+manual-changelog:
+  filename: CHANGELOG.md
+  markup-type: markdown
+
 ignore:
   - README.md
-  - .git
   - .github
+  - "*.lnk"
+
+# IDs de CurseForge y otras plataformas
+curse-project-id: 1360857
