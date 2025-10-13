@@ -57,10 +57,12 @@ jobs:
         run: |
           echo "Packaging addon: ${{ matrix.addon }}"
           TEMP_DIR=$(mktemp -d)
-          # Copiar carpeta completa
-          cp -r Alpha/${{ matrix.addon }}/* "$TEMP_DIR/"
+          cp Alpha/${{ matrix.addon }}/*.toc "$TEMP_DIR/"
+          cp Alpha/${{ matrix.addon }}/.pkgmeta "$TEMP_DIR/"
+          cp Alpha/${{ matrix.addon }}/*.lua "$TEMP_DIR/"
           cd "$TEMP_DIR"
-          ls -la  # debug para verificar .toc y .pkgmeta
+          ls -la  # Verifica que .toc y .pkgmeta estén aquí
+
 
       - name: Package and upload to CurseForge
         uses: BigWigsMods/packager@v2
