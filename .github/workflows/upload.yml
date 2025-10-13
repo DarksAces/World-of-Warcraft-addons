@@ -16,36 +16,56 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Detect release type
+      - name: Detect release type and changed addons
         id: detect
         run: |
-          if [[ "$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})" =~ Alpha/ ]]; then
-            echo "type=alpha" >> $GITHUB_OUTPUT
-            echo "folder=Alpha" >> $GITHUB_OUTPUT
-          elif [[ "$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})" =~ Beta/ ]]; then
-            echo "type=beta" >> $GITHUB_OUTPUT
-            echo "folder=Beta" >> $GITHUB_OUTPUT
-          elif [[ "$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})" =~ Release/ ]]; then
-            echo "type=release" >> $GITHUB_OUTPUT
-            echo "folder=Release" >> $GITHUB_OUTPUT
+          echo "🕵️ Detecting changed folder..."
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          echo "$CHANGED_FILES"
+
+          TYPE=""
+          BASE=""
+          if echo "$CHANGED_FILES" | grep -q '^Alpha/'; then
+            TYPE="alpha"
+            BASE="Alpha"
+          elif echo "$CHANGED_FILES" | grep -q '^Beta/'; then
+            TYPE="beta"
+            BASE="Beta"
+          elif echo "$CHANGED_FILES" | grep -q '^Release/'; then
+            TYPE="release"
+            BASE="Release"
           else
-            echo "No folder detected"
+            echo "❌ No release folder detected."
             exit 1
           fi
 
-      - name: Upload each addon
+          # Detect which addons changed inside that folder
+          ADDONS=$(echo "$CHANGED_FILES" | grep "^$BASE/" | cut -d/ -f2 | sort -u)
+          echo "type=$TYPE" >> $GITHUB_OUTPUT
+          echo "base=$BASE" >> $GITHUB_OUTPUT
+          echo "addons=$ADDONS" >> $GITHUB_OUTPUT
+
+          echo "📦 Changed addons: $ADDONS"
+
+      - name: Upload changed addons
+        if: steps.detect.outputs.addons != ''
         env:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
           TYPE: ${{ steps.detect.outputs.type }}
-          BASE: ${{ steps.detect.outputs.folder }}
+          BASE: ${{ steps.detect.outputs.base }}
         run: |
-          echo "Scanning $BASE for addons..."
-          for addon in $(find "$BASE" -mindepth 1 -maxdepth 1 -type d); do
-            echo "Processing $addon..."
-            cf_config="$addon/.cf.json"
+          echo "Uploading changed addons..."
+          for addon in ${{ steps.detect.outputs.addons }}; do
+            addon_path="$BASE/$addon"
+            cf_config="$addon_path/.cf.json"
+
+            if [ ! -d "$addon_path" ]; then
+              echo "⚠️ Skipping $addon (not a directory)"
+              continue
+            fi
 
             if [ ! -f "$cf_config" ]; then
-              echo "⚠️ No .cf.json found in $addon, skipping..."
+              echo "⚠️ No .cf.json found in $addon_path, skipping..."
               continue
             fi
 
@@ -53,12 +73,13 @@ jobs:
             gameVersions=$(jq -c '.gameVersions' "$cf_config")
 
             if [ -z "$projectId" ] || [ "$projectId" == "null" ]; then
-              echo "⚠️ No projectId in $addon, skipping..."
+              echo "⚠️ Missing projectId in $cf_config, skipping..."
               continue
             fi
 
-            zipFile="${addon##*/}.zip"
-            zip -r "$zipFile" "$addon" >/dev/null
+            zipFile="${addon}.zip"
+            echo "📦 Creating zip for $addon..."
+            (cd "$BASE" && zip -r "../$zipFile" "$addon" >/dev/null)
 
             echo "⬆️ Uploading $addon ($TYPE) to CurseForge project $projectId..."
             curl -s -X POST "https://wow.curseforge.com/api/projects/$projectId/upload-file" \
