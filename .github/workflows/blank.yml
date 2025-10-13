@@ -15,7 +15,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       
-      - name: Find all addons with .pkgmeta
+      - name: Find all addons with .pkgmc
         id: set-matrix
         run: |
           addons="[]"
@@ -41,16 +41,16 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      
+
       - name: Prepare addon for packaging
         run: |
-          # Mueve los archivos del addon a la raíz
-          shopt -s dotglob
-          mv Alpha/${{ matrix.addon }}/* .
-          # Limpia las carpetas que no queremos empaquetar
-          rm -rf Alpha Beta "WoW Classic" "WoW Classic Era" "WoW Retail"
+          echo "Packaging addon: ${{ matrix.addon }}"
+          TEMP_DIR=$(mktemp -d)
+          # Copiamos solo el addon actual a un directorio temporal
+          cp -r Alpha/${{ matrix.addon }}/* "$TEMP_DIR"
+          cd "$TEMP_DIR"
           ls -la
-      
+
       - name: Package and upload to CurseForge
         uses: BigWigsMods/packager@v2
         with:
