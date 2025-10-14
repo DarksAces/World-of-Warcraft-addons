@@ -4,9 +4,9 @@ import json
 import requests
 from zipfile import ZipFile
 
-API_KEY = os.getenv("CURSEFORGE_API_KEY")
+API_KEY = os.getenv("CF_API_KEY")
 if not API_KEY:
-    raise Exception("No se encontró CURSEFORGE_API_KEY en los secrets")
+    raise Exception("No se encontró CF_API_KEY en los secrets")
 
 # Carpeta del addon
 addon_dir = sys.argv[1]

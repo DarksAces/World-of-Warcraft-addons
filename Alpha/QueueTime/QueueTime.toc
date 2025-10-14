@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: QueueTime
-## Notes: Muestra el tiempo en cola y el tiempo medio de mazmorra en un frame movible.
-## Version: 1.0
-## Author: Daniel
-
-QueueTime.lua

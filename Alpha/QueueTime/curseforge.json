@@ -1,5 +1,0 @@
-{
-  "curse-project-id": 1358265,       // tu ID en CurseForge
-  "release-type": "alpha",          // alpha, beta o release según la carpeta
-  "gameVersions": ["12.0.0"]        // versión de WoW
-}
