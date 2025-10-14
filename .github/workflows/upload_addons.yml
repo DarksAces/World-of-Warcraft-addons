@@ -27,19 +27,14 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
-      # 4️⃣ Encuentra addons modificados
-      - name: Find changed addons
-        id: find
+      # 4️⃣ Subida de todos los addons presentes
+      - name: Upload all addons
         run: |
-          echo "CHANGED_DIRS=$(git diff --name-only HEAD~1 HEAD | grep -E '^(Alpha|Beta|Release)/' | cut -d/ -f1,2 | sort -u)" >> $GITHUB_ENV
-
-      # 5️⃣ Ejecuta script Python para cada addon cambiado
-      - name: Upload changed addons
-        if: env.CHANGED_DIRS != ''
-        run: |
-          for DIR in $CHANGED_DIRS; do
-            echo "Uploading $DIR..."
-            python .github/scripts/upload_curseforge.py "$DIR"
+          for DIR in Alpha/* Beta/* Release/*; do
+            if [ -d "$DIR" ]; then
+              echo "Uploading $DIR..."
+              python .github/scripts/upload_curseforge.py "$DIR"
+            fi
           done
         env:
           CURSEFORGE_API_KEY: ${{ secrets.CURSEFORGE_API_KEY }}
