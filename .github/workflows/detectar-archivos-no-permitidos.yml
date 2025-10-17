@@ -1,0 +1,119 @@
+name: Detectar archivos o carpetas no permitidos
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  detectar-y-limpiar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Buscar y eliminar archivos/carpetas prohibidas
+        id: eliminar
+        run: |
+          set -e
+          CHANGED=false
+
+          # Buscar archivos con extensiones prohibidas
+          FILES=$(git ls-files | grep -iE '\.(pdf|zip|exe|rar|7z|tar|mp4|mov)$' || true)
+          
+          if [ -n "$FILES" ]; then
+            echo "=== Encontrados archivos prohibidos ==="
+            echo "$FILES"
+            echo "======================================"
+            
+            while IFS= read -r file; do
+              if [ -n "$file" ]; then
+                if [[ "$file" =~ \.(pdf|zip|exe|rar|7z|tar|mp4|mov|PDF|ZIP|EXE|RAR|7Z|TAR|MP4|MOV)$ ]]; then
+                  echo "✗ Eliminando archivo: $file"
+                  git rm -f "$file"
+                  CHANGED=true
+                fi
+              fi
+            done <<< "$FILES"
+          fi
+
+          # Eliminar carpetas prohibidas
+          CARPETAS=(".vs" ".idea" "node_modules" "venv" "__pycache__")
+          for carpeta in "${CARPETAS[@]}"; do
+            echo "=== Buscando carpetas: ${carpeta} ==="
+            while IFS= read -r -d '' dir; do
+              if [ -d "$dir" ]; then
+                echo "✗ Eliminando carpeta: $dir"
+                git rm -rf "$dir" 2>/dev/null || rm -rf "$dir"
+                CHANGED=true
+              fi
+            done < <(find . -type d -name "${carpeta}" -not -path "./.git/*" -print0 2>/dev/null || true)
+          done
+
+          # Buscar archivos no trackeados
+          echo "=== Buscando archivos no trackeados ==="
+          for ext in pdf zip exe rar 7z tar mp4 mov; do
+            while IFS= read -r -d '' file; do
+              if [ -f "$file" ]; then
+                echo "✗ Eliminando archivo no trackeado: $file"
+                rm -f "$file"
+                CHANGED=true
+              fi
+            done < <(find . -type f -iname "*.${ext}" -not -path "./.git/*" -print0 2>/dev/null || true)
+          done
+
+          if [ "$CHANGED" = true ]; then
+            echo ""
+            echo "✓ Se detectaron y eliminaron archivos/carpetas prohibidos"
+          else
+            echo ""
+            echo "✓ No se encontraron archivos/carpetas prohibidos"
+          fi
+
+          echo "changed=$CHANGED" >> $GITHUB_OUTPUT
+
+      - name: Crear/Actualizar Pull Request automático
+        if: steps.eliminar.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "🗑️ Eliminar archivos o carpetas no permitidos"
+          branch: cleanup             # Rama fija
+          base: main
+          title: "🚨 Eliminar archivos o carpetas no permitidos"
+          body: |
+            🚨 Se detectaron y eliminaron archivos o carpetas no permitidos.
+            
+            **Archivos eliminados:**
+            - 📄 Documentos: PDF, ZIP, RAR, 7z, TAR
+            - 💿 Ejecutables: EXE
+            - 🎥 Videos: MP4, MOV
+            
+            **Carpetas eliminadas:**
+            - 📁 `.vs`, `.idea`, `node_modules`, `venv`, `__pycache__`
+            
+            ✅ **Tu código fuente está SEGURO:** Archivos `.java`, `.cs`, `.py`, `.js`, `.md`, `.xml`, `.sql` NO fueron tocados.
+            
+            ⚠️ **Revisa los cambios antes de hacer merge.**
+            
+            ---
+            _Este PR fue creado automáticamente por GitHub Actions._
+          labels: |
+            automated
+            cleanup
+          update-existing-pr: true
