@@ -1,30 +1,31 @@
--- CompactNumbers: Muestra vida y mana/poder con numeros acortados (K/M/B)
--- Ahora con contorno negro y escalado automatico para diferentes resoluciones
+-- CompactNumbers: Muestra vida y maná/poder con números acortados (K/M/B)
+-- Ahora con contorno negro y escalado automático para diferentes resoluciones
+-- + Ocultar overlay cuando el ratón está encima de la barra de vida
 
--- Variables de configuracion
+-- Variables de configuración
 local decimalPlaces = 1
 local showPercent = false
 local baseFontSize = 12
 local percentFontSize = 9
 
--- Funcion para obtener el factor de escala de la UI
+-- Función para obtener el factor de escala de la UI
 local function GetUIScale()
     local screenWidth = GetScreenWidth()
     local screenHeight = GetScreenHeight()
     -- Escala base para 1920x1080
     local baseWidth = 1920
     local baseHeight = 1080
-    
-    -- Calcular factor de escala basado en resolucion
+
+    -- Calcular factor de escala basado en resolución
     local scaleX = screenWidth / baseWidth
     local scaleY = screenHeight / baseHeight
     local scale = math.min(scaleX, scaleY)
-    
+
     -- Limitar el escalado entre 0.5 y 2.0
     return math.max(0.5, math.min(2.0, scale))
 end
 
--- Funcion para reducir nymeros grandes con decimales configurables
+-- Función para reducir números grandes con decimales configurables
 local function ShortenNumber(value)
     local formatString = "%." .. decimalPlaces .. "f"
     if value >= 1e18 then
@@ -44,7 +45,7 @@ local function ShortenNumber(value)
     end
 end
 
--- FunciÃ³n que devuelve texto con o sin porcentaje
+-- Función que devuelve texto con o sin porcentaje
 local function FormatWithOptionalPercent(current, max)
     if max > 0 then
         if showPercent then
@@ -58,76 +59,126 @@ local function FormatWithOptionalPercent(current, max)
     end
 end
 
--- FunciÃ³n para actualizar tamaÃ±o de fuente con escala automÃ¡tica
+-- Función para actualizar tamaño de fuente con escala automática
 local function UpdateFontSize(text)
     local uiScale = GetUIScale()
     local fontSize
-    
+
     if showPercent then
         fontSize = math.floor(percentFontSize * uiScale)
     else
         fontSize = math.floor(baseFontSize * uiScale)
     end
-    
-    -- Asegurar que el tamaÃ±o no sea demasiado pequeÃ±o o grande
+
+    -- Asegurar que el tamaño no sea demasiado pequeño o grande
     fontSize = math.max(6, math.min(24, fontSize))
-    
+
     -- Aplicar fuente con contorno negro
     text:SetFont("Fonts\\FRIZQT__.TTF", fontSize, "OUTLINE")
-    
+
     -- Color del texto (blanco por defecto)
     text:SetTextColor(1, 1, 1, 1)
-    
+
     -- Sombra adicional para mejor visibilidad
-    text:SetShadowColor(0, 0, 0, 1)
-    text:SetShadowOffset(1, -1)
+    if text.SetShadowColor then
+        text:SetShadowColor(0, 0, 0, 1)
+        text:SetShadowOffset(1, -1)
+    end
 end
 
 -- Crea texto overlay en el frame deseado con mejor posicionamiento
 local function CreateOverlayText(parentFrame, offsetY)
+    if not parentFrame then return nil end
     local text = parentFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     text:SetPoint("CENTER", parentFrame, "CENTER", 0, offsetY or 0)
     text:SetText("")
-    
-    -- Configurar justificaciÃ³n del texto
+
+    -- Configurar justificación del texto
     text:SetJustifyH("CENTER")
     text:SetJustifyV("MIDDLE")
-    
+
     return text
 end
 
--- Crear textos para vida y manÃ¡ del jugador y objetivo
-local playerHealthText = CreateOverlayText(PlayerFrame.healthbar, 0)
-local playerPowerText  = CreateOverlayText(PlayerFrame.manabar, 0)
+-- Crear textos para vida y maná del jugador y objetivo
+local playerHealthText = CreateOverlayText(PlayerFrame and PlayerFrame.healthbar or nil, 0)
+local playerPowerText  = CreateOverlayText(PlayerFrame and PlayerFrame.manabar or nil, 0)
 
-local targetHealthText = CreateOverlayText(TargetFrame.healthbar, 0)
-local targetPowerText  = CreateOverlayText(TargetFrame.manabar, 0)
+local targetHealthText = CreateOverlayText(TargetFrame and TargetFrame.healthbar or nil, 0)
+local targetPowerText  = CreateOverlayText(TargetFrame and TargetFrame.manabar or nil, 0)
 
--- Actualiza todos los textos de vida y manÃ¡/poder
+-- Ocultar/Mostrar helper (acepta múltiples fontstrings)
+-- Ocultar/Mostrar helper (acepta múltiples fontstrings)
+-- Ocultar/Mostrar helper (acepta múltiples fontstrings)
+-- Ocultar/Mostrar helper (acepta múltiples fontstrings)
+-- Ocultar/Mostrar helper (acepta múltiples fontstrings)
+local function HideTexts(...)
+    local texts = {...}
+    for i = 1, #texts do
+        local t = texts[i]
+        if t and t.Hide then t:Hide() end
+    end
+end
+
+local function ShowTexts(...)
+    local texts = {...}
+    for i = 1, #texts do
+        local t = texts[i]
+        if t and t.Show then t:Show() end
+    end
+end
+
+-- Oculta solo nuestros overlays al pasar el ratón, sin tocar los de Blizzard
+local function SetMouseHide(bar, ...)
+    if not bar then return end
+    bar:EnableMouse(true)
+    local texts = {...}
+
+    -- HookScript no sobreescribe los OnEnter/OnLeave existentes de Blizzard
+    bar:HookScript("OnEnter", function()
+        HideTexts(unpack(texts))
+    end)
+
+    bar:HookScript("OnLeave", function()
+        ShowTexts(unpack(texts))
+    end)
+end
+
+-- Aplicar comportamiento mouseover en player/target
+SetMouseHide(PlayerFrame and PlayerFrame.healthbar or nil, playerHealthText)
+SetMouseHide(PlayerFrame and PlayerFrame.manabar or nil, playerPowerText)
+
+SetMouseHide(TargetFrame and TargetFrame.healthbar or nil, targetHealthText)
+SetMouseHide(TargetFrame and TargetFrame.manabar or nil, targetPowerText)
+
+
+-- Actualiza todos los textos de vida y maná/poder
 local function UpdateOverlayText()
     -- Jugador
-    local pHP, pHPMax = UnitHealth("player"), UnitHealthMax("player")
-    local pMP, pMPMax = UnitPower("player"), UnitPowerMax("player")
-    
-    playerHealthText:SetText(FormatWithOptionalPercent(pHP, pHPMax))
-    playerPowerText:SetText(pMPMax > 0 and FormatWithOptionalPercent(pMP, pMPMax) or "")
-    
-    UpdateFontSize(playerHealthText)
-    UpdateFontSize(playerPowerText)
+    if playerHealthText then
+        local pHP, pHPMax = UnitHealth("player"), UnitHealthMax("player")
+        local pMP, pMPMax = UnitPower("player"), UnitPowerMax("player")
+
+        playerHealthText:SetText(FormatWithOptionalPercent(pHP, pHPMax))
+        playerPowerText:SetText(pMPMax > 0 and FormatWithOptionalPercent(pMP, pMPMax) or "")
+
+        UpdateFontSize(playerHealthText)
+        UpdateFontSize(playerPowerText)
+    end
 
     -- Objetivo
-    if UnitExists("target") then
+    if UnitExists("target") and targetHealthText then
         local tHP, tHPMax = UnitHealth("target"), UnitHealthMax("target")
         local tMP, tMPMax = UnitPower("target"), UnitPowerMax("target")
-        
+
         targetHealthText:SetText(FormatWithOptionalPercent(tHP, tHPMax))
         targetPowerText:SetText(tMPMax > 0 and FormatWithOptionalPercent(tMP, tMPMax) or "")
-        
+
         UpdateFontSize(targetHealthText)
         UpdateFontSize(targetPowerText)
     else
-        targetHealthText:SetText("")
-        targetPowerText:SetText("")
+        if targetHealthText then targetHealthText:SetText("") end
+        if targetPowerText then targetPowerText:SetText("") end
     end
 end
 
@@ -141,10 +192,10 @@ frame:RegisterEvent("UI_SCALE_CHANGED") -- Nuevo evento para cambios de escala
 
 -- Solo actualizar en eventos clave
 frame:SetScript("OnEvent", function(_, event, unit)
-    if event == "PLAYER_ENTERING_WORLD" or 
-       event == "PLAYER_TARGET_CHANGED" or 
+    if event == "PLAYER_ENTERING_WORLD" or
+       event == "PLAYER_TARGET_CHANGED" or
        event == "UI_SCALE_CHANGED" or
-       unit == "player" or 
+       unit == "player" or
        unit == "target" then
         UpdateOverlayText()
     end
@@ -181,7 +232,7 @@ SlashCmdList["PERCENT"] = function(msg)
     UpdateOverlayText()
 end
 
--- Comando para ajustar tamaÃ±o base de fuente
+-- Comando para ajustar tamaño base de fuente
 SLASH_FONTSIZE1 = "/fontsize"
 SLASH_TAMANO1 = "/tamano"
 SlashCmdList["FONTSIZE"] = function(msg)
@@ -196,7 +247,7 @@ SlashCmdList["FONTSIZE"] = function(msg)
     end
 end
 
--- Comando para mostrar informaciÃ³n de resoluciÃ³n
+-- Comando para mostrar información de resolución
 SLASH_RESOLUTION1 = "/resolution"
 SLASH_RESOLUCION1 = "/resolucion"
 SlashCmdList["RESOLUTION"] = function()
@@ -205,3 +256,6 @@ SlashCmdList["RESOLUTION"] = function()
     local scale = GetUIScale()
     print(string.format("Resolution: %.0fx%.0f, UI Scale Factor: %.2f", width, height, scale))
 end
+
+-- Inicializar primera actualización
+UpdateOverlayText()

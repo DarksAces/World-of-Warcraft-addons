@@ -1,7 +1,7 @@
 ## Interface: 110000
 ## Title: Quest Help
-## Notes: Botón “? Help” y comando /qh para abrir/copiar el enlace de Wowhead de la misión seleccionada o por ID.
+## Notes: Botón “? Help” y comando /qh para abrir/copiar el enlace de Wowhead de la misión seleccionada  por ID
 ## Author: DarkAce
-## Version: 1.0.02
+## Version: 1.0.2
 ## SavedVariables: BetterQuestHelpDB
 QuestHelp.lua

@@ -1,7 +1,7 @@
 ## Interface: 110200
 ## Title: CursorTrail
-## Notes: Deja un rastro detrás del cursor
+## Notes: Deja un rastro detrás del cursor.
 ## Author: Daniel
-## Version: 1.0
+## Version: 1.0.0
 
 CursorTrail.lua
