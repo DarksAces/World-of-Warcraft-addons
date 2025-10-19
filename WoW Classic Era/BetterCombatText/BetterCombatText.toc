@@ -1,6 +1,6 @@
 ## Interface: 110200
 ## Title: Better Combat Text Enhanced
-## Notes: Enhanced combat text with modern UI and improved functionality
+## Notes: Enhanced combat text with modern UI and improved functionality..
 ## Author: DarkAce
 ## Version: 2.0.0
 ## SavedVariables: BCT_SavedSettings
