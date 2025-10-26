@@ -1,0 +1,9 @@
+## Interface: 110100
+## Title: AbandonAllQuest
+## Notes: Adds buttons to abandon quests by zone or all quests at once.
+## Author: DarkAce
+## Version: 1.0
+## DefaultState: Enabled
+
+Localization.lua
+AbandonAllQuest.lua
