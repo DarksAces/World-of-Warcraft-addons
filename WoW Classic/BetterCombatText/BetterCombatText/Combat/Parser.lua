@@ -7,37 +7,12 @@ if not _G[addonName] then
 end
 local BCT = _G[addonName]
 
--- Obtiene el porcentaje de salud/poder de un GUID
-local function GetUnitPercentage(guid)
-    if not guid then return "" end
-
-    local unit 
-    if guid == UnitGUID("player") then
-        unit = "player"
-    elseif UnitGUID("target") == guid then
-        unit = "target"
-    else
-        return ""
-    end
-    
-    -- Usar UnitHealth y UnitHealthMax para obtener la vida
-    local health = UnitHealth(unit)
-    local healthMax = UnitHealthMax(unit)
-    
-    if health and healthMax and healthMax > 0 then
-        local percent = math.floor((health / healthMax) * 100)
-        return " (" .. percent .. "%)"
-    end
-    return ""
-end
-
-
 -- Parse combat events
 function BCT:ParseCombatEvent(...)
     if not self.config.enabled then return end
     
     local timestamp, subevent, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags,
-          destGUID, destName, destFlags, destRaidFlags = select(1, ...)
+          destGUID, destName, destFlags, destRaidFlags = ...
     
     local playerGUID = UnitGUID("player")
     
@@ -51,7 +26,7 @@ function BCT:ParseCombatEvent(...)
         
     elseif subevent == "SPELL_DAMAGE" or subevent == "RANGE_DAMAGE" then
         local spellId, spellName, spellSchool, amount, overkill, school, resisted, blocked, absorbed, critical = select(12, ...)
-        self:ShowDamageText(amount, critical, spellSchool, overkill > 0, sourceGUID == playerGUID)
+        self:ShowDamageText(amount, critical, school, overkill > 0, sourceGUID == playerGUID)
         
     elseif subevent == "SPELL_HEAL" then
         local spellId, spellName, spellSchool, amount, overhealing, absorbed, critical = select(12, ...)
@@ -61,19 +36,23 @@ function BCT:ParseCombatEvent(...)
         
     elseif subevent == "SPELL_PERIODIC_DAMAGE" then
         local spellId, spellName, spellSchool, amount, overkill, school, resisted, blocked, absorbed, critical = select(12, ...)
-        self:ShowPeriodicDamageText(amount, critical, spellSchool, sourceGUID == playerGUID)
+        self:ShowPeriodicDamageText(amount, critical, school, sourceGUID == playerGUID)
         
     elseif subevent == "SPELL_PERIODIC_HEAL" then
         local spellId, spellName, spellSchool, amount, overhealing, absorbed, critical = select(12, ...)
         if destGUID == playerGUID or sourceGUID == playerGUID then
-            self:ShowPeriodicHealingText(amount, critical) -- Nueva función para HoT
+            self:ShowPeriodicHealingText(amount, critical) 
         end
     end
 end
 
--- Show damage text (FIX aplicado)
+-- Show damage text (APLICANDO FILTRO DE ESCUELA)
 function BCT:ShowDamageText(amount, isCrit, school, isOverkill, isOutgoing)
     if not self.config.showDamage or not amount then return end
+    
+    local schoolName = self:GetSchoolName(school)
+    -- *** FILTRADO ***
+    if not self.config["filter_" .. schoolName] then return end
     
     local color = self:GetDamageColor(school, isCrit, isOverkill, isOutgoing)
     
@@ -87,29 +66,24 @@ function BCT:ShowDamageText(amount, isCrit, school, isOverkill, isOutgoing)
     if isCrit then size = size * self.config.critMultiplier end
     if isOverkill then size = size * self.config.killBlowMultiplier end
     
-    local damageType = self:GetSchoolName(school)
+    local damageType = schoolName
     self:AddToCombatLog(amount, damageType, isCrit, isOverkill, false, isOutgoing)
     
-    -- LÓGICA DE PORCENTAJE (NUEVO)
-    local percentageText = ""
-    if BCT.config.showPercentages then
-        -- Usar target para daño saliente, player para daño entrante
-        local unitGuid = isOutgoing and UnitGUID("target") or UnitGUID("player")
-        percentageText = GetUnitPercentage(unitGuid) 
-    end
-    
-    local text = self:FormatNumber(amount) .. percentageText -- <--- ¡TEXTO MODIFICADO!
-    
     if self:ShouldGroup(amount, isOutgoing) then
-        self:AddToGroup(amount, color, size, isOutgoing)
+        -- Asumiendo que ShouldGroup está corregido para manejar la lógica de visualización
+        -- Si devuelve true, se acumuló/mostró el grupo, así que salimos.
+        return
     else
-        self:DisplayFloatingText(text, color, size, isCrit, isOverkill)
+        self:DisplayFloatingText(self:FormatNumber(amount), color, size, isCrit, isOverkill)
     end
 end
 
--- Show healing text
+-- Show healing text (APLICANDO FILTRO DE CURACIÓN DIRECTA)
 function BCT:ShowHealingText(amount, isCrit, isOverheal)
     if not self.config.showHealing or not amount then return end
+    
+    -- *** FILTRADO ***
+    if not self.config.filter_DirectHealing then return end
     
     local color = isCrit and self.Colors.critHealing or self.Colors.healing
     
@@ -119,21 +93,18 @@ function BCT:ShowHealingText(amount, isCrit, isOverheal)
     
     self:AddToCombatLog(amount, "Healing", isCrit, false, true, true)
     
-    -- LÓGICA DE PORCENTAJE (NUEVO)
-    local percentageText = ""
-    if BCT.config.showPercentages then
-        percentageText = GetUnitPercentage(UnitGUID("player")) -- Curación siempre va al jugador
-    end
-    
-    local text = "+" .. self:FormatNumber(amount) .. percentageText
+    local text = "+" .. self:FormatNumber(amount)
     if isOverheal then text = text .. "*" end
     
     self:DisplayFloatingText(text, color, size, isCrit, false)
 end
 
--- Show periodic damage text (FIX aplicado)
+-- Show periodic damage text (APLICANDO FILTRO DoT)
 function BCT:ShowPeriodicDamageText(amount, isCrit, school, isOutgoing)
     if not self.config.showDamage or not amount then return end
+    
+    -- *** FILTRADO ***
+    if not self.config.filter_DoT then return end 
     
     local color = self:GetDamageColor(school, isCrit, false, isOutgoing)
     
@@ -146,23 +117,16 @@ function BCT:ShowPeriodicDamageText(amount, isCrit, school, isOutgoing)
     
     -- Added to Combat Log (Fix: Se añade al log)
     self:AddToCombatLog(amount, "Periodic", isCrit, false, false, isOutgoing)
-
-    -- LÓGICA DE PORCENTAJE (NUEVO)
-    local percentageText = ""
-    if BCT.config.showPercentages then
-        -- Usar target para daño saliente, player para daño entrante
-        local unitGuid = isOutgoing and UnitGUID("target") or UnitGUID("player")
-        percentageText = GetUnitPercentage(unitGuid) 
-    end
     
-    local text = self:FormatNumber(amount) .. percentageText
-    
-    self:DisplayFloatingText(text, color, size, false, false, true)
+    self:DisplayFloatingText(self:FormatNumber(amount), color, size, false, false, true)
 end
 
--- Show periodic healing text (NEW)
+-- Show periodic healing text (APLICANDO FILTRO HoT)
 function BCT:ShowPeriodicHealingText(amount, isCrit)
     if not self.config.showHealing or not amount then return end
+    
+    -- *** FILTRADO ***
+    if not self.config.filter_HoT then return end
     
     -- Los colores hot y critHot no están definidos en Colors.lua, 
     -- usamos colores de fallback seguros para evitar nil.
@@ -171,13 +135,7 @@ function BCT:ShowPeriodicHealingText(amount, isCrit)
     
     self:AddToCombatLog(amount, "HoT", isCrit, false, true, true)
     
-    -- LÓGICA DE PORCENTAJE (NUEVO)
-    local percentageText = ""
-    if BCT.config.showPercentages then
-        percentageText = GetUnitPercentage(UnitGUID("player")) -- Curación HoT siempre va al jugador
-    end
-
-    local text = "+" .. self:FormatNumber(amount) .. percentageText
+    local text = "+" .. self:FormatNumber(amount)
     
     self:DisplayFloatingText(text, color, size, isCrit, false, true)
 end

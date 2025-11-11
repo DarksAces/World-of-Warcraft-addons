@@ -263,18 +263,6 @@ function BCT:CreateDisplayTab(parent)
     separator:SetTextColor(0.5, 0.5, 0.5, 1)
     yOffset = yOffset - 30
     
-    -- NUEVO: Mostrar Porcentajes
-    local percentCheck = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
-    percentCheck:SetPoint("TOPLEFT", parent, "TOPLEFT", 20, yOffset)
-    percentCheck:SetChecked(self.config.showPercentages) 
-    percentCheck.text = percentCheck:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    percentCheck.text:SetPoint("LEFT", percentCheck, "RIGHT", 5, 0)
-    percentCheck.text:SetText("Show Health/Power Percentages")
-    percentCheck:SetScript("OnClick", function(self)
-        BCT.config.showPercentages = self:GetChecked()
-    end)
-    yOffset = yOffset - 30
-    
     -- Compact Mode
     local compactCheck = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
     compactCheck:SetPoint("TOPLEFT", parent, "TOPLEFT", 20, yOffset)

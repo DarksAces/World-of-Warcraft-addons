@@ -21,6 +21,7 @@ BCT.defaults = {
     maxNumbers = 20,
     groupingThreshold = 5,
     groupingTime = 2.0,
+    textScale = 1.0, -- Default value for scale
     showBackground = true,
     theme = "dark",
     opacity = 0.85,
@@ -28,7 +29,13 @@ BCT.defaults = {
     showIcons = true,
     compactMode = false,
     autoHide = false,
-    autoHideDelay = 5.0
+    autoHideDelay = 5.0,
+    showPercentages = false, -- <--- ¡NUEVO!
+    -- Added defaults for combat log frame position/size (Persistencia)
+    logPanelX = 0,
+    logPanelY = 0,
+    logPanelW = 500,
+    logPanelH = 650
 }
 
 -- Initialize config with defaults

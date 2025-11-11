@@ -11,21 +11,46 @@ BCT.combatLogFrame = BCT.combatLogFrame or nil
 BCT.combatLogData = BCT.combatLogData or {}
 BCT.maxLogEntries = 200
 
+-- Función para actualizar el layout y el tamaño de los componentes
+local function updateLayout(frame, titleBar, statsPanel, contentFrame, scrollFrame, width, height)
+    titleBar:SetWidth(width)
+    statsPanel:SetWidth(width - 20)
+    contentFrame:SetWidth(width - 65)
+    
+    -- Ajuste del ScrollFrame: se ancla a la parte inferior del frame principal
+    scrollFrame:SetPoint("TOPLEFT", statsPanel, "BOTTOMLEFT", 15, -10)
+    scrollFrame:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -45, 20)
+    
+    BCT:UpdateCombatLogDisplay()
+end
+
 -- Create combat log panel
 function BCT:CreateCombatLogPanel()
     if self.combatLogFrame then return end
     
     local currentTheme = self.Themes[self.config.theme]
     
-    -- Main frame
+    -- 1. CREACIÓN DEL FRAME PRINCIPAL
     local frame = CreateFrame("Frame", "BCT_CombatLogFrame", UIParent, "BackdropTemplate")
-    frame:SetSize(500, 650)
-    frame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+    
+    local w, h = self.config.logPanelW, self.config.logPanelH
+    local x, y = self.config.logPanelX, self.config.logPanelY
+    
+    frame:SetSize(w, h)
+    frame:SetPoint("CENTER", UIParent, "CENTER", x, y)
+    
     frame:SetMovable(true)
     frame:EnableMouse(true)
     frame:RegisterForDrag("LeftButton")
+    
     frame:SetScript("OnDragStart", frame.StartMoving)
-    frame:SetScript("OnDragStop", frame.StopMovingOrSizing)
+    frame:SetScript("OnDragStop", function(self)
+        self.StopMovingOrSizing(self)
+        local _, _, _, px, py = self:GetPoint()
+        BCT.config.logPanelX = px
+        BCT.config.logPanelY = py
+    end)
+
     frame:SetResizable(true)
 
     frame:SetBackdrop({
@@ -35,7 +60,7 @@ function BCT:CreateCombatLogPanel()
         insets = { left = 4, right = 4, top = 4, bottom = 4 }
     })
     
-    -- Update theme function
+    -- Lógica de Temas
     local function updateTheme()
         local theme = BCT.Themes[BCT.config.theme]
         if BCT.config.showBackground then
@@ -51,10 +76,13 @@ function BCT:CreateCombatLogPanel()
     frame.updateTheme = updateTheme
     updateTheme()
 
-    -- Title bar
+    -- 2. CREACIÓN DE COMPONENTES INTERNOS (EN ORDEN)
+    
+    -- Título
     local titleBar = CreateFrame("Frame", nil, frame, "BackdropTemplate")
-    titleBar:SetSize(500, 40)
+    titleBar:SetHeight(40)
     titleBar:SetPoint("TOP", frame, "TOP", 0, 0)
+    
     titleBar:SetBackdrop({
         bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
         tile = true, tileSize = 16,
@@ -68,8 +96,8 @@ function BCT:CreateCombatLogPanel()
     titleText:SetTextColor(unpack(currentTheme.title))
     titleText:SetFont("Fonts\\FRIZQT__.TTF", 14, "OUTLINE")
 
-    -- Buttons
-    local closeButton = self:CreateStyledButton(titleBar, "X", 30, 30)
+    -- Botones (Creación simplificada)
+    local closeButton = BCT:CreateStyledButton(titleBar, "X", 30, 30)
     closeButton:SetPoint("TOPRIGHT", titleBar, "TOPRIGHT", -5, -5)
     closeButton:SetScript("OnClick", function() 
         frame:Hide()
@@ -78,7 +106,7 @@ function BCT:CreateCombatLogPanel()
         end
     end)
 
-    local clearButton = self:CreateStyledButton(titleBar, "Clear", 70, 30)
+    local clearButton = BCT:CreateStyledButton(titleBar, "Clear", 70, 30)
     clearButton:SetPoint("TOPRIGHT", closeButton, "TOPLEFT", -5, 0)
     clearButton:SetScript("OnClick", function() 
         BCT.combatLogData = {}
@@ -86,15 +114,15 @@ function BCT:CreateCombatLogPanel()
         print("|cff00ff00BCT:|r Combat log cleared")
     end)
 
-    local configButton = self:CreateStyledButton(titleBar, "Config", 70, 30)
+    local configButton = BCT:CreateStyledButton(titleBar, "Config", 70, 30)
     configButton:SetPoint("TOPRIGHT", clearButton, "TOPLEFT", -5, 0)
     configButton:SetScript("OnClick", function() 
         BCT:ShowConfigFrame()
     end)
 
-    -- Stats panel
+    -- Panel de Estadísticas (Stats panel)
     local statsPanel = CreateFrame("Frame", nil, frame, "BackdropTemplate")
-    statsPanel:SetSize(480, 40)
+    statsPanel:SetHeight(40)
     statsPanel:SetPoint("TOP", titleBar, "BOTTOM", 0, -5)
     statsPanel:SetBackdrop({
         bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
@@ -103,6 +131,7 @@ function BCT:CreateCombatLogPanel()
     })
     statsPanel:SetBackdropColor(0.1, 0.1, 0.1, 0.6)
 
+    -- Textos de Estadísticas (DPS, Total, Max)
     local dpsText = statsPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     dpsText:SetPoint("TOPLEFT", statsPanel, "TOPLEFT", 15, -15)
     dpsText:SetText("DPS: 0")
@@ -123,38 +152,40 @@ function BCT:CreateCombatLogPanel()
 
     frame.statsPanel = {
         dps = dpsText,
-        total = totalText,
-        max = maxText
+        total = totalText, -- Asumiendo que estas variables existen
+        max = maxText      -- Asumiendo que estas variables existen
     }
 
-    -- Scroll frame
+    -- Scroll frame y Content Frame
     local scrollFrame = CreateFrame("ScrollFrame", "BCT_ScrollFrame", frame, "UIPanelScrollFrameTemplate")
-    scrollFrame:SetPoint("TOPLEFT", statsPanel, "BOTTOMLEFT", 15, -10)
-    scrollFrame:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -45, 20)
-
+    
     local contentFrame = CreateFrame("Frame", nil, scrollFrame)
-    contentFrame:SetSize(430, 1)
+    contentFrame:SetSize(w - 65, 1)
     contentFrame.fontStrings = {}
     scrollFrame:SetScrollChild(contentFrame)
 
     frame.scrollFrame = scrollFrame
     frame.contentFrame = contentFrame
 
-    -- Resize handle
+    -- *************** INSERCIÓN DE CÓDIGO FALTANTE ***************
+    -- Resize handle (CREACIÓN CORRECTA)
     local resizeButton = CreateFrame("Button", nil, frame)
     resizeButton:SetSize(25, 25)
     resizeButton:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
     resizeButton:SetNormalTexture("Interface\\CHATFRAME\\UI-ChatIM-SizeGrabber-Up")
     resizeButton:SetHighlightTexture("Interface\\CHATFRAME\\UI-ChatIM-SizeGrabber-Highlight")
     resizeButton:SetPushedTexture("Interface\\CHATFRAME\\UI-ChatIM-SizeGrabber-Down")
-
+    
     local MIN_WIDTH, MIN_HEIGHT = 450, 400
     local MAX_WIDTH, MAX_HEIGHT = 1000, 900
 
+    -- Lógica de OnMouseDown (Donde fallaba la indexación)
     resizeButton:SetScript("OnMouseDown", function(self)
         frame:StartSizing("BOTTOMRIGHT")
     end)
+    -- ************************************************************
 
+    -- Lógica de Guardado y Layout en OnMouseUp
     resizeButton:SetScript("OnMouseUp", function(self)
         frame:StopMovingOrSizing()
         
@@ -166,18 +197,22 @@ function BCT:CreateCombatLogPanel()
             frame:SetSize(newWidth, newHeight)
         end
         
-        titleBar:SetWidth(newWidth)
-        statsPanel:SetWidth(newWidth - 20)
-        contentFrame:SetWidth(newWidth - 65)
+        -- Save new size
+        BCT.config.logPanelW = newWidth
+        BCT.config.logPanelH = newHeight
         
-        BCT:UpdateCombatLogDisplay()
+        -- Llamada a updateLayout con todos los frames
+        updateLayout(frame, titleBar, statsPanel, contentFrame, scrollFrame, newWidth, newHeight)
     end)
+
+    -- 3. LLAMADA INICIAL AL LAYOUT (AL FINAL)
+    updateLayout(frame, titleBar, statsPanel, contentFrame, scrollFrame, w, h)
 
     frame:Hide()
     self.combatLogFrame = frame
 end
 
--- Update combat log display
+-- Update combat log display (omitiendo por brevedad, sin cambios)
 function BCT:UpdateCombatLogDisplay()
     if not self.combatLogFrame or not self.combatLogFrame.contentFrame then return end
     
@@ -298,7 +333,7 @@ function BCT:UpdateCombatLogDisplay()
     contentFrame:SetHeight(math.max(150, math.abs(yOffset) + 30))
 end
 
--- Add to combat log
+-- Add to combat log (omitiendo por brevedad, sin cambios)
 function BCT:AddToCombatLog(amount, damageType, isCrit, isOverkill, isHealing, isOutgoing)
     local timestamp = GetTime()
     local entry = {
@@ -323,7 +358,7 @@ function BCT:AddToCombatLog(amount, damageType, isCrit, isOverkill, isHealing, i
     end
 end
 
--- Toggle combat log
+-- Toggle combat log (omitiendo por brevedad, sin cambios)
 function BCT:ToggleCombatLogPanel()
     if not self.combatLogFrame then 
         self:CreateCombatLogPanel()
@@ -340,7 +375,7 @@ function BCT:ToggleCombatLogPanel()
     end
 end
 
--- Schedule auto-hide
+-- Schedule auto-hide (omitiendo por brevedad, sin cambios)
 function BCT:ScheduleAutoHide()
     if not self.combatLogFrame or not self.config.autoHide then return end
     

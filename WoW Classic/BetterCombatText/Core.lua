@@ -16,6 +16,9 @@ local cleanupTimer = nil
 
 -- Initialize addon
 function BCT:OnLoad()
+    -- Load settings first to get maxNumbers for pool
+    self:LoadSettings()
+    
     -- Initialize text pool
     self:InitializeTextPool()
     
@@ -27,11 +30,9 @@ function BCT:OnLoad()
         BCT:ForceCleanupStuckText()
     end)
     
-    -- Create UI components
-    self:CreateCombatLogPanel()
-    
-    -- Load settings
-    self:LoadSettings()
+    -- Create UI components (uses loaded settings for position/size)
+    -- NOTA: Esto llama a BCT:CreateCombatLogPanel() que está en UI/CombatLog.lua
+    self:CreateCombatLogPanel() 
     
     print("|cff00ff00Better Combat Text Enhanced|r loaded successfully!")
     print("|cff00ff00BCT Fix:|r Anti-freeze system activated")
@@ -44,11 +45,19 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
         BCT:OnLoad()
         
     elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
-        local success, err = pcall(function()
-            BCT:ParseCombatEvent(CombatLogGetCurrentEventInfo())
-        end)
-        if not success then
-            -- Silently handle errors
+        -- FIX CRÍTICO: Obtiene los argumentos y verifica si son válidos antes de llamar a Parse
+        local eventArgs = {CombatLogGetCurrentEventInfo()}
+        
+        -- Verifica si el primer argumento (timestamp) no es nil.
+        if eventArgs and eventArgs[1] then 
+            local success, err = pcall(function()
+                -- Llama a la función con todos los argumentos del evento
+                BCT:ParseCombatEvent(unpack(eventArgs))
+            end)
+            if not success then
+                -- Print error for better debugging (Debugging)
+                print("|cffff0000BCT Error:|r Failed to parse combat event: " .. tostring(err))
+            end
         end
         
     elseif event == "PLAYER_REGEN_ENABLED" then
@@ -62,7 +71,7 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
         BCT:ForceCleanupStuckText()
         
     elseif event == "PLAYER_LOGOUT" then
-        -- Save settings and cleanup
+        -- Save settings and cleanup (Persistencia)
         BCT:SaveSettings()
         BCT:CleanupAllFloatingText()
         if cleanupTimer then
@@ -78,7 +87,9 @@ eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
 eventFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
 eventFrame:RegisterEvent("PLAYER_LOGOUT")
 
--- Slash commands
+-- =============================================================
+-- DEFINICIÓN DEL SLASH COMMAND (DEBE ESTAR AQUÍ)
+-- =============================================================
 SLASH_BCT1 = "/bct"
 SLASH_BCT2 = "/bettercombattext"
 SlashCmdList["BCT"] = function(msg)
@@ -90,6 +101,23 @@ SlashCmdList["BCT"] = function(msg)
         
     elseif cmd == "panel" or cmd == "log" then
         BCT:ToggleCombatLogPanel()
+    
+    -- BLOQUE MEJORADO: Maneja /bct percent, /bct percent on, y /bct percent off
+    elseif cmd == "percent" or cmd == "percent on" or cmd == "percent off" then 
+        local newState
+        
+        if cmd == "percent on" then
+            newState = true
+        elseif cmd == "percent off" then
+            newState = false
+        else 
+            -- Si solo se escribió /bct percent, muestra el estado actual
+            print("|cff00ff00BCT Percentage Status:|r " .. (BCT.config.showPercentages and "Enabled" or "Disabled"))
+            return
+        end
+        
+        BCT.config.showPercentages = newState
+        print("|cff00ff00BCT:|r Percentage display " .. (newState and "Enabled" or "Disabled"))
         
     elseif cmd == "config" or cmd == "options" then
         BCT:ShowConfigFrame()
@@ -97,7 +125,6 @@ SlashCmdList["BCT"] = function(msg)
     elseif cmd == "test" then
         print("|cff00ff00BCT:|r Iniciando test de 10 segundos con todos los tipos...")
         
-        -- Tabla con todos los tipos de daño/curación disponibles
         local testTypes = {
             -- Daño normal
             {
@@ -110,7 +137,8 @@ SlashCmdList["BCT"] = function(msg)
                 max = 800, 
                 prefix = "", 
                 school = "Physical", 
-                label = "Daño"
+                label = "Daño",
+                isHealing = false
             },
             -- Daño crítico
             {
@@ -123,7 +151,8 @@ SlashCmdList["BCT"] = function(msg)
                 max = 5000, 
                 prefix = "", 
                 school = "Fire", 
-                label = "Crítico"
+                label = "Crítico",
+                isHealing = false
             },
             -- Overkill
             {
@@ -136,12 +165,13 @@ SlashCmdList["BCT"] = function(msg)
                 max = 15000, 
                 prefix = "", 
                 school = "Physical", 
-                label = "Overkill"
+                label = "Overkill",
+                isHealing = false
             },
             -- DoT normal
             {
                 colors = BCT.Colors.dot or {0.8, 1, 0.5}, 
-                size = BCT.config.fontSize * 0.9, 
+                size = BCT.config.fontSize * 0.8, 
                 isCrit = false, 
                 isOverkill = false, 
                 isDot = true, 
@@ -149,20 +179,8 @@ SlashCmdList["BCT"] = function(msg)
                 max = 400, 
                 prefix = "", 
                 school = "Nature", 
-                label = "DoT"
-            },
-            -- DoT crítico
-            {
-                colors = BCT.Colors.critDot or {1, 0.8, 0.5}, 
-                size = BCT.config.fontSize * (BCT.config.critMultiplier or 1.5) * 0.9, 
-                isCrit = true, 
-                isOverkill = false, 
-                isDot = true, 
-                min = 500, 
-                max = 2000, 
-                prefix = "", 
-                school = "Shadow", 
-                label = "DoT Crítico"
+                label = "DoT",
+                isHealing = false
             },
             -- Curación normal
             {
@@ -175,7 +193,8 @@ SlashCmdList["BCT"] = function(msg)
                 max = 1000, 
                 prefix = "+", 
                 school = "Healing", 
-                label = "Curación"
+                label = "Curación",
+                isHealing = true
             },
             -- Curación crítica
             {
@@ -188,45 +207,18 @@ SlashCmdList["BCT"] = function(msg)
                 max = 3000, 
                 prefix = "+", 
                 school = "Healing", 
-                label = "Curación Crítica"
-            },
-            -- HoT normal
-            {
-                colors = BCT.Colors.hot or {0.5, 1, 0.5}, 
-                size = BCT.config.fontSize * 0.9, 
-                isCrit = false, 
-                isOverkill = false, 
-                isDot = true, 
-                min = 100, 
-                max = 500, 
-                prefix = "+", 
-                school = "Healing", 
-                label = "HoT"
-            },
-            -- HoT crítico
-            {
-                colors = BCT.Colors.critHot or {0.5, 1, 0.8}, 
-                size = BCT.config.fontSize * (BCT.config.critMultiplier or 1.5) * 0.9, 
-                isCrit = true, 
-                isOverkill = false, 
-                isDot = true, 
-                min = 300, 
-                max = 1200, 
-                prefix = "+", 
-                school = "Healing", 
-                label = "HoT Crítico"
-            },
+                label = "Curación Crítica",
+                isHealing = true
+            }
         }
         
-        -- Programar 20 números durante 10 segundos (1 cada 0.5 segundos)
+        -- Programar 20 números
         for i = 0, 19 do
             C_Timer.After(i * 0.5, function()
-                -- Seleccionar tipo aleatorio
                 local testType = testTypes[math.random(1, #testTypes)]
                 local amount = math.random(testType.min, testType.max)
-                local text = testType.prefix .. tostring(amount)
+                local text = testType.prefix .. BCT:FormatNumber(amount)
                 
-                -- Mostrar texto flotante
                 BCT:DisplayFloatingText(
                     text,
                     testType.colors,
@@ -237,23 +229,21 @@ SlashCmdList["BCT"] = function(msg)
                     false
                 )
                 
-                -- Añadir al log si existe la función
                 if BCT.AddToCombatLog then
                     BCT:AddToCombatLog(
                         amount,
                         testType.school,
                         testType.isCrit,
                         testType.isOverkill,
-                        string.find(testType.prefix, "+") ~= nil,
-                        true
+                        testType.isHealing,
+                        true 
                     )
                 end
             end)
         end
         
-        -- Mensaje final después de 10 segundos
         C_Timer.After(10, function()
-            print("|cff00ff00BCT:|r Test completado! Se mostraron 20 números de 9 tipos diferentes")
+            print("|cff00ff00BCT:|r Test completado! Se mostraron 20 números de 6 tipos diferentes")
         end)
         
     elseif cmd == "clear" then
@@ -284,5 +274,6 @@ SlashCmdList["BCT"] = function(msg)
         print("|cffFF0000BCT:|r Unknown command. Type |cff00ffff/bct help|r")
     end
 end
+
 
 print("|cff00ff00Better Combat Text Enhanced|r code loaded. Ready for initialization!")

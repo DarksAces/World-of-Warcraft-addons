@@ -101,23 +101,6 @@ SlashCmdList["BCT"] = function(msg)
         
     elseif cmd == "panel" or cmd == "log" then
         BCT:ToggleCombatLogPanel()
-    
-    -- BLOQUE MEJORADO: Maneja /bct percent, /bct percent on, y /bct percent off
-    elseif cmd == "percent" or cmd == "percent on" or cmd == "percent off" then 
-        local newState
-        
-        if cmd == "percent on" then
-            newState = true
-        elseif cmd == "percent off" then
-            newState = false
-        else 
-            -- Si solo se escribió /bct percent, muestra el estado actual
-            print("|cff00ff00BCT Percentage Status:|r " .. (BCT.config.showPercentages and "Enabled" or "Disabled"))
-            return
-        end
-        
-        BCT.config.showPercentages = newState
-        print("|cff00ff00BCT:|r Percentage display " .. (newState and "Enabled" or "Disabled"))
         
     elseif cmd == "config" or cmd == "options" then
         BCT:ShowConfigFrame()

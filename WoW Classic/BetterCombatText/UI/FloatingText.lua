@@ -108,7 +108,9 @@ function BCT:DisplayFloatingText(text, color, size, isCrit, isOverkill, isDot, i
     local scaledSize = size * textScale
 
     textFrame.fontString:SetText(text)
-    textFrame.fontString:SetTextColor(unpack(color))
+    -- LÍNEA DE ERROR ORIGINAL: Si 'color' es NIL, 'unpack(color)' falla.
+    -- La corrección está en Core.lua y Parser.lua para evitar que 'color' sea NIL.
+    textFrame.fontString:SetTextColor(unpack(color)) 
     textFrame.fontString:SetFont("Fonts\\FRIZQT__.TTF", scaledSize, "OUTLINE")
 
     -- Position

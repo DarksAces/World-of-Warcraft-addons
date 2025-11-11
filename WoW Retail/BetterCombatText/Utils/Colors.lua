@@ -13,6 +13,10 @@ BCT.Colors = {
     critDamage = {1, 0.5, 0, 1},
     healing = {0, 1, 0, 1},
     critHealing = {0, 1, 0.5, 1},
+    -- NUEVOS COLORES PARA HEALING OVER TIME (HoT)
+    hot = {0.2, 0.8, 0.2, 1},
+    critHot = {0.4, 1, 0.4, 1},
+    -- Fin NUEVOS COLORES
     damageTaken = {1, 0, 0, 1},
     physical = {1, 0.8, 0.4, 1},
     magic = {0.4, 0.8, 1, 1},
@@ -51,21 +55,36 @@ BCT.Themes = {
 }
 
 -- Get damage color based on school and conditions
+-- Colors.lua (Función GetDamageColor CORREGIDA)
+
+-- Get damage color based on school and conditions
 function BCT:GetDamageColor(school, isCrit, isOverkill, isOutgoing)
-    if isOverkill then return self.Colors.overkill end
-    
-    local inPvP = UnitIsPVP and UnitIsPVP("player") or false
-    if inPvP and self.config.showPvP then return self.Colors.pvpDamage end
-    
-    if school == 1 then return self.Colors.physical
-    elseif school == 2 then return self.Colors.holy
-    elseif school == 4 then return self.Colors.fire
-    elseif school == 8 then return self.Colors.nature
-    elseif school == 16 then return self.Colors.frost
-    elseif school == 32 then return self.Colors.shadow
-    else
-        return isCrit and self.Colors.critDamage or self.Colors.damage
+    local defaultColor = self.Colors and self.Colors.damage or {1, 1, 0, 1} -- Color de fallback
+
+    if isOverkill then 
+        return self.Colors.overkill or defaultColor 
     end
+    
+    local inPvP = UnitIsPVP and UnitIsPVP("player") or false -- Usando UnitIsPVP de WoW API
+    if inPvP and self.config.showPvP then 
+        return self.Colors.pvpDamage or defaultColor 
+    end
+    
+    local color
+    
+    if school == 1 then color = self.Colors.physical
+    elseif school == 2 then color = self.Colors.holy
+    elseif school == 4 then color = self.Colors.fire
+    elseif school == 8 then color = self.Colors.nature
+    elseif school == 16 then color = self.Colors.frost
+    elseif school == 32 then color = self.Colors.shadow
+    else
+        -- Si el school es desconocido, usa crítico o normal
+        color = isCrit and self.Colors.critDamage or self.Colors.damage
+    end
+    
+    -- RETORNO FINAL: Asegura que el valor final nunca sea nil.
+    return color or defaultColor
 end
 
 -- Get school name from ID
