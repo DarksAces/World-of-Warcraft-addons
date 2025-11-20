@@ -1,4 +1,4 @@
--- FloatingText.lua - Floating combat text display system
+-- UI\FloatingText.lua - Floating combat text display system
 local addonName = "BetterCombatText"
 
 -- Ensure global namespace exists
@@ -15,9 +15,15 @@ BCT.activeTexts = BCT.activeTexts or {}
 function BCT:CreateFloatingText()
     local text = CreateFrame("Frame", nil, UIParent)
     text:SetSize(300, 80)
+    -- Aumentamos el Strata para asegurar que se vea sobre otros elementos
+    text:SetFrameStrata("TOOLTIP") 
+    
     text.fontString = text:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     text.fontString:SetPoint("CENTER")
-    text.fontString:SetFont("Fonts\\FRIZQT__.TTF", self.config.fontSize, "OUTLINE")
+    
+    -- FIX: Usar STANDARD_TEXT_FONT en lugar de una ruta de archivo fija que falla en 11.0+
+    text.fontString:SetFont(STANDARD_TEXT_FONT, self.config.fontSize, "OUTLINE")
+    
     text.fontString:SetShadowOffset(2, -2)
     text.fontString:SetShadowColor(0, 0, 0, 0.8)
     
@@ -108,14 +114,20 @@ function BCT:DisplayFloatingText(text, color, size, isCrit, isOverkill, isDot, i
     local scaledSize = size * textScale
 
     textFrame.fontString:SetText(text)
-    -- LÍNEA DE ERROR ORIGINAL: Si 'color' es NIL, 'unpack(color)' falla.
-    -- La corrección está en Core.lua y Parser.lua para evitar que 'color' sea NIL.
-    textFrame.fontString:SetTextColor(unpack(color)) 
-    textFrame.fontString:SetFont("Fonts\\FRIZQT__.TTF", scaledSize, "OUTLINE")
+    
+    -- FIX: Protección contra colores nulos (nil safe)
+    if color and type(color) == "table" then
+        textFrame.fontString:SetTextColor(unpack(color))
+    else
+        textFrame.fontString:SetTextColor(1, 1, 0, 1) -- Amarillo por defecto si falla
+    end
+
+    -- FIX: Reaplicar fuente válida
+    textFrame.fontString:SetFont(STANDARD_TEXT_FONT, scaledSize, "OUTLINE")
 
     -- Position
     local screenWidth = GetScreenWidth()
-    local screenHeight = GetScreenHeight()
+    -- local screenHeight = GetScreenHeight() -- No se usa actualmente
     local offsetX = math.random(-math.min(300, screenWidth * 0.2), math.min(300, screenWidth * 0.2))
     local offsetY = math.random(-100, 200)
     
@@ -157,14 +169,16 @@ function BCT:DisplayFloatingText(text, color, size, isCrit, isOverkill, isDot, i
     end
 
     -- Sound effects
+    -- FIX: Usar pcall para evitar errores si el ID de sonido cambia en Beta
     if self.config.soundEnabled then
-        if isOverkill then
-            PlaySound(SOUNDKIT.UI_RAID_BOSS_WHISPER_WARNING)
-        elseif isCrit then
-            PlaySound(SOUNDKIT.UI_BNET_TOAST)
-        end
+        pcall(function()
+            if isOverkill then
+                PlaySound(SOUNDKIT.UI_RAID_BOSS_WHISPER_WARNING)
+            elseif isCrit then
+                PlaySound(SOUNDKIT.UI_BNET_TOAST)
+            end
+        end)
     end
-
 
     -- Cleanup handling
     textFrame.animGroup:SetScript("OnFinished", function()
@@ -246,20 +260,17 @@ end
 -- Force cleanup stuck text
 function BCT:ForceCleanupStuckText()
     local currentTime = GetTime()
-    local cleaned = 0
     
     for i = #self.textPool, 1, -1 do
         local text = self.textPool[i]
         if text and text.isActive then
             if text.cleanupTimer and (currentTime - text.cleanupTimer) > 15 then
                 self:CleanupFloatingText(text)
-                cleaned = cleaned + 1
             elseif text:IsShown() and not text.animGroup:IsPlaying() then
                 if not text.lastAnimationTime then
                     text.lastAnimationTime = currentTime
                 elseif (currentTime - text.lastAnimationTime) > 3 then
                     self:CleanupFloatingText(text)
-                    cleaned = cleaned + 1
                 end
             end
         end

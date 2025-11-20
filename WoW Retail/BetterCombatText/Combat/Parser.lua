@@ -7,31 +7,6 @@ if not _G[addonName] then
 end
 local BCT = _G[addonName]
 
--- Obtiene el porcentaje de salud/poder de un GUID
-local function GetUnitPercentage(guid)
-    if not guid then return "" end
-
-    local unit 
-    if guid == UnitGUID("player") then
-        unit = "player"
-    elseif UnitGUID("target") == guid then
-        unit = "target"
-    else
-        return ""
-    end
-    
-    -- Usar UnitHealth y UnitHealthMax para obtener la vida
-    local health = UnitHealth(unit)
-    local healthMax = UnitHealthMax(unit)
-    
-    if health and healthMax and healthMax > 0 then
-        local percent = math.floor((health / healthMax) * 100)
-        return " (" .. percent .. "%)"
-    end
-    return ""
-end
-
-
 -- Parse combat events
 function BCT:ParseCombatEvent(...)
     if not self.config.enabled then return end
@@ -66,18 +41,17 @@ function BCT:ParseCombatEvent(...)
     elseif subevent == "SPELL_PERIODIC_HEAL" then
         local spellId, spellName, spellSchool, amount, overhealing, absorbed, critical = select(12, ...)
         if destGUID == playerGUID or sourceGUID == playerGUID then
-            self:ShowPeriodicHealingText(amount, critical) -- Nueva función para HoT
+            self:ShowPeriodicHealingText(amount, critical)
         end
     end
 end
 
--- Show damage text (FIX aplicado)
+-- Show damage text
 function BCT:ShowDamageText(amount, isCrit, school, isOverkill, isOutgoing)
     if not self.config.showDamage or not amount then return end
     
+    -- Obtener color con protección contra nil
     local color = self:GetDamageColor(school, isCrit, isOverkill, isOutgoing)
-    
-    -- CORRECCIÓN CRÍTICA: Asegurar un color válido si GetDamageColor devuelve nil.
     if not color then 
         color = self.Colors and self.Colors.damage or {1, 1, 0, 1}
     end
@@ -88,17 +62,13 @@ function BCT:ShowDamageText(amount, isCrit, school, isOverkill, isOutgoing)
     if isOverkill then size = size * self.config.killBlowMultiplier end
     
     local damageType = self:GetSchoolName(school)
-    self:AddToCombatLog(amount, damageType, isCrit, isOverkill, false, isOutgoing)
     
-    -- LÓGICA DE PORCENTAJE (NUEVO)
-    local percentageText = ""
-    if BCT.config.showPercentages then
-        -- Usar target para daño saliente, player para daño entrante
-        local unitGuid = isOutgoing and UnitGUID("target") or UnitGUID("player")
-        percentageText = GetUnitPercentage(unitGuid) 
+    -- Log del combate (Safe check por si la función no existe en versiones viejas)
+    if self.AddToCombatLog then
+        self:AddToCombatLog(amount, damageType, isCrit, isOverkill, false, isOutgoing)
     end
     
-    local text = self:FormatNumber(amount) .. percentageText -- <--- ¡TEXTO MODIFICADO!
+    local text = self:FormatNumber(amount)
     
     if self:ShouldGroup(amount, isOutgoing) then
         self:AddToGroup(amount, color, size, isOutgoing)
@@ -112,72 +82,53 @@ function BCT:ShowHealingText(amount, isCrit, isOverheal)
     if not self.config.showHealing or not amount then return end
     
     local color = isCrit and self.Colors.critHealing or self.Colors.healing
-    
     local size = self.config.fontSize
     
     if isCrit then size = size * self.config.critMultiplier end
     
-    self:AddToCombatLog(amount, "Healing", isCrit, false, true, true)
-    
-    -- LÓGICA DE PORCENTAJE (NUEVO)
-    local percentageText = ""
-    if BCT.config.showPercentages then
-        percentageText = GetUnitPercentage(UnitGUID("player")) -- Curación siempre va al jugador
+    if self.AddToCombatLog then
+        self:AddToCombatLog(amount, "Healing", isCrit, false, true, true)
     end
     
-    local text = "+" .. self:FormatNumber(amount) .. percentageText
+    local text = "+" .. self:FormatNumber(amount)
     if isOverheal then text = text .. "*" end
     
     self:DisplayFloatingText(text, color, size, isCrit, false)
 end
 
--- Show periodic damage text (FIX aplicado)
+-- Show periodic damage text
 function BCT:ShowPeriodicDamageText(amount, isCrit, school, isOutgoing)
     if not self.config.showDamage or not amount then return end
     
     local color = self:GetDamageColor(school, isCrit, false, isOutgoing)
-    
-    -- CORRECCIÓN CRÍTICA: Asegurar un color válido si GetDamageColor devuelve nil.
     if not color then 
         color = self.Colors and self.Colors.dot or {0.8, 1, 0.5, 1}
     end
     
     local size = self.config.fontSize * 0.8
     
-    -- Added to Combat Log (Fix: Se añade al log)
-    self:AddToCombatLog(amount, "Periodic", isCrit, false, false, isOutgoing)
-
-    -- LÓGICA DE PORCENTAJE (NUEVO)
-    local percentageText = ""
-    if BCT.config.showPercentages then
-        -- Usar target para daño saliente, player para daño entrante
-        local unitGuid = isOutgoing and UnitGUID("target") or UnitGUID("player")
-        percentageText = GetUnitPercentage(unitGuid) 
+    if self.AddToCombatLog then
+        self:AddToCombatLog(amount, "Periodic", isCrit, false, false, isOutgoing)
     end
-    
-    local text = self:FormatNumber(amount) .. percentageText
+
+    local text = self:FormatNumber(amount)
     
     self:DisplayFloatingText(text, color, size, false, false, true)
 end
 
--- Show periodic healing text (NEW)
+-- Show periodic healing text
 function BCT:ShowPeriodicHealingText(amount, isCrit)
     if not self.config.showHealing or not amount then return end
     
-    -- Los colores hot y critHot no están definidos en Colors.lua, 
-    -- usamos colores de fallback seguros para evitar nil.
+    -- Fallback de colores seguro
     local color = isCrit and (self.Colors.critHot or self.Colors.critHealing) or (self.Colors.hot or self.Colors.healing)
     local size = self.config.fontSize * 0.8
     
-    self:AddToCombatLog(amount, "HoT", isCrit, false, true, true)
-    
-    -- LÓGICA DE PORCENTAJE (NUEVO)
-    local percentageText = ""
-    if BCT.config.showPercentages then
-        percentageText = GetUnitPercentage(UnitGUID("player")) -- Curación HoT siempre va al jugador
+    if self.AddToCombatLog then
+        self:AddToCombatLog(amount, "HoT", isCrit, false, true, true)
     end
 
-    local text = "+" .. self:FormatNumber(amount) .. percentageText
+    local text = "+" .. self:FormatNumber(amount)
     
     self:DisplayFloatingText(text, color, size, isCrit, false, true)
 end
