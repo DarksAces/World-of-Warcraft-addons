@@ -1,0 +1,1 @@
+print('Item_Tooltips_Addon_7820 loaded.')

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Paladin_DivineShield_Extra_9380
+## Notes: Extra alert for DivineShield.
+## Author: Daniel
+## Version: 1.0
+
+Paladin_DivineShield_Extra_9380.lua

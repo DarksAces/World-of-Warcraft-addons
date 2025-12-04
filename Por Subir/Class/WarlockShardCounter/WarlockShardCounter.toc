@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: WarlockShardCounter
+## Notes: Counts shards.
+## Author: Daniel
+## Version: 1.0
+
+WarlockShardCounter.lua

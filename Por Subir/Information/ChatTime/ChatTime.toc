@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: ChatTime
+## Notes: Adds timestamps to chat.
+## Author: Daniel
+## Version: 1.0
+
+ChatTime.lua

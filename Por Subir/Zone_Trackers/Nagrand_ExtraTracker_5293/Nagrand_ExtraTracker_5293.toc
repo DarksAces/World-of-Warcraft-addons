@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Nagrand_ExtraTracker_5293
+## Notes: Extra tracker for Nagrand.
+## Author: Daniel
+## Version: 1.0
+
+Nagrand_ExtraTracker_5293.lua

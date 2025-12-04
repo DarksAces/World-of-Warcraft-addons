@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: VantusRuneReminder
+## Notes: Reminds vantus rune.
+## Author: Daniel
+## Version: 1.0
+
+VantusRuneReminder.lua

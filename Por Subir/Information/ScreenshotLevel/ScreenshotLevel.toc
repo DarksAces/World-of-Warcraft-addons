@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: ScreenshotLevel
+## Notes: Auto screenshot on level up.
+## Author: Daniel
+## Version: 1.0
+
+ScreenshotLevel.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: PVPTimer
+## Notes: PVP timer.
+## Author: Daniel
+## Version: 1.0
+
+PVPTimer.lua

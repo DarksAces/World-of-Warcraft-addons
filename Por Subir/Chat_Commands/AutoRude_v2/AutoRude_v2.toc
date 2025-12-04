@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: AutoRude_v2
+## Notes: Auto Rude command variation 2.
+## Author: Daniel
+## Version: 1.0
+
+AutoRude_v2.lua

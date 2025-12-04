@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: DemonHunter_ImmolationAura_Extra_6024
+## Notes: Extra alert for ImmolationAura.
+## Author: Daniel
+## Version: 1.0
+
+DemonHunter_ImmolationAura_Extra_6024.lua

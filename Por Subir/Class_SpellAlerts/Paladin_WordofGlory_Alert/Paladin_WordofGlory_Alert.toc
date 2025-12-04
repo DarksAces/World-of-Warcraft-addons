@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Paladin_WordofGlory_Alert
+## Notes: Alerts when WordofGlory is cast.
+## Author: Daniel
+## Version: 1.0
+
+Paladin_WordofGlory_Alert.lua

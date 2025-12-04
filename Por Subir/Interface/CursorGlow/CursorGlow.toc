@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: CursorGlow
+## Notes: Glowy cursor.
+## Author: Daniel
+## Version: 1.0
+
+CursorGlow.lua

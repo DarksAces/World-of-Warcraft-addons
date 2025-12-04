@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Illidan_ExtraTimer_7385
+## Notes: Extra timer for Illidan.
+## Author: Daniel
+## Version: 1.0
+
+Illidan_ExtraTimer_7385.lua

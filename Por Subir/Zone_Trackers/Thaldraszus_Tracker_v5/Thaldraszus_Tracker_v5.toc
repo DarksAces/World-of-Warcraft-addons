@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Thaldraszus_Tracker_v5
+## Notes: Tracker variation 5 for Thaldraszus.
+## Author: Daniel
+## Version: 1.0
+
+Thaldraszus_Tracker_v5.lua

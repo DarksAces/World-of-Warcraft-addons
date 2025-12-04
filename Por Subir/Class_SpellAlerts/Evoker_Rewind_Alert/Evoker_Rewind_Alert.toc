@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Evoker_Rewind_Alert
+## Notes: Alerts when Rewind is cast.
+## Author: Daniel
+## Version: 1.0
+
+Evoker_Rewind_Alert.lua

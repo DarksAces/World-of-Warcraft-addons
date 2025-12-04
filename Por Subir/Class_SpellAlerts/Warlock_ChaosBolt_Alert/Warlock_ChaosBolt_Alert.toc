@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Warlock_ChaosBolt_Alert
+## Notes: Alerts when ChaosBolt is cast.
+## Author: Daniel
+## Version: 1.0
+
+Warlock_ChaosBolt_Alert.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Rogue_Blind_Alert
+## Notes: Alerts when Blind is cast.
+## Author: Daniel
+## Version: 1.0
+
+Rogue_Blind_Alert.lua

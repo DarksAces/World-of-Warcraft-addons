@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Raszageth_Timer_v3
+## Notes: Timer variation 3 for Raszageth.
+## Author: Daniel
+## Version: 1.0
+
+Raszageth_Timer_v3.lua

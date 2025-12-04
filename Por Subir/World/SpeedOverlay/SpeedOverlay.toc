@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: SpeedOverlay
+## Notes: Speed overlay.
+## Author: Daniel
+## Version: 1.0
+
+SpeedOverlay.lua

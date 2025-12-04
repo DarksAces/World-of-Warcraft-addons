@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: AutoEat_v2
+## Notes: Auto Eat command variation 2.
+## Author: Daniel
+## Version: 1.0
+
+AutoEat_v2.lua

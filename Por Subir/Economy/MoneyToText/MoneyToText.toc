@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: MoneyToText
+## Notes: Money to text.
+## Author: Daniel
+## Version: 1.0
+
+MoneyToText.lua

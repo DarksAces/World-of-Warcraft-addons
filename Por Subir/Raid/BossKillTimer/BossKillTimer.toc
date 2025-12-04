@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: BossKillTimer
+## Notes: Boss kill timer.
+## Author: Daniel
+## Version: 1.0
+
+BossKillTimer.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Mulgore_ExtraTracker_7227
+## Notes: Extra tracker for Mulgore.
+## Author: Daniel
+## Version: 1.0
+
+Mulgore_ExtraTracker_7227.lua

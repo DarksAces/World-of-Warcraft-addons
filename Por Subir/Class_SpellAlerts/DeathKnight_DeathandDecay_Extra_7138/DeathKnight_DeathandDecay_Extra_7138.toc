@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: DeathKnight_DeathandDecay_Extra_7138
+## Notes: Extra alert for DeathandDecay.
+## Author: Daniel
+## Version: 1.0
+
+DeathKnight_DeathandDecay_Extra_7138.lua

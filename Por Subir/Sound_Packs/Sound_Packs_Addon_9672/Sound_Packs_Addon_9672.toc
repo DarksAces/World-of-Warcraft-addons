@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Sound_Packs_Addon_9672
+## Notes: Generic addon for Sound_Packs.
+## Author: Daniel
+## Version: 1.0
+
+Sound_Packs_Addon_9672.lua

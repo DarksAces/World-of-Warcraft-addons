@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: GatheringOverlay
+## Notes: Gathering overlay.
+## Author: Daniel
+## Version: 1.0
+
+GatheringOverlay.lua

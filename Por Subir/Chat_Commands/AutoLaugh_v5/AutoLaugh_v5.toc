@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: AutoLaugh_v5
+## Notes: Auto Laugh command variation 5.
+## Author: Daniel
+## Version: 1.0
+
+AutoLaugh_v5.lua

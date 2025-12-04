@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Warrior_Avatar_Alert
+## Notes: Alerts when Avatar is cast.
+## Author: Daniel
+## Version: 1.0
+
+Warrior_Avatar_Alert.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Monk_TouchofDeath_Alert
+## Notes: Alerts when TouchofDeath is cast.
+## Author: Daniel
+## Version: 1.0
+
+Monk_TouchofDeath_Alert.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: QuickDance_9808
+## Notes: Quick command for Dance.
+## Author: Daniel
+## Version: 1.0
+
+QuickDance_9808.lua

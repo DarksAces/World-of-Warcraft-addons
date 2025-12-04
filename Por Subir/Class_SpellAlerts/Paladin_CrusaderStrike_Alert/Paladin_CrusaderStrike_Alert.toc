@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Paladin_CrusaderStrike_Alert
+## Notes: Alerts when CrusaderStrike is cast.
+## Author: Daniel
+## Version: 1.0
+
+Paladin_CrusaderStrike_Alert.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Druid_Rejuvenation_Extra_4967
+## Notes: Extra alert for Rejuvenation.
+## Author: Daniel
+## Version: 1.0
+
+Druid_Rejuvenation_Extra_4967.lua

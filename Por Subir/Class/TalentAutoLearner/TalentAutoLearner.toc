@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: TalentAutoLearner
+## Notes: Auto learn talents.
+## Author: Daniel
+## Version: 1.0
+
+TalentAutoLearner.lua

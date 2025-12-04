@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Mage_ArcanePower_Extra_3569
+## Notes: Extra alert for ArcanePower.
+## Author: Daniel
+## Version: 1.0
+
+Mage_ArcanePower_Extra_3569.lua

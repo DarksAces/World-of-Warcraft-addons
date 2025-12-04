@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: AutoQuestAccept
+## Notes: Auto accept quests.
+## Author: Daniel
+## Version: 1.0
+
+AutoQuestAccept.lua

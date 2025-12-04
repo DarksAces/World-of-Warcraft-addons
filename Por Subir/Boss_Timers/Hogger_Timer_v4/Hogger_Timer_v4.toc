@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Hogger_Timer_v4
+## Notes: Timer variation 4 for Hogger.
+## Author: Daniel
+## Version: 1.0
+
+Hogger_Timer_v4.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: HousingToolkit
+## Notes: Tools for the future Housing feature.
+## Author: Daniel
+## Version: 1.0
+
+HousingToolkit.lua

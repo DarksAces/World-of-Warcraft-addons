@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Barrens_ExtraTracker_5221
+## Notes: Extra tracker for Barrens.
+## Author: Daniel
+## Version: 1.0
+
+Barrens_ExtraTracker_5221.lua

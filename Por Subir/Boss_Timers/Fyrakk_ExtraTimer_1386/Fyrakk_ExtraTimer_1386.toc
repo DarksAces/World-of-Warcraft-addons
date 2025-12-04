@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Fyrakk_ExtraTimer_1386
+## Notes: Extra timer for Fyrakk.
+## Author: Daniel
+## Version: 1.0
+
+Fyrakk_ExtraTimer_1386.lua

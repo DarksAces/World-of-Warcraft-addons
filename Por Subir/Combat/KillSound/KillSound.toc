@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: KillSound
+## Notes: Sound on killing blow.
+## Author: Daniel
+## Version: 1.0
+
+KillSound.lua

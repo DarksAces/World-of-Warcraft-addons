@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Evoker_Hover_Alert
+## Notes: Alerts when Hover is cast.
+## Author: Daniel
+## Version: 1.0
+
+Evoker_Hover_Alert.lua

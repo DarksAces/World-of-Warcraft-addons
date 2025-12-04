@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: DoTTracker
+## Notes: DoT tracker.
+## Author: Daniel
+## Version: 1.0
+
+DoTTracker.lua

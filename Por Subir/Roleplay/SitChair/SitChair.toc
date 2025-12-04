@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: SitChair
+## Notes: Sit on chairs.
+## Author: Daniel
+## Version: 1.0
+
+SitChair.lua

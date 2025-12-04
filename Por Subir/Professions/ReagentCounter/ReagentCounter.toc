@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: ReagentCounter
+## Notes: Reagent counts.
+## Author: Daniel
+## Version: 1.0
+
+ReagentCounter.lua

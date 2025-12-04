@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: GuildWelcomer
+## Notes: Auto-welcome guildies.
+## Author: Daniel
+## Version: 1.0
+
+GuildWelcomer.lua

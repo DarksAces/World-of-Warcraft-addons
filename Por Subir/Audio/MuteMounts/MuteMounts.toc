@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: MuteMounts
+## Notes: Mutes mounts.
+## Author: Daniel
+## Version: 1.0
+
+MuteMounts.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: ChatFilter
+## Notes: Filters bad words.
+## Author: Daniel
+## Version: 1.0
+
+ChatFilter.lua

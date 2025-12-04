@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: UI_Tweaks_Addon_7676
+## Notes: Generic addon for UI_Tweaks.
+## Author: Daniel
+## Version: 1.0
+
+UI_Tweaks_Addon_7676.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Evoker_LivingFlame_Alert
+## Notes: Alerts when LivingFlame is cast.
+## Author: Daniel
+## Version: 1.0
+
+Evoker_LivingFlame_Alert.lua

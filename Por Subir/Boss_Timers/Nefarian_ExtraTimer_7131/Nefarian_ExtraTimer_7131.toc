@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Nefarian_ExtraTimer_7131
+## Notes: Extra timer for Nefarian.
+## Author: Daniel
+## Version: 1.0
+
+Nefarian_ExtraTimer_7131.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: FasterLooting
+## Notes: Speeds up looting.
+## Author: Daniel
+## Version: 1.0
+
+FasterLooting.lua

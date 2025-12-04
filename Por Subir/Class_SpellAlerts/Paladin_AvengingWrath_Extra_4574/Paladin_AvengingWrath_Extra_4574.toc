@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Paladin_AvengingWrath_Extra_4574
+## Notes: Extra alert for AvengingWrath.
+## Author: Daniel
+## Version: 1.0
+
+Paladin_AvengingWrath_Extra_4574.lua

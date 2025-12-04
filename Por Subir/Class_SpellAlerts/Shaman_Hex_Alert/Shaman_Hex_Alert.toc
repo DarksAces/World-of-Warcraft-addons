@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Shaman_Hex_Alert
+## Notes: Alerts when Hex is cast.
+## Author: Daniel
+## Version: 1.0
+
+Shaman_Hex_Alert.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: RoleCheckAutoReply
+## Notes: Auto reply role.
+## Author: Daniel
+## Version: 1.0
+
+RoleCheckAutoReply.lua

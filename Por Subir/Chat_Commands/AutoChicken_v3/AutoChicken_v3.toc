@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: AutoChicken_v3
+## Notes: Auto Chicken command variation 3.
+## Author: Daniel
+## Version: 1.0
+
+AutoChicken_v3.lua

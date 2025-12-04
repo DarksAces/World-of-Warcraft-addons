@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Suramar_ExtraTracker_3903
+## Notes: Extra tracker for Suramar.
+## Author: Daniel
+## Version: 1.0
+
+Suramar_ExtraTracker_3903.lua

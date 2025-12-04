@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Thaldraszus_Tracker_v2
+## Notes: Tracker variation 2 for Thaldraszus.
+## Author: Daniel
+## Version: 1.0
+
+Thaldraszus_Tracker_v2.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Tirisfal_Tracker_v4
+## Notes: Tracker variation 4 for Tirisfal.
+## Author: Daniel
+## Version: 1.0
+
+Tirisfal_Tracker_v4.lua

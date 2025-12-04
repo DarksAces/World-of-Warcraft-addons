@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Rogue_Eviscerate_Alert
+## Notes: Alerts when Eviscerate is cast.
+## Author: Daniel
+## Version: 1.0
+
+Rogue_Eviscerate_Alert.lua

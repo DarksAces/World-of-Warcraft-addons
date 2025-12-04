@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: QuickTalk_4500
+## Notes: Quick command for Talk.
+## Author: Daniel
+## Version: 1.0
+
+QuickTalk_4500.lua

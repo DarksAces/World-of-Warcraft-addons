@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: AutoApplaud_v2
+## Notes: Auto Applaud command variation 2.
+## Author: Daniel
+## Version: 1.0
+
+AutoApplaud_v2.lua

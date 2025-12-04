@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Drustvar_Tracker_v5
+## Notes: Tracker variation 5 for Drustvar.
+## Author: Daniel
+## Version: 1.0
+
+Drustvar_Tracker_v5.lua

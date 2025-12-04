@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: SocialTabs
+## Notes: Better social tabs.
+## Author: Daniel
+## Version: 1.0
+
+SocialTabs.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: AutoCry_v4
+## Notes: Auto Cry command variation 4.
+## Author: Daniel
+## Version: 1.0
+
+AutoCry_v4.lua

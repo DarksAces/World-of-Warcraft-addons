@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Winterspring_Tracker_v2
+## Notes: Tracker variation 2 for Winterspring.
+## Author: Daniel
+## Version: 1.0
+
+Winterspring_Tracker_v2.lua

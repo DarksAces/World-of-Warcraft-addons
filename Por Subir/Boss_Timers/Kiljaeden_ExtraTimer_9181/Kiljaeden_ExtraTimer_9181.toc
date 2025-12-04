@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Kiljaeden_ExtraTimer_9181
+## Notes: Extra timer for Kiljaeden.
+## Author: Daniel
+## Version: 1.0
+
+Kiljaeden_ExtraTimer_9181.lua

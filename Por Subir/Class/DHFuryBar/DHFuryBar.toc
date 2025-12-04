@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: DHFuryBar
+## Notes: Fury bar.
+## Author: Daniel
+## Version: 1.0
+
+DHFuryBar.lua

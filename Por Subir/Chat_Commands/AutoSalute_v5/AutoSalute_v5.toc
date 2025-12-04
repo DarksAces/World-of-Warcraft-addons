@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: AutoSalute_v5
+## Notes: Auto Salute command variation 5.
+## Author: Daniel
+## Version: 1.0
+
+AutoSalute_v5.lua

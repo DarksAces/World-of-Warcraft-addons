@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Darkshore_Tracker_v4
+## Notes: Tracker variation 4 for Darkshore.
+## Author: Daniel
+## Version: 1.0
+
+Darkshore_Tracker_v4.lua

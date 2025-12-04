@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: AutoBow_v3
+## Notes: Auto Bow command variation 3.
+## Author: Daniel
+## Version: 1.0
+
+AutoBow_v3.lua

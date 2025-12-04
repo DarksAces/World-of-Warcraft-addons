@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Stranglethorn_Tracker_v2
+## Notes: Tracker variation 2 for Stranglethorn.
+## Author: Daniel
+## Version: 1.0
+
+Stranglethorn_Tracker_v2.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Monk_BlackoutKick_Alert
+## Notes: Alerts when BlackoutKick is cast.
+## Author: Daniel
+## Version: 1.0
+
+Monk_BlackoutKick_Alert.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Rogue_Vanish_Alert
+## Notes: Alerts when Vanish is cast.
+## Author: Daniel
+## Version: 1.0
+
+Rogue_Vanish_Alert.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Arthas_ExtraTimer_8468
+## Notes: Extra timer for Arthas.
+## Author: Daniel
+## Version: 1.0
+
+Arthas_ExtraTimer_8468.lua

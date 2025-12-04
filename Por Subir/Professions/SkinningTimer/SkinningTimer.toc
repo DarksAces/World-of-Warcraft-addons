@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: SkinningTimer
+## Notes: Skinning timer.
+## Author: Daniel
+## Version: 1.0
+
+SkinningTimer.lua

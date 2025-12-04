@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Darkshore_Tracker_v2
+## Notes: Tracker variation 2 for Darkshore.
+## Author: Daniel
+## Version: 1.0
+
+Darkshore_Tracker_v2.lua

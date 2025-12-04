@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: AutoRepair
+## Notes: Automatically repairs items when visiting a merchant.
+## Author: Daniel
+## Version: 1.0
+
+AutoRepair.lua

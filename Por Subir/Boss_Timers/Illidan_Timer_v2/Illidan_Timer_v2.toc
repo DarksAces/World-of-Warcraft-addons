@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Illidan_Timer_v2
+## Notes: Timer variation 2 for Illidan.
+## Author: Daniel
+## Version: 1.0
+
+Illidan_Timer_v2.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: VanCleef_Timer_v5
+## Notes: Timer variation 5 for VanCleef.
+## Author: Daniel
+## Version: 1.0
+
+VanCleef_Timer_v5.lua

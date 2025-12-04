@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: FurnitureCatalog
+## Notes: Catalog of furniture items.
+## Author: Daniel
+## Version: 1.0
+
+FurnitureCatalog.lua

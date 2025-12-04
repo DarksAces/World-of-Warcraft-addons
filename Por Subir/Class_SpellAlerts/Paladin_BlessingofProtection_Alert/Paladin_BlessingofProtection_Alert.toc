@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Paladin_BlessingofProtection_Alert
+## Notes: Alerts when BlessingofProtection is cast.
+## Author: Daniel
+## Version: 1.0
+
+Paladin_BlessingofProtection_Alert.lua

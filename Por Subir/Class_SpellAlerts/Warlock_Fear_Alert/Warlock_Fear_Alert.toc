@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Warlock_Fear_Alert
+## Notes: Alerts when Fear is cast.
+## Author: Daniel
+## Version: 1.0
+
+Warlock_Fear_Alert.lua

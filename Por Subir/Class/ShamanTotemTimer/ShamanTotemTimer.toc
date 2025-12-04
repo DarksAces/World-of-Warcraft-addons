@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: ShamanTotemTimer
+## Notes: Totem timer.
+## Author: Daniel
+## Version: 1.0
+
+ShamanTotemTimer.lua

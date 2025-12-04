@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: TalkingHeadRemover
+## Notes: Hides the Talking Head frame.
+## Author: Daniel
+## Version: 1.0
+
+TalkingHeadRemover.lua

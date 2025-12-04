@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Hunter_FeignDeath_Alert
+## Notes: Alerts when FeignDeath is cast.
+## Author: Daniel
+## Version: 1.0
+
+Hunter_FeignDeath_Alert.lua

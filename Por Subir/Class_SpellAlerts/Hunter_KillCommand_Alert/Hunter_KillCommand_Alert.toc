@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Hunter_KillCommand_Alert
+## Notes: Alerts when KillCommand is cast.
+## Author: Daniel
+## Version: 1.0
+
+Hunter_KillCommand_Alert.lua

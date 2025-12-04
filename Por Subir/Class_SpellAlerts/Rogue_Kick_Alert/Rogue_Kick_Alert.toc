@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Rogue_Kick_Alert
+## Notes: Alerts when Kick is cast.
+## Author: Daniel
+## Version: 1.0
+
+Rogue_Kick_Alert.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Warlock_Immolate_Alert
+## Notes: Alerts when Immolate is cast.
+## Author: Daniel
+## Version: 1.0
+
+Warlock_Immolate_Alert.lua

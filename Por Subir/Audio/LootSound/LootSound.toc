@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: LootSound
+## Notes: Loot sound.
+## Author: Daniel
+## Version: 1.0
+
+LootSound.lua

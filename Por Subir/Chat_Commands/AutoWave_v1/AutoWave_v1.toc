@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: AutoWave_v1
+## Notes: Auto Wave command variation 1.
+## Author: Daniel
+## Version: 1.0
+
+AutoWave_v1.lua

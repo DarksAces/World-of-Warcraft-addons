@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: QuickShy_8268
+## Notes: Quick command for Shy.
+## Author: Daniel
+## Version: 1.0
+
+QuickShy_8268.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Smite_Timer_v5
+## Notes: Timer variation 5 for Smite.
+## Author: Daniel
+## Version: 1.0
+
+Smite_Timer_v5.lua

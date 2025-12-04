@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: AutoDance_v1
+## Notes: Auto Dance command variation 1.
+## Author: Daniel
+## Version: 1.0
+
+AutoDance_v1.lua

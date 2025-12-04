@@ -1,0 +1,8 @@
+## Interface: 110200
+## Title: VendorTracker
+## Notes: Tracks locations of vendors you visit.
+## Author: Daniel
+## Version: 1.0
+## SavedVariables: VendorTrackerDB
+
+VendorTracker.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: PortalClicker
+## Notes: Auto clicks portals.
+## Author: Daniel
+## Version: 1.0
+
+PortalClicker.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Silithus_Tracker_v4
+## Notes: Tracker variation 4 for Silithus.
+## Author: Daniel
+## Version: 1.0
+
+Silithus_Tracker_v4.lua

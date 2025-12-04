@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: GuildBankStacker
+## Notes: Guild bank stacker.
+## Author: Daniel
+## Version: 1.0
+
+GuildBankStacker.lua

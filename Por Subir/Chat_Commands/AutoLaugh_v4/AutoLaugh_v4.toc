@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: AutoLaugh_v4
+## Notes: Auto Laugh command variation 4.
+## Author: Daniel
+## Version: 1.0
+
+AutoLaugh_v4.lua

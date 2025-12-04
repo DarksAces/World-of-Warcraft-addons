@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Jailer_Timer_v3
+## Notes: Timer variation 3 for Jailer.
+## Author: Daniel
+## Version: 1.0
+
+Jailer_Timer_v3.lua

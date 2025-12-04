@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Warrior_Pummel_Alert
+## Notes: Alerts when Pummel is cast.
+## Author: Daniel
+## Version: 1.0
+
+Warrior_Pummel_Alert.lua

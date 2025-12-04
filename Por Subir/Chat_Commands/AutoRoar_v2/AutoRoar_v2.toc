@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: AutoRoar_v2
+## Notes: Auto Roar command variation 2.
+## Author: Daniel
+## Version: 1.0
+
+AutoRoar_v2.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: HousingGrid
+## Notes: Overlay grid for placement.
+## Author: Daniel
+## Version: 1.0
+
+HousingGrid.lua

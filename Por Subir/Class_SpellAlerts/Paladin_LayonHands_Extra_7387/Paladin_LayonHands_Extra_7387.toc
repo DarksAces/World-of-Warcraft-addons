@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Paladin_LayonHands_Extra_7387
+## Notes: Extra alert for LayonHands.
+## Author: Daniel
+## Version: 1.0
+
+Paladin_LayonHands_Extra_7387.lua

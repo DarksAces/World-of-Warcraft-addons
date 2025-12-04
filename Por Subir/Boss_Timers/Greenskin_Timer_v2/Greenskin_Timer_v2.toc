@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Greenskin_Timer_v2
+## Notes: Timer variation 2 for Greenskin.
+## Author: Daniel
+## Version: 1.0
+
+Greenskin_Timer_v2.lua

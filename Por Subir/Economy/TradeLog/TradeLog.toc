@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: TradeLog
+## Notes: Trade log.
+## Author: Daniel
+## Version: 1.0
+
+TradeLog.lua

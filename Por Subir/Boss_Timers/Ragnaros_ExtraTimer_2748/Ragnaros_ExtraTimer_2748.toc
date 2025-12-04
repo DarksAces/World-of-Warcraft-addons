@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Ragnaros_ExtraTimer_2748
+## Notes: Extra timer for Ragnaros.
+## Author: Daniel
+## Version: 1.0
+
+Ragnaros_ExtraTimer_2748.lua

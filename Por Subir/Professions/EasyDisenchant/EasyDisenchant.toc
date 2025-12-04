@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: EasyDisenchant
+## Notes: Easy DE.
+## Author: Daniel
+## Version: 1.0
+
+EasyDisenchant.lua

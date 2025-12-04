@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Evoker_Pyre_Alert
+## Notes: Alerts when Pyre is cast.
+## Author: Daniel
+## Version: 1.0
+
+Evoker_Pyre_Alert.lua

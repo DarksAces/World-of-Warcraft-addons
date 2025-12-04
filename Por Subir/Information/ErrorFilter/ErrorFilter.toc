@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: ErrorFilter
+## Notes: Hides common red error text.
+## Author: Daniel
+## Version: 1.0
+
+ErrorFilter.lua

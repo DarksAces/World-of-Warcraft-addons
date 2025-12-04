@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Shaman_HealingSurge_Alert
+## Notes: Alerts when HealingSurge is cast.
+## Author: Daniel
+## Version: 1.0
+
+Shaman_HealingSurge_Alert.lua

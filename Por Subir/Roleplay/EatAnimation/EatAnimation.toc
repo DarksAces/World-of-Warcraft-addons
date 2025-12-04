@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: EatAnimation
+## Notes: Eat anim.
+## Author: Daniel
+## Version: 1.0
+
+EatAnimation.lua

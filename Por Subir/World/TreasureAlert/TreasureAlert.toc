@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: TreasureAlert
+## Notes: Treasure alert.
+## Author: Daniel
+## Version: 1.0
+
+TreasureAlert.lua

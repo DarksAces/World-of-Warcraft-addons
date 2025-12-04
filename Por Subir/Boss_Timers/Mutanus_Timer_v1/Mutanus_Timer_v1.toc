@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Mutanus_Timer_v1
+## Notes: Timer variation 1 for Mutanus.
+## Author: Daniel
+## Version: 1.0
+
+Mutanus_Timer_v1.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Hunter_SteadyShot_Alert
+## Notes: Alerts when SteadyShot is cast.
+## Author: Daniel
+## Version: 1.0
+
+Hunter_SteadyShot_Alert.lua

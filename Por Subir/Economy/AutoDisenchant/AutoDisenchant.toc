@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: AutoDisenchant
+## Notes: Auto disenchant.
+## Author: Daniel
+## Version: 1.0
+
+AutoDisenchant.lua

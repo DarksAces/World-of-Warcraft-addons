@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: QuickFlex_1888
+## Notes: Quick command for Flex.
+## Author: Daniel
+## Version: 1.0
+
+QuickFlex_1888.lua

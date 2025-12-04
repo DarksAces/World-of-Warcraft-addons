@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Mage_Blink_Alert
+## Notes: Alerts when Blink is cast.
+## Author: Daniel
+## Version: 1.0
+
+Mage_Blink_Alert.lua

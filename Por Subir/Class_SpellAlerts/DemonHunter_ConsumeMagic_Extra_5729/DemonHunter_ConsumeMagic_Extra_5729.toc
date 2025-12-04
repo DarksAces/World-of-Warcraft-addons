@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: DemonHunter_ConsumeMagic_Extra_5729
+## Notes: Extra alert for ConsumeMagic.
+## Author: Daniel
+## Version: 1.0
+
+DemonHunter_ConsumeMagic_Extra_5729.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Evoker_TimeDilation_Extra_6845
+## Notes: Extra alert for TimeDilation.
+## Author: Daniel
+## Version: 1.0
+
+Evoker_TimeDilation_Extra_6845.lua

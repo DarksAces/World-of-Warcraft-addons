@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: DeathKnight_HeartStrike_Alert
+## Notes: Alerts when HeartStrike is cast.
+## Author: Daniel
+## Version: 1.0
+
+DeathKnight_HeartStrike_Alert.lua

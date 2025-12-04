@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: DemonHunter_BladeDance_Alert
+## Notes: Alerts when BladeDance is cast.
+## Author: Daniel
+## Version: 1.0
+
+DemonHunter_BladeDance_Alert.lua

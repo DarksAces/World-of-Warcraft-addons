@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: AffixHelper
+## Notes: Affix helper.
+## Author: Daniel
+## Version: 1.0
+
+AffixHelper.lua

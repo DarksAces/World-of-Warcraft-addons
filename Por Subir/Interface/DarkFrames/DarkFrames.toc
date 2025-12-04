@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: DarkFrames
+## Notes: Darker UI.
+## Author: Daniel
+## Version: 1.0
+
+DarkFrames.lua

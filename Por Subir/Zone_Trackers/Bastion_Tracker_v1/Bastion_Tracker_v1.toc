@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Bastion_Tracker_v1
+## Notes: Tracker variation 1 for Bastion.
+## Author: Daniel
+## Version: 1.0
+
+Bastion_Tracker_v1.lua

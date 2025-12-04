@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Druid_Barkskin_Alert
+## Notes: Alerts when Barkskin is cast.
+## Author: Daniel
+## Version: 1.0
+
+Druid_Barkskin_Alert.lua

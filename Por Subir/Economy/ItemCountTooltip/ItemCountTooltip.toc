@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: ItemCountTooltip
+## Notes: Item count tooltip.
+## Author: Daniel
+## Version: 1.0
+
+ItemCountTooltip.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Warrior_SpellReflection_Alert
+## Notes: Alerts when SpellReflection is cast.
+## Author: Daniel
+## Version: 1.0
+
+Warrior_SpellReflection_Alert.lua

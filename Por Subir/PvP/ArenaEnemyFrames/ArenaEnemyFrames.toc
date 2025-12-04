@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: ArenaEnemyFrames
+## Notes: Arena enemy frames.
+## Author: Daniel
+## Version: 1.0
+
+ArenaEnemyFrames.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: DeathKnight_MindFreeze_Extra_1697
+## Notes: Extra alert for MindFreeze.
+## Author: Daniel
+## Version: 1.0
+
+DeathKnight_MindFreeze_Extra_1697.lua

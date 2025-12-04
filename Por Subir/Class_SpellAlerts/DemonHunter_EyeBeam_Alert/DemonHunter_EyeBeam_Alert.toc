@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: DemonHunter_EyeBeam_Alert
+## Notes: Alerts when EyeBeam is cast.
+## Author: Daniel
+## Version: 1.0
+
+DemonHunter_EyeBeam_Alert.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: LocationText
+## Notes: Location text.
+## Author: Daniel
+## Version: 1.0
+
+LocationText.lua

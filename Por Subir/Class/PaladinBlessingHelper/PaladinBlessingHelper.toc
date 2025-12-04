@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: PaladinBlessingHelper
+## Notes: Blessing helper.
+## Author: Daniel
+## Version: 1.0
+
+PaladinBlessingHelper.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Warlock_Corruption_Alert
+## Notes: Alerts when Corruption is cast.
+## Author: Daniel
+## Version: 1.0
+
+Warlock_Corruption_Alert.lua

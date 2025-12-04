@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: MountRandomizer
+## Notes: /mount for random mount.
+## Author: Daniel
+## Version: 1.0
+
+MountRandomizer.lua

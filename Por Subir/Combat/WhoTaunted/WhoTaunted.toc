@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: WhoTaunted
+## Notes: Announces taunts.
+## Author: Daniel
+## Version: 1.0
+
+WhoTaunted.lua

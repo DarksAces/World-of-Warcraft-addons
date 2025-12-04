@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: RoguePoisonReminder
+## Notes: Reminds poisons.
+## Author: Daniel
+## Version: 1.0
+
+RoguePoisonReminder.lua

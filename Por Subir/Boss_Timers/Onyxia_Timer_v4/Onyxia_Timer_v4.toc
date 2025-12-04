@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Onyxia_Timer_v4
+## Notes: Timer variation 4 for Onyxia.
+## Author: Daniel
+## Version: 1.0
+
+Onyxia_Timer_v4.lua

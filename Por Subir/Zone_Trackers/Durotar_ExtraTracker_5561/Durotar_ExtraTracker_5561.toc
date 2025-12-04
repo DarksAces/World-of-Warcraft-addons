@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Durotar_ExtraTracker_5561
+## Notes: Extra tracker for Durotar.
+## Author: Daniel
+## Version: 1.0
+
+Durotar_ExtraTracker_5561.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Hunter_Disengage_Extra_3533
+## Notes: Extra alert for Disengage.
+## Author: Daniel
+## Version: 1.0
+
+Hunter_Disengage_Extra_3533.lua

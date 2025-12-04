@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: MailboxSummoner
+## Notes: Summons mailbox.
+## Author: Daniel
+## Version: 1.0
+
+MailboxSummoner.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Westfall_Tracker_v2
+## Notes: Tracker variation 2 for Westfall.
+## Author: Daniel
+## Version: 1.0
+
+Westfall_Tracker_v2.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Shaman_FlameShock_Extra_9704
+## Notes: Extra alert for FlameShock.
+## Author: Daniel
+## Version: 1.0
+
+Shaman_FlameShock_Extra_9704.lua

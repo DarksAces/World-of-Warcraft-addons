@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Druid_Wrath_Alert
+## Notes: Alerts when Wrath is cast.
+## Author: Daniel
+## Version: 1.0
+
+Druid_Wrath_Alert.lua

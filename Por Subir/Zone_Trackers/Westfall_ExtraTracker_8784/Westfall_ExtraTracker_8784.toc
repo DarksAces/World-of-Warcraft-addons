@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Westfall_ExtraTracker_8784
+## Notes: Extra tracker for Westfall.
+## Author: Daniel
+## Version: 1.0
+
+Westfall_ExtraTracker_8784.lua

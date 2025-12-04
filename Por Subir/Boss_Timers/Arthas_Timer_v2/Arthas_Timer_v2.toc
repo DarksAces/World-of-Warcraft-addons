@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Arthas_Timer_v2
+## Notes: Timer variation 2 for Arthas.
+## Author: Daniel
+## Version: 1.0
+
+Arthas_Timer_v2.lua

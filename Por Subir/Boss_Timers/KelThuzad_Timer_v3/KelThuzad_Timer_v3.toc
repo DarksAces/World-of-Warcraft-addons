@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: KelThuzad_Timer_v3
+## Notes: Timer variation 3 for KelThuzad.
+## Author: Daniel
+## Version: 1.0
+
+KelThuzad_Timer_v3.lua

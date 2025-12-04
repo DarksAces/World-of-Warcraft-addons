@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Rogue_KidneyShot_Alert
+## Notes: Alerts when KidneyShot is cast.
+## Author: Daniel
+## Version: 1.0
+
+Rogue_KidneyShot_Alert.lua

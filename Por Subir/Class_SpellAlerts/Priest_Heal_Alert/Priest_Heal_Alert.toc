@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Priest_Heal_Alert
+## Notes: Alerts when Heal is cast.
+## Author: Daniel
+## Version: 1.0
+
+Priest_Heal_Alert.lua

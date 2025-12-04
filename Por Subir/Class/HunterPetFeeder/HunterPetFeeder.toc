@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: HunterPetFeeder
+## Notes: Reminds to feed pet.
+## Author: Daniel
+## Version: 1.0
+
+HunterPetFeeder.lua

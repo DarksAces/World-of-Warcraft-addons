@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Monk_Vivify_Extra_3529
+## Notes: Extra alert for Vivify.
+## Author: Daniel
+## Version: 1.0
+
+Monk_Vivify_Extra_3529.lua

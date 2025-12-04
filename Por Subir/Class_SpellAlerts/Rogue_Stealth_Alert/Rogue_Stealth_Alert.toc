@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Rogue_Stealth_Alert
+## Notes: Alerts when Stealth is cast.
+## Author: Daniel
+## Version: 1.0
+
+Rogue_Stealth_Alert.lua

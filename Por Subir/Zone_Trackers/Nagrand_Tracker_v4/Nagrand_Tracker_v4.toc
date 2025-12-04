@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Nagrand_Tracker_v4
+## Notes: Tracker variation 4 for Nagrand.
+## Author: Daniel
+## Version: 1.0
+
+Nagrand_Tracker_v4.lua

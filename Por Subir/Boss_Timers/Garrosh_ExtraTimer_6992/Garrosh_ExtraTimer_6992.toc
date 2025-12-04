@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Garrosh_ExtraTimer_6992
+## Notes: Extra timer for Garrosh.
+## Author: Daniel
+## Version: 1.0
+
+Garrosh_ExtraTimer_6992.lua

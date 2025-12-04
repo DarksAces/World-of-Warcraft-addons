@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: AutoDrink_v4
+## Notes: Auto Drink command variation 4.
+## Author: Daniel
+## Version: 1.0
+
+AutoDrink_v4.lua

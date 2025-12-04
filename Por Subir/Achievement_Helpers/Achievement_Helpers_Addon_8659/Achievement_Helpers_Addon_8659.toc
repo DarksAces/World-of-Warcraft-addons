@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Achievement_Helpers_Addon_8659
+## Notes: Generic addon for Achievement_Helpers.
+## Author: Daniel
+## Version: 1.0
+
+Achievement_Helpers_Addon_8659.lua

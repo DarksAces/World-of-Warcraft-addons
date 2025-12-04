@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: ReadyCheckSound
+## Notes: Loud ready check.
+## Author: Daniel
+## Version: 1.0
+
+ReadyCheckSound.lua

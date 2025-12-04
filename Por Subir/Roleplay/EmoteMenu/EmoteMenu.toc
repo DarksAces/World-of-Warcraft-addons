@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: EmoteMenu
+## Notes: Menu for emotes.
+## Author: Daniel
+## Version: 1.0
+
+EmoteMenu.lua

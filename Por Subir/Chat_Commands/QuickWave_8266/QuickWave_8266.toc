@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: QuickWave_8266
+## Notes: Quick command for Wave.
+## Author: Daniel
+## Version: 1.0
+
+QuickWave_8266.lua

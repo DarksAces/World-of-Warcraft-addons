@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Warlock_Immolate_Extra_9348
+## Notes: Extra alert for Immolate.
+## Author: Daniel
+## Version: 1.0
+
+Warlock_Immolate_Extra_9348.lua

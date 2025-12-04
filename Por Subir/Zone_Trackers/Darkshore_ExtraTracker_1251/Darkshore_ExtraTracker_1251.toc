@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Darkshore_ExtraTracker_1251
+## Notes: Extra tracker for Darkshore.
+## Author: Daniel
+## Version: 1.0
+
+Darkshore_ExtraTracker_1251.lua

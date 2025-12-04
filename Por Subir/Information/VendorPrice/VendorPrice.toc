@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: VendorPrice
+## Notes: Show vendor price in tooltips.
+## Author: Daniel
+## Version: 1.0
+
+VendorPrice.lua

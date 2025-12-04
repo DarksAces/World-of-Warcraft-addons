@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: BGObjectiveTracker
+## Notes: BG objective tracker.
+## Author: Daniel
+## Version: 1.0
+
+BGObjectiveTracker.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Raszageth_ExtraTimer_6141
+## Notes: Extra timer for Raszageth.
+## Author: Daniel
+## Version: 1.0
+
+Raszageth_ExtraTimer_6141.lua

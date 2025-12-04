@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: AuctionScanner
+## Notes: Scans auction house.
+## Author: Daniel
+## Version: 1.0
+
+AuctionScanner.lua

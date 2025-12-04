@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Shaman_HealingSurge_Extra_3927
+## Notes: Extra alert for HealingSurge.
+## Author: Daniel
+## Version: 1.0
+
+Shaman_HealingSurge_Extra_3927.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Nefarian_Timer_v1
+## Notes: Timer variation 1 for Nefarian.
+## Author: Daniel
+## Version: 1.0
+
+Nefarian_Timer_v1.lua

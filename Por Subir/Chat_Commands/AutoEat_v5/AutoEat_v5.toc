@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: AutoEat_v5
+## Notes: Auto Eat command variation 5.
+## Author: Daniel
+## Version: 1.0
+
+AutoEat_v5.lua

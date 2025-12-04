@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Warrior_ShieldSlam_Alert
+## Notes: Alerts when ShieldSlam is cast.
+## Author: Daniel
+## Version: 1.0
+
+Warrior_ShieldSlam_Alert.lua

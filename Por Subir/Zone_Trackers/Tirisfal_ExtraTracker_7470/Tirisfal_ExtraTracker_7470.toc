@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Tirisfal_ExtraTracker_7470
+## Notes: Extra tracker for Tirisfal.
+## Author: Daniel
+## Version: 1.0
+
+Tirisfal_ExtraTracker_7470.lua

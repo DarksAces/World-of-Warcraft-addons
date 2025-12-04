@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Warrior_ShieldSlam_Extra_4645
+## Notes: Extra alert for ShieldSlam.
+## Author: Daniel
+## Version: 1.0
+
+Warrior_ShieldSlam_Extra_4645.lua

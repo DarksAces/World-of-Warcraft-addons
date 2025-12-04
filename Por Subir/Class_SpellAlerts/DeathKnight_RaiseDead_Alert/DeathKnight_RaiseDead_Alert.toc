@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: DeathKnight_RaiseDead_Alert
+## Notes: Alerts when RaiseDead is cast.
+## Author: Daniel
+## Version: 1.0
+
+DeathKnight_RaiseDead_Alert.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: KelThuzad_ExtraTimer_2926
+## Notes: Extra timer for KelThuzad.
+## Author: Daniel
+## Version: 1.0
+
+KelThuzad_ExtraTimer_2926.lua

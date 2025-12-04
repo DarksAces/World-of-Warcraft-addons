@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: DemonHunter_ChaosStrike_Extra_3535
+## Notes: Extra alert for ChaosStrike.
+## Author: Daniel
+## Version: 1.0
+
+DemonHunter_ChaosStrike_Extra_3535.lua

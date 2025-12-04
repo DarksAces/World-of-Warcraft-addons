@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: DemonHunter_VengefulRetreat_Alert
+## Notes: Alerts when VengefulRetreat is cast.
+## Author: Daniel
+## Version: 1.0
+
+DemonHunter_VengefulRetreat_Alert.lua

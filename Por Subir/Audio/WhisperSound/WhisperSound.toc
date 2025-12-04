@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: WhisperSound
+## Notes: Whisper sound.
+## Author: Daniel
+## Version: 1.0
+
+WhisperSound.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Shaman_FlameShock_Alert
+## Notes: Alerts when FlameShock is cast.
+## Author: Daniel
+## Version: 1.0
+
+Shaman_FlameShock_Alert.lua

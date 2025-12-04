@@ -1,0 +1,1 @@
+print('Fun_Emotes_Addon_2505 loaded.')

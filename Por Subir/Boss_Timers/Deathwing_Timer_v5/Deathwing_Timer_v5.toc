@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Deathwing_Timer_v5
+## Notes: Timer variation 5 for Deathwing.
+## Author: Daniel
+## Version: 1.0
+
+Deathwing_Timer_v5.lua

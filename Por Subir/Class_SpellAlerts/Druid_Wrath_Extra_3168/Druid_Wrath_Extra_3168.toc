@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Druid_Wrath_Extra_3168
+## Notes: Extra alert for Wrath.
+## Author: Daniel
+## Version: 1.0
+
+Druid_Wrath_Extra_3168.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: SessionGold
+## Notes: Session gold tracker.
+## Author: Daniel
+## Version: 1.0
+
+SessionGold.lua

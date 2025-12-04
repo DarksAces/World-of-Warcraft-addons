@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Stranglethorn_ExtraTracker_1720
+## Notes: Extra tracker for Stranglethorn.
+## Author: Daniel
+## Version: 1.0
+
+Stranglethorn_ExtraTracker_1720.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: ClassResourceMover
+## Notes: Moves resource bar.
+## Author: Daniel
+## Version: 1.0
+
+ClassResourceMover.lua

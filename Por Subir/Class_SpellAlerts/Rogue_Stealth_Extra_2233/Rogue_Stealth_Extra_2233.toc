@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Rogue_Stealth_Extra_2233
+## Notes: Extra alert for Stealth.
+## Author: Daniel
+## Version: 1.0
+
+Rogue_Stealth_Extra_2233.lua

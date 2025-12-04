@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Hunter_Disengage_Alert
+## Notes: Alerts when Disengage is cast.
+## Author: Daniel
+## Version: 1.0
+
+Hunter_Disengage_Alert.lua

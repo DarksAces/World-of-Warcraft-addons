@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Evoker_AzureStrike_Alert
+## Notes: Alerts when AzureStrike is cast.
+## Author: Daniel
+## Version: 1.0
+
+Evoker_AzureStrike_Alert.lua

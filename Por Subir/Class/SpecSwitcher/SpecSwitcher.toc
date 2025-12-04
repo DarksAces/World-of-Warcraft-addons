@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: SpecSwitcher
+## Notes: Quick spec switch.
+## Author: Daniel
+## Version: 1.0
+
+SpecSwitcher.lua

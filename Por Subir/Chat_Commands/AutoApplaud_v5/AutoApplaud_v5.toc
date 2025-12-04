@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: AutoApplaud_v5
+## Notes: Auto Applaud command variation 5.
+## Author: Daniel
+## Version: 1.0
+
+AutoApplaud_v5.lua

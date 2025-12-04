@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Kiljaeden_Timer_v4
+## Notes: Timer variation 4 for Kiljaeden.
+## Author: Daniel
+## Version: 1.0
+
+Kiljaeden_Timer_v4.lua

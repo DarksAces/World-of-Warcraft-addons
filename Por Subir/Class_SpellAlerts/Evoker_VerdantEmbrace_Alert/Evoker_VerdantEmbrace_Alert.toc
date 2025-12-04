@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Evoker_VerdantEmbrace_Alert
+## Notes: Alerts when VerdantEmbrace is cast.
+## Author: Daniel
+## Version: 1.0
+
+Evoker_VerdantEmbrace_Alert.lua

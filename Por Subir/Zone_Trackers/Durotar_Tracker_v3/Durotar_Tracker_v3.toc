@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Durotar_Tracker_v3
+## Notes: Tracker variation 3 for Durotar.
+## Author: Daniel
+## Version: 1.0
+
+Durotar_Tracker_v3.lua

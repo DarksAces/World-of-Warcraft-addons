@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Tanaris_ExtraTracker_4026
+## Notes: Extra tracker for Tanaris.
+## Author: Daniel
+## Version: 1.0
+
+Tanaris_ExtraTracker_4026.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: DpsMeterLite
+## Notes: Simple DPS.
+## Author: Daniel
+## Version: 1.0
+
+DpsMeterLite.lua

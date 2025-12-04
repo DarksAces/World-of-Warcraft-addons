@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Evoker_TimeDilation_Alert
+## Notes: Alerts when TimeDilation is cast.
+## Author: Daniel
+## Version: 1.0
+
+Evoker_TimeDilation_Alert.lua

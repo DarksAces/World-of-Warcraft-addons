@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: QuickDrink_6757
+## Notes: Quick command for Drink.
+## Author: Daniel
+## Version: 1.0
+
+QuickDrink_6757.lua

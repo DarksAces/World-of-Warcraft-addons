@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Rogue_SinisterStrike_Alert
+## Notes: Alerts when SinisterStrike is cast.
+## Author: Daniel
+## Version: 1.0
+
+Rogue_SinisterStrike_Alert.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Warrior_Bladestorm_Alert
+## Notes: Alerts when Bladestorm is cast.
+## Author: Daniel
+## Version: 1.0
+
+Warrior_Bladestorm_Alert.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: IgnoreListPlus
+## Notes: Enhanced ignore list.
+## Author: Daniel
+## Version: 1.0
+
+IgnoreListPlus.lua

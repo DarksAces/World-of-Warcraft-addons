@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: SkillUpAlert
+## Notes: Skill up alert.
+## Author: Daniel
+## Version: 1.0
+
+SkillUpAlert.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: ArenaNameplate
+## Notes: Arena nameplate numbers.
+## Author: Daniel
+## Version: 1.0
+
+ArenaNameplate.lua

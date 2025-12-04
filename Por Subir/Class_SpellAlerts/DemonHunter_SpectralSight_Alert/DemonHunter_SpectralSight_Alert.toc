@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: DemonHunter_SpectralSight_Alert
+## Notes: Alerts when SpectralSight is cast.
+## Author: Daniel
+## Version: 1.0
+
+DemonHunter_SpectralSight_Alert.lua

@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: WorldBossTimer
+## Notes: World boss timer.
+## Author: Daniel
+## Version: 1.0
+
+WorldBossTimer.lua

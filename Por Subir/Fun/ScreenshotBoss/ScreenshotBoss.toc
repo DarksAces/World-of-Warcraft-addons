@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: ScreenshotBoss
+## Notes: Screenshot on boss kill.
+## Author: Daniel
+## Version: 1.0
+
+ScreenshotBoss.lua

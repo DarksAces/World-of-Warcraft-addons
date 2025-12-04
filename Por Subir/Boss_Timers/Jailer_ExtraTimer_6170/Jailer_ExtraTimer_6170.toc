@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: Jailer_ExtraTimer_6170
+## Notes: Extra timer for Jailer.
+## Author: Daniel
+## Version: 1.0
+
+Jailer_ExtraTimer_6170.lua

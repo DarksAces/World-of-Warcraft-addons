@@ -1,0 +1,7 @@
+## Interface: 110200
+## Title: ToyRandomizer
+## Notes: /toy for random toy.
+## Author: Daniel
+## Version: 1.0
+
+ToyRandomizer.lua
