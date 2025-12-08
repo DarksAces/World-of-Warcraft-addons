@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: SpellID
-## Notes: Shows Spell ID in tooltips.
-## Author: Daniel
-## Version: 1.0
-
-SpellID.lua

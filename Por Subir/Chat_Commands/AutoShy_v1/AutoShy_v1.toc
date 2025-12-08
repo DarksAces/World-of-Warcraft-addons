@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: AutoShy_v1
-## Notes: Auto Shy command variation 1.
-## Author: Daniel
-## Version: 1.0
-
-AutoShy_v1.lua

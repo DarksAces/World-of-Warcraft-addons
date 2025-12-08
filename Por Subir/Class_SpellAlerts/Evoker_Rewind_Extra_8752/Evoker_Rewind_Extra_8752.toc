@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Evoker_Rewind_Extra_8752
-## Notes: Extra alert for Rewind.
-## Author: Daniel
-## Version: 1.0
-
-Evoker_Rewind_Extra_8752.lua

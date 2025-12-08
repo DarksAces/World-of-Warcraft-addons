@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Bastion_ExtraTracker_4033
-## Notes: Extra tracker for Bastion.
-## Author: Daniel
-## Version: 1.0
-
-Bastion_ExtraTracker_4033.lua

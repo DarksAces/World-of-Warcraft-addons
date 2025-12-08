@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Priest_GuardianSpirit_Extra_4065
-## Notes: Extra alert for GuardianSpirit.
-## Author: Daniel
-## Version: 1.0
-
-Priest_GuardianSpirit_Extra_4065.lua

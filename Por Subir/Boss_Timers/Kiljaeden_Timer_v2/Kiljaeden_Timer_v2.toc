@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Kiljaeden_Timer_v2
-## Notes: Timer variation 2 for Kiljaeden.
-## Author: Daniel
-## Version: 1.0
-
-Kiljaeden_Timer_v2.lua

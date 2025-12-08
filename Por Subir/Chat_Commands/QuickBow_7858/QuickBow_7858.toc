@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: QuickBow_7858
-## Notes: Quick command for Bow.
-## Author: Daniel
-## Version: 1.0
-
-QuickBow_7858.lua

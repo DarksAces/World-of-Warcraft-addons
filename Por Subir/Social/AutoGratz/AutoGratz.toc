@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: AutoGratz
-## Notes: Auto-gratz achievements.
-## Author: Daniel
-## Version: 1.0
-
-AutoGratz.lua

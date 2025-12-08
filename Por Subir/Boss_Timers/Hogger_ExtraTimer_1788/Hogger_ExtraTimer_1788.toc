@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Hogger_ExtraTimer_1788
-## Notes: Extra timer for Hogger.
-## Author: Daniel
-## Version: 1.0
-
-Hogger_ExtraTimer_1788.lua

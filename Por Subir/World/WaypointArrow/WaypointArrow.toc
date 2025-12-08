@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: WaypointArrow
-## Notes: Waypoint arrow.
-## Author: Daniel
-## Version: 1.0
-
-WaypointArrow.lua

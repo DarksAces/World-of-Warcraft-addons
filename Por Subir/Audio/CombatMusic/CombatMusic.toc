@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: CombatMusic
-## Notes: Combat music.
-## Author: Daniel
-## Version: 1.0
-
-CombatMusic.lua

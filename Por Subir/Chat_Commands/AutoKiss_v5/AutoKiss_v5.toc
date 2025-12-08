@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: AutoKiss_v5
-## Notes: Auto Kiss command variation 5.
-## Author: Daniel
-## Version: 1.0
-
-AutoKiss_v5.lua

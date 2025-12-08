@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: DeathKnight_HeartStrike_Extra_2805
-## Notes: Extra alert for HeartStrike.
-## Author: Daniel
-## Version: 1.0
-
-DeathKnight_HeartStrike_Extra_2805.lua

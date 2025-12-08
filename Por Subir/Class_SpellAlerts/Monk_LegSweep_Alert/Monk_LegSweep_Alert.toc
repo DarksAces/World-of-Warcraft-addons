@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Monk_LegSweep_Alert
-## Notes: Alerts when LegSweep is cast.
-## Author: Daniel
-## Version: 1.0
-
-Monk_LegSweep_Alert.lua

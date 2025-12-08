@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: CThun_ExtraTimer_2685
-## Notes: Extra timer for CThun.
-## Author: Daniel
-## Version: 1.0
-
-CThun_ExtraTimer_2685.lua

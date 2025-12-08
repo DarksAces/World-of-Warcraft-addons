@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Fun_Emotes_Addon_3466
-## Notes: Generic addon for Fun_Emotes.
-## Author: Daniel
-## Version: 1.0
-
-Fun_Emotes_Addon_3466.lua

@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Fyrakk_Timer_v5
-## Notes: Timer variation 5 for Fyrakk.
-## Author: Daniel
-## Version: 1.0
-
-Fyrakk_Timer_v5.lua

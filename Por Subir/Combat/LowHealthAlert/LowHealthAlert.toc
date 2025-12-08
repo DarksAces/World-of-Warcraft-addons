@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: LowHealthAlert
-## Notes: Red flash on low health.
-## Author: Daniel
-## Version: 1.0
-
-LowHealthAlert.lua

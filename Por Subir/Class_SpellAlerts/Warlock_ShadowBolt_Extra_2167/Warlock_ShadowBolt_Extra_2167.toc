@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Warlock_ShadowBolt_Extra_2167
-## Notes: Extra alert for ShadowBolt.
-## Author: Daniel
-## Version: 1.0
-
-Warlock_ShadowBolt_Extra_2167.lua

@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: QuickChicken_5933
-## Notes: Quick command for Chicken.
-## Author: Daniel
-## Version: 1.0
-
-QuickChicken_5933.lua

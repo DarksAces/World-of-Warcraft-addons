@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Paladin_CrusaderStrike_Extra_9091
-## Notes: Extra alert for CrusaderStrike.
-## Author: Daniel
-## Version: 1.0
-
-Paladin_CrusaderStrike_Extra_9091.lua

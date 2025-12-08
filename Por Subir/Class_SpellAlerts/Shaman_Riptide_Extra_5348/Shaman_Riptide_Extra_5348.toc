@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Shaman_Riptide_Extra_5348
-## Notes: Extra alert for Riptide.
-## Author: Daniel
-## Version: 1.0
-
-Shaman_Riptide_Extra_5348.lua

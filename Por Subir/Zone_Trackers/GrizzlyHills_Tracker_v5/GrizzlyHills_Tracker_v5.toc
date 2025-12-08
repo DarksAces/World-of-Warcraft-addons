@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: GrizzlyHills_Tracker_v5
-## Notes: Tracker variation 5 for GrizzlyHills.
-## Author: Daniel
-## Version: 1.0
-
-GrizzlyHills_Tracker_v5.lua

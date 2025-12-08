@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: AutoTalk_v2
-## Notes: Auto Talk command variation 2.
-## Author: Daniel
-## Version: 1.0
-
-AutoTalk_v2.lua

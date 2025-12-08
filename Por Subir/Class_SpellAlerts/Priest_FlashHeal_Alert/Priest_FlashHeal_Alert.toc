@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Priest_FlashHeal_Alert
-## Notes: Alerts when FlashHeal is cast.
-## Author: Daniel
-## Version: 1.0
-
-Priest_FlashHeal_Alert.lua

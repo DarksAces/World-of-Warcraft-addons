@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Paladin_AvengingWrath_Alert
-## Notes: Alerts when AvengingWrath is cast.
-## Author: Daniel
-## Version: 1.0
-
-Paladin_AvengingWrath_Alert.lua

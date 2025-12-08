@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Warrior_MortalStrike_Alert
-## Notes: Alerts when MortalStrike is cast.
-## Author: Daniel
-## Version: 1.0
-
-Warrior_MortalStrike_Alert.lua

@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: AutoFlex_v5
-## Notes: Auto Flex command variation 5.
-## Author: Daniel
-## Version: 1.0
-
-AutoFlex_v5.lua

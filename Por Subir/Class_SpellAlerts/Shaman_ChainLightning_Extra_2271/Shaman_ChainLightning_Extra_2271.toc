@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Shaman_ChainLightning_Extra_2271
-## Notes: Extra alert for ChainLightning.
-## Author: Daniel
-## Version: 1.0
-
-Shaman_ChainLightning_Extra_2271.lua

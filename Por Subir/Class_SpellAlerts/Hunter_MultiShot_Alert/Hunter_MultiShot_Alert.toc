@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Hunter_MultiShot_Alert
-## Notes: Alerts when MultiShot is cast.
-## Author: Daniel
-## Version: 1.0
-
-Hunter_MultiShot_Alert.lua

@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: DescriptionEdit
-## Notes: Edit RP desc.
-## Author: Daniel
-## Version: 1.0
-
-DescriptionEdit.lua

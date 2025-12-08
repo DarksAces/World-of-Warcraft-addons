@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Coords
-## Notes: Minimap coordinates.
-## Author: Daniel
-## Version: 1.0
-
-Coords.lua

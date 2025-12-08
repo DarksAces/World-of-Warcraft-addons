@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Paladin_HammerofJustice_Alert
-## Notes: Alerts when HammerofJustice is cast.
-## Author: Daniel
-## Version: 1.0
-
-Paladin_HammerofJustice_Alert.lua

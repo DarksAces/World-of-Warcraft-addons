@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Priest_PowerWordShield_Extra_2538
-## Notes: Extra alert for PowerWordShield.
-## Author: Daniel
-## Version: 1.0
-
-Priest_PowerWordShield_Extra_2538.lua

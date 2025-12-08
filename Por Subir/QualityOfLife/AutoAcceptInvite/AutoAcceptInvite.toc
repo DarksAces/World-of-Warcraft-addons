@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: AutoAcceptInvite
-## Notes: Auto accept invites.
-## Author: Daniel
-## Version: 1.0
-
-AutoAcceptInvite.lua

@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Nagrand_Tracker_v3
-## Notes: Tracker variation 3 for Nagrand.
-## Author: Daniel
-## Version: 1.0
-
-Nagrand_Tracker_v3.lua

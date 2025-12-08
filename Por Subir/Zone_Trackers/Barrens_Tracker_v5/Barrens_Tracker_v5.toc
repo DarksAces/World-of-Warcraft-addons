@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Barrens_Tracker_v5
-## Notes: Tracker variation 5 for Barrens.
-## Author: Daniel
-## Version: 1.0
-
-Barrens_Tracker_v5.lua

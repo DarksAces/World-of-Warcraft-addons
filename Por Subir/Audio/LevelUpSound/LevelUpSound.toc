@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: LevelUpSound
-## Notes: Level up sound.
-## Author: Daniel
-## Version: 1.0
-
-LevelUpSound.lua

@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: DemonHunter_ConsumeMagic_Alert
-## Notes: Alerts when ConsumeMagic is cast.
-## Author: Daniel
-## Version: 1.0
-
-DemonHunter_ConsumeMagic_Alert.lua

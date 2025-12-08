@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Item_Tooltips_Addon_5726
-## Notes: Generic addon for Item_Tooltips.
-## Author: Daniel
-## Version: 1.0
-
-Item_Tooltips_Addon_5726.lua

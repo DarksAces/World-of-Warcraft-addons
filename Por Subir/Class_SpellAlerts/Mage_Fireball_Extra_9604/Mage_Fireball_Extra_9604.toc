@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Mage_Fireball_Extra_9604
-## Notes: Extra alert for Fireball.
-## Author: Daniel
-## Version: 1.0
-
-Mage_Fireball_Extra_9604.lua

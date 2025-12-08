@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: QuickCry_3132
-## Notes: Quick command for Cry.
-## Author: Daniel
-## Version: 1.0
-
-QuickCry_3132.lua

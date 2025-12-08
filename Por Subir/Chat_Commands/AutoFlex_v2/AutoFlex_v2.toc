@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: AutoFlex_v2
-## Notes: Auto Flex command variation 2.
-## Author: Daniel
-## Version: 1.0
-
-AutoFlex_v2.lua

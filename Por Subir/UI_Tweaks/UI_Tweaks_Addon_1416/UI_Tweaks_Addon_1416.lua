@@ -1,1 +1,0 @@
-print('UI_Tweaks_Addon_1416 loaded.')

@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: ChatRole
-## Notes: Shows role icons in chat.
-## Author: Daniel
-## Version: 1.0
-
-ChatRole.lua

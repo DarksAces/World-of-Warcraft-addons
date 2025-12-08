@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: GoldTracker
-## Notes: Tracks gold.
-## Author: Daniel
-## Version: 1.0
-
-GoldTracker.lua

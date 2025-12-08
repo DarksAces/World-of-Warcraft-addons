@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: DemonHunter_FelRush_Alert
-## Notes: Alerts when FelRush is cast.
-## Author: Daniel
-## Version: 1.0
-
-DemonHunter_FelRush_Alert.lua

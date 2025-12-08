@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Paladin_HammerofJustice_Extra_3482
-## Notes: Extra alert for HammerofJustice.
-## Author: Daniel
-## Version: 1.0
-
-Paladin_HammerofJustice_Extra_3482.lua

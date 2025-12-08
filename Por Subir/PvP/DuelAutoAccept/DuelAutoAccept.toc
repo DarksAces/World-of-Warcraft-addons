@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: DuelAutoAccept
-## Notes: Auto accept duels.
-## Author: Daniel
-## Version: 1.0
-
-DuelAutoAccept.lua

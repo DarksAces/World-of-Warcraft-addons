@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Priest_Penance_Alert
-## Notes: Alerts when Penance is cast.
-## Author: Daniel
-## Version: 1.0
-
-Priest_Penance_Alert.lua

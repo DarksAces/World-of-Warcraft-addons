@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Thaldraszus_ExtraTracker_6207
-## Notes: Extra tracker for Thaldraszus.
-## Author: Daniel
-## Version: 1.0
-
-Thaldraszus_ExtraTracker_6207.lua

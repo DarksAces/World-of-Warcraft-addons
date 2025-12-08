@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Priest_Smite_Alert
-## Notes: Alerts when Smite is cast.
-## Author: Daniel
-## Version: 1.0
-
-Priest_Smite_Alert.lua

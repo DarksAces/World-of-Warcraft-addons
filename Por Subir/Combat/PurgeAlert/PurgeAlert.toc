@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: PurgeAlert
-## Notes: Purge alert.
-## Author: Daniel
-## Version: 1.0
-
-PurgeAlert.lua

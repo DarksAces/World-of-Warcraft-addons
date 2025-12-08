@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: HotTracker
-## Notes: HoT tracker.
-## Author: Daniel
-## Version: 1.0
-
-HotTracker.lua

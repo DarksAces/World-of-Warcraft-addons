@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: CraftQueue
-## Notes: Crafting queue.
-## Author: Daniel
-## Version: 1.0
-
-CraftQueue.lua

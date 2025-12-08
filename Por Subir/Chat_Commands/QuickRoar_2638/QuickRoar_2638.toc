@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: QuickRoar_2638
-## Notes: Quick command for Roar.
-## Author: Daniel
-## Version: 1.0
-
-QuickRoar_2638.lua

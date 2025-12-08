@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: DungeonMapZoom
-## Notes: Auto zoom map.
-## Author: Daniel
-## Version: 1.0
-
-DungeonMapZoom.lua

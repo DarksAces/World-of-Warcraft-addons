@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: RaidBuffChecker
-## Notes: Check raid buffs.
-## Author: Daniel
-## Version: 1.0
-
-RaidBuffChecker.lua

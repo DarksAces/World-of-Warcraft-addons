@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: AlignGrid
-## Notes: /grid to show alignment grid.
-## Author: Daniel
-## Version: 1.0
-
-AlignGrid.lua

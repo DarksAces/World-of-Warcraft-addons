@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Hunter_BestialWrath_Alert
-## Notes: Alerts when BestialWrath is cast.
-## Author: Daniel
-## Version: 1.0
-
-Hunter_BestialWrath_Alert.lua

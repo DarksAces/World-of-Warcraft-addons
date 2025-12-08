@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Profession_Helpers_Addon_7748
-## Notes: Generic addon for Profession_Helpers.
-## Author: Daniel
-## Version: 1.0
-
-Profession_Helpers_Addon_7748.lua

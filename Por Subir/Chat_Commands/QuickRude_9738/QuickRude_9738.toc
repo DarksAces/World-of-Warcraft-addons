@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: QuickRude_9738
-## Notes: Quick command for Rude.
-## Author: Daniel
-## Version: 1.0
-
-QuickRude_9738.lua

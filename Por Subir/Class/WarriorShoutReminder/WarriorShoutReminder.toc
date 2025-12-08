@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: WarriorShoutReminder
-## Notes: Reminds to shout.
-## Author: Daniel
-## Version: 1.0
-
-WarriorShoutReminder.lua

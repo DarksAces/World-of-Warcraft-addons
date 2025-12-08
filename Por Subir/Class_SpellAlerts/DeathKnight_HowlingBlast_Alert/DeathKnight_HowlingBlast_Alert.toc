@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: DeathKnight_HowlingBlast_Alert
-## Notes: Alerts when HowlingBlast is cast.
-## Author: Daniel
-## Version: 1.0
-
-DeathKnight_HowlingBlast_Alert.lua

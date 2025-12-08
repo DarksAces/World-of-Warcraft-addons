@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: FarmHud
-## Notes: Farm HUD.
-## Author: Daniel
-## Version: 1.0
-
-FarmHud.lua

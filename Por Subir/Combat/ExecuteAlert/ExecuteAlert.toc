@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: ExecuteAlert
-## Notes: Execute alert.
-## Author: Daniel
-## Version: 1.0
-
-ExecuteAlert.lua

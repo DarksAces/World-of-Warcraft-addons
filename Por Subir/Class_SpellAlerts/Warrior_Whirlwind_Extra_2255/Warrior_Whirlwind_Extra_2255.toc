@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Warrior_Whirlwind_Extra_2255
-## Notes: Extra alert for Whirlwind.
-## Author: Daniel
-## Version: 1.0
-
-Warrior_Whirlwind_Extra_2255.lua

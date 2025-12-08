@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: RuneReminder
-## Notes: Reminds rune.
-## Author: Daniel
-## Version: 1.0
-
-RuneReminder.lua

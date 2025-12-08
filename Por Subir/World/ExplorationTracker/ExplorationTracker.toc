@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: ExplorationTracker
-## Notes: Exploration tracker.
-## Author: Daniel
-## Version: 1.0
-
-ExplorationTracker.lua

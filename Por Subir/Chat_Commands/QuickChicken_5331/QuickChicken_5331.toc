@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: QuickChicken_5331
-## Notes: Quick command for Chicken.
-## Author: Daniel
-## Version: 1.0
-
-QuickChicken_5331.lua

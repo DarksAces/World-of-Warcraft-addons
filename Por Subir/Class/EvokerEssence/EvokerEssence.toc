@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: EvokerEssence
-## Notes: Essence bar.
-## Author: Daniel
-## Version: 1.0
-
-EvokerEssence.lua

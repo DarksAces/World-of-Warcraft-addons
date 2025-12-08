@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: DeathKnight_DeathStrike_Alert
-## Notes: Alerts when DeathStrike is cast.
-## Author: Daniel
-## Version: 1.0
-
-DeathKnight_DeathStrike_Alert.lua

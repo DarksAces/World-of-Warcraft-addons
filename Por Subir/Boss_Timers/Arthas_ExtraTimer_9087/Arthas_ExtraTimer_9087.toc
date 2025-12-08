@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Arthas_ExtraTimer_9087
-## Notes: Extra timer for Arthas.
-## Author: Daniel
-## Version: 1.0
-
-Arthas_ExtraTimer_9087.lua

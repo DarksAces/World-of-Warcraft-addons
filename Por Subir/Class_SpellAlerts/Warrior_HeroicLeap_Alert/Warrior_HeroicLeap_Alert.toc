@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Warrior_HeroicLeap_Alert
-## Notes: Alerts when HeroicLeap is cast.
-## Author: Daniel
-## Version: 1.0
-
-Warrior_HeroicLeap_Alert.lua

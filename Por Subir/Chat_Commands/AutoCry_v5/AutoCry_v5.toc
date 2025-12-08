@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: AutoCry_v5
-## Notes: Auto Cry command variation 5.
-## Author: Daniel
-## Version: 1.0
-
-AutoCry_v5.lua

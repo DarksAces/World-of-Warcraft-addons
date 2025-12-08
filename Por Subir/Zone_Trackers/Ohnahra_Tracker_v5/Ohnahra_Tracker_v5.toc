@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Ohnahra_Tracker_v5
-## Notes: Tracker variation 5 for Ohnahra.
-## Author: Daniel
-## Version: 1.0
-
-Ohnahra_Tracker_v5.lua

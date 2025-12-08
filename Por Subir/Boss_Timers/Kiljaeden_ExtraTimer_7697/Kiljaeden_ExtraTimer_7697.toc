@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Kiljaeden_ExtraTimer_7697
-## Notes: Extra timer for Kiljaeden.
-## Author: Daniel
-## Version: 1.0
-
-Kiljaeden_ExtraTimer_7697.lua

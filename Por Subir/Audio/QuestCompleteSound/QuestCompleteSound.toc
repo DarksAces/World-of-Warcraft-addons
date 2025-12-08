@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: QuestCompleteSound
-## Notes: Quest complete sound.
-## Author: Daniel
-## Version: 1.0
-
-QuestCompleteSound.lua

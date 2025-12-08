@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Hunter_MultiShot_Extra_7983
-## Notes: Extra alert for MultiShot.
-## Author: Daniel
-## Version: 1.0
-
-Hunter_MultiShot_Extra_7983.lua

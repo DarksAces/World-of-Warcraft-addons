@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: AutoGreed
-## Notes: Auto greed.
-## Author: Daniel
-## Version: 1.0
-
-AutoGreed.lua

@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Rogue_AdrenalineRush_Extra_2810
-## Notes: Extra alert for AdrenalineRush.
-## Author: Daniel
-## Version: 1.0
-
-Rogue_AdrenalineRush_Extra_2810.lua

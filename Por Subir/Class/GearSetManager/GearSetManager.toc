@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: GearSetManager
-## Notes: Gear set manager.
-## Author: Daniel
-## Version: 1.0
-
-GearSetManager.lua

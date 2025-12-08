@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: DemonHunter_ChaosStrike_Alert
-## Notes: Alerts when ChaosStrike is cast.
-## Author: Daniel
-## Version: 1.0
-
-DemonHunter_ChaosStrike_Alert.lua

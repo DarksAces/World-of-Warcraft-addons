@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Hunter_KillCommand_Extra_7679
-## Notes: Extra alert for KillCommand.
-## Author: Daniel
-## Version: 1.0
-
-Hunter_KillCommand_Extra_7679.lua

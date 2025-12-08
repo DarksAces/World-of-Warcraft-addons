@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: SpellReagentCounter
-## Notes: Spell reagent counter.
-## Author: Daniel
-## Version: 1.0
-
-SpellReagentCounter.lua

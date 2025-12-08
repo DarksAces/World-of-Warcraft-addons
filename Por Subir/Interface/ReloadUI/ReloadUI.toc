@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: ReloadUI
-## Notes: Adds /rl command.
-## Author: Daniel
-## Version: 1.0
-
-ReloadUI.lua

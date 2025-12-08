@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: ThreatMeterLite
-## Notes: Simple threat.
-## Author: Daniel
-## Version: 1.0
-
-ThreatMeterLite.lua

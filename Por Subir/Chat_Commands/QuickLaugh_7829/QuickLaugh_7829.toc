@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: QuickLaugh_7829
-## Notes: Quick command for Laugh.
-## Author: Daniel
-## Version: 1.0
-
-QuickLaugh_7829.lua

@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: VanCleef_ExtraTimer_2438
-## Notes: Extra timer for VanCleef.
-## Author: Daniel
-## Version: 1.0
-
-VanCleef_ExtraTimer_2438.lua

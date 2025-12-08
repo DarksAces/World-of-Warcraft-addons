@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Winterspring_ExtraTracker_6664
-## Notes: Extra tracker for Winterspring.
-## Author: Daniel
-## Version: 1.0
-
-Winterspring_ExtraTracker_6664.lua

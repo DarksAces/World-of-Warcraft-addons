@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: GemCrusher
-## Notes: Auto-prospect ore.
-## Author: Daniel
-## Version: 1.0
-
-GemCrusher.lua

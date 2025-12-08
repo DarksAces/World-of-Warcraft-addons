@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: LanguageFilter
-## Notes: Speak languages.
-## Author: Daniel
-## Version: 1.0
-
-LanguageFilter.lua

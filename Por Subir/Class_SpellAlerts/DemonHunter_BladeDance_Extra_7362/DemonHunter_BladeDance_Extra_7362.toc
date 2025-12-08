@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: DemonHunter_BladeDance_Extra_7362
-## Notes: Extra alert for BladeDance.
-## Author: Daniel
-## Version: 1.0
-
-DemonHunter_BladeDance_Extra_7362.lua

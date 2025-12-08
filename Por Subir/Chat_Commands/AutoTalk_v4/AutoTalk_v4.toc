@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: AutoTalk_v4
-## Notes: Auto Talk command variation 4.
-## Author: Daniel
-## Version: 1.0
-
-AutoTalk_v4.lua

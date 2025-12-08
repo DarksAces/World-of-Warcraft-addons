@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: DeathKnight_MindFreeze_Alert
-## Notes: Alerts when MindFreeze is cast.
-## Author: Daniel
-## Version: 1.0
-
-DeathKnight_MindFreeze_Alert.lua

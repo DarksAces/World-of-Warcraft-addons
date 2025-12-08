@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: WhisperPop
-## Notes: Sound on whisper.
-## Author: Daniel
-## Version: 1.0
-
-WhisperPop.lua

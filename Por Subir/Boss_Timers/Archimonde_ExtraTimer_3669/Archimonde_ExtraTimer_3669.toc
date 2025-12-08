@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Archimonde_ExtraTimer_3669
-## Notes: Extra timer for Archimonde.
-## Author: Daniel
-## Version: 1.0
-
-Archimonde_ExtraTimer_3669.lua

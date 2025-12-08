@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Mulgore_Tracker_v3
-## Notes: Tracker variation 3 for Mulgore.
-## Author: Daniel
-## Version: 1.0
-
-Mulgore_Tracker_v3.lua

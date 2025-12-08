@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: UI_Tweaks_Addon_2808
-## Notes: Generic addon for UI_Tweaks.
-## Author: Daniel
-## Version: 1.0
-
-UI_Tweaks_Addon_2808.lua

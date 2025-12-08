@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: PrestigeTracker
-## Notes: Prestige tracker.
-## Author: Daniel
-## Version: 1.0
-
-PrestigeTracker.lua

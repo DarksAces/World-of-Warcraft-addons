@@ -1,1 +1,0 @@
-print('Item_Tooltips_Addon_6956 loaded.')

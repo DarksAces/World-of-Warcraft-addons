@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: PriestFortitude
-## Notes: Fortitude reminder.
-## Author: Daniel
-## Version: 1.0
-
-PriestFortitude.lua

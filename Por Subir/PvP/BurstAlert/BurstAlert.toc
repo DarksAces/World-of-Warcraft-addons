@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: BurstAlert
-## Notes: Burst alert.
-## Author: Daniel
-## Version: 1.0
-
-BurstAlert.lua

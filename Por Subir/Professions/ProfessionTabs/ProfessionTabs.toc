@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: ProfessionTabs
-## Notes: Tabs for professions.
-## Author: Daniel
-## Version: 1.0
-
-ProfessionTabs.lua

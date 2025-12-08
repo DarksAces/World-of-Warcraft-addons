@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Ashenvale_Tracker_v3
-## Notes: Tracker variation 3 for Ashenvale.
-## Author: Daniel
-## Version: 1.0
-
-Ashenvale_Tracker_v3.lua

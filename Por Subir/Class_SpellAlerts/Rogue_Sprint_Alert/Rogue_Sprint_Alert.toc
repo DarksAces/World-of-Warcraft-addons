@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Rogue_Sprint_Alert
-## Notes: Alerts when Sprint is cast.
-## Author: Daniel
-## Version: 1.0
-
-Rogue_Sprint_Alert.lua

@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Suramar_Tracker_v4
-## Notes: Tracker variation 4 for Suramar.
-## Author: Daniel
-## Version: 1.0
-
-Suramar_Tracker_v4.lua

@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: QuickTrain_9131
-## Notes: Quick command for Train.
-## Author: Daniel
-## Version: 1.0
-
-QuickTrain_9131.lua

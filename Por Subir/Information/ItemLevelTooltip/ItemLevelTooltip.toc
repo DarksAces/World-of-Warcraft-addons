@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: ItemLevelTooltip
-## Notes: Shows Item Level in tooltips.
-## Author: Daniel
-## Version: 1.0
-
-ItemLevelTooltip.lua

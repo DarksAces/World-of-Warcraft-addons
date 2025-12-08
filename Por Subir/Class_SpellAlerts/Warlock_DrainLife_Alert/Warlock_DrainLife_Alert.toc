@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Warlock_DrainLife_Alert
-## Notes: Alerts when DrainLife is cast.
-## Author: Daniel
-## Version: 1.0
-
-Warlock_DrainLife_Alert.lua

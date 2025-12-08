@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: AutoBeg_v2
-## Notes: Auto Beg command variation 2.
-## Author: Daniel
-## Version: 1.0
-
-AutoBeg_v2.lua

@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: DemonHunter_Metamorphosis_Alert
-## Notes: Alerts when Metamorphosis is cast.
-## Author: Daniel
-## Version: 1.0
-
-DemonHunter_Metamorphosis_Alert.lua

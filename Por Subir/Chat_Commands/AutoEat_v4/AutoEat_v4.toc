@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: AutoEat_v4
-## Notes: Auto Eat command variation 4.
-## Author: Daniel
-## Version: 1.0
-
-AutoEat_v4.lua

@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: ZoomOut
-## Notes: Max camera distance on login.
-## Author: Daniel
-## Version: 1.0
-
-ZoomOut.lua

@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Paladin_DivineShield_Alert
-## Notes: Alerts when DivineShield is cast.
-## Author: Daniel
-## Version: 1.0
-
-Paladin_DivineShield_Alert.lua

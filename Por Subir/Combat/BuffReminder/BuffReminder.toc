@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: BuffReminder
-## Notes: Reminds you to buff.
-## Author: Daniel
-## Version: 1.0
-
-BuffReminder.lua

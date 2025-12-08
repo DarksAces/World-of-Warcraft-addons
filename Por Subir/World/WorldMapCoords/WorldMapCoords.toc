@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: WorldMapCoords
-## Notes: World map coords.
-## Author: Daniel
-## Version: 1.0
-
-WorldMapCoords.lua

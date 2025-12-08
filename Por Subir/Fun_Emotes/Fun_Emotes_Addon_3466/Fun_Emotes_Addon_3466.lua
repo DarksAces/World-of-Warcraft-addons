@@ -1,1 +1,0 @@
-print('Fun_Emotes_Addon_3466 loaded.')

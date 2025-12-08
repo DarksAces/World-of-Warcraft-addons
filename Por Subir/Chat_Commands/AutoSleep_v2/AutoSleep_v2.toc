@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: AutoSleep_v2
-## Notes: Auto Sleep command variation 2.
-## Author: Daniel
-## Version: 1.0
-
-AutoSleep_v2.lua

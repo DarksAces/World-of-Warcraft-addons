@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Elwynn_Tracker_v5
-## Notes: Tracker variation 5 for Elwynn.
-## Author: Daniel
-## Version: 1.0
-
-Elwynn_Tracker_v5.lua

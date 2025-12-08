@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: ChatCopy
-## Notes: Copy chat text.
-## Author: Daniel
-## Version: 1.0
-
-ChatCopy.lua

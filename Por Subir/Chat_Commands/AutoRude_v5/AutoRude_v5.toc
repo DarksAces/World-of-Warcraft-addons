@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: AutoRude_v5
-## Notes: Auto Rude command variation 5.
-## Author: Daniel
-## Version: 1.0
-
-AutoRude_v5.lua

@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: InterruptAnnounce
-## Notes: Announces interrupts.
-## Author: Daniel
-## Version: 1.0
-
-InterruptAnnounce.lua

@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Paladin_Judgment_Extra_9844
-## Notes: Extra alert for Judgment.
-## Author: Daniel
-## Version: 1.0
-
-Paladin_Judgment_Extra_9844.lua

@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: RaidFrameScaler
-## Notes: Scales raid frames.
-## Author: Daniel
-## Version: 1.0
-
-RaidFrameScaler.lua

@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: QuickSleep_6051
-## Notes: Quick command for Sleep.
-## Author: Daniel
-## Version: 1.0
-
-QuickSleep_6051.lua

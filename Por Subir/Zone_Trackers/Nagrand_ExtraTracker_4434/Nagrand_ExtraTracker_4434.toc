@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Nagrand_ExtraTracker_4434
-## Notes: Extra tracker for Nagrand.
-## Author: Daniel
-## Version: 1.0
-
-Nagrand_ExtraTracker_4434.lua

@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: QuickSalute_6960
-## Notes: Quick command for Salute.
-## Author: Daniel
-## Version: 1.0
-
-QuickSalute_6960.lua

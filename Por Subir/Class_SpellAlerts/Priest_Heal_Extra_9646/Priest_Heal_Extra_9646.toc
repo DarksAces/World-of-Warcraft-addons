@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Priest_Heal_Extra_9646
-## Notes: Extra alert for Heal.
-## Author: Daniel
-## Version: 1.0
-
-Priest_Heal_Extra_9646.lua

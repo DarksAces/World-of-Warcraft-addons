@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: PartySay
-## Notes: Repeats /say in /party.
-## Author: Daniel
-## Version: 1.0
-
-PartySay.lua

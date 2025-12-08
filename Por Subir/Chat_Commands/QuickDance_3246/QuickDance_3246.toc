@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: QuickDance_3246
-## Notes: Quick command for Dance.
-## Author: Daniel
-## Version: 1.0
-
-QuickDance_3246.lua

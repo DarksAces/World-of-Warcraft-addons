@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: AmbienceBooster
-## Notes: Boosts ambience.
-## Author: Daniel
-## Version: 1.0
-
-AmbienceBooster.lua

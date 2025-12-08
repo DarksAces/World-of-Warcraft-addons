@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: UndercutAlert
-## Notes: Undercut alert.
-## Author: Daniel
-## Version: 1.0
-
-UndercutAlert.lua

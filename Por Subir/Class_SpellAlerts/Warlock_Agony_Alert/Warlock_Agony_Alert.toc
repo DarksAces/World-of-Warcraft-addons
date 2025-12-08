@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Warlock_Agony_Alert
-## Notes: Alerts when Agony is cast.
-## Author: Daniel
-## Version: 1.0
-
-Warlock_Agony_Alert.lua

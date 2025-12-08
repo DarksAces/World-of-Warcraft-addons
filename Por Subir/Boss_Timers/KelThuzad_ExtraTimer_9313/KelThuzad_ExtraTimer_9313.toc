@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: KelThuzad_ExtraTimer_9313
-## Notes: Extra timer for KelThuzad.
-## Author: Daniel
-## Version: 1.0
-
-KelThuzad_ExtraTimer_9313.lua

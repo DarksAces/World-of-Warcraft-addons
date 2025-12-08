@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: CThun_Timer_v4
-## Notes: Timer variation 4 for CThun.
-## Author: Daniel
-## Version: 1.0
-
-CThun_Timer_v4.lua

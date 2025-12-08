@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: RaidYell
-## Notes: Repeats /yell in /raid.
-## Author: Daniel
-## Version: 1.0
-
-RaidYell.lua

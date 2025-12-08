@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Sylvanas_ExtraTimer_4297
-## Notes: Extra timer for Sylvanas.
-## Author: Daniel
-## Version: 1.0
-
-Sylvanas_ExtraTimer_4297.lua

@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: AutoWave_v4
-## Notes: Auto Wave command variation 4.
-## Author: Daniel
-## Version: 1.0
-
-AutoWave_v4.lua

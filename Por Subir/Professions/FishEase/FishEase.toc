@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: FishEase
-## Notes: Easier fishing.
-## Author: Daniel
-## Version: 1.0
-
-FishEase.lua

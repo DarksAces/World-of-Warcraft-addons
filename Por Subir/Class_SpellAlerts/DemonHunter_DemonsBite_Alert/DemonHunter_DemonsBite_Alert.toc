@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: DemonHunter_DemonsBite_Alert
-## Notes: Alerts when DemonsBite is cast.
-## Author: Daniel
-## Version: 1.0
-
-DemonHunter_DemonsBite_Alert.lua

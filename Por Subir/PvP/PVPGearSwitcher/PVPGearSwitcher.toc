@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: PVPGearSwitcher
-## Notes: PVP gear switcher.
-## Author: Daniel
-## Version: 1.0
-
-PVPGearSwitcher.lua

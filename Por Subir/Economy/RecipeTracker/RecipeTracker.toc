@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: RecipeTracker
-## Notes: Recipe tracker.
-## Author: Daniel
-## Version: 1.0
-
-RecipeTracker.lua

@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: DeathKnight_Obliterate_Alert
-## Notes: Alerts when Obliterate is cast.
-## Author: Daniel
-## Version: 1.0
-
-DeathKnight_Obliterate_Alert.lua

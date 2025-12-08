@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: HideGryphons
-## Notes: Hides the Main Bar gryphons.
-## Author: Daniel
-## Version: 1.0
-
-HideGryphons.lua

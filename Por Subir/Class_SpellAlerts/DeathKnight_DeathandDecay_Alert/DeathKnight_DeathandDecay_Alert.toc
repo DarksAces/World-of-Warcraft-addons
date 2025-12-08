@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: DeathKnight_DeathandDecay_Alert
-## Notes: Alerts when DeathandDecay is cast.
-## Author: Daniel
-## Version: 1.0
-
-DeathKnight_DeathandDecay_Alert.lua

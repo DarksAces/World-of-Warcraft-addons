@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: RPFlag
-## Notes: RP status flag.
-## Author: Daniel
-## Version: 1.0
-
-RPFlag.lua

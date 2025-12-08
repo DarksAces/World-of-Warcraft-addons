@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: AutoKiss_v2
-## Notes: Auto Kiss command variation 2.
-## Author: Daniel
-## Version: 1.0
-
-AutoKiss_v2.lua

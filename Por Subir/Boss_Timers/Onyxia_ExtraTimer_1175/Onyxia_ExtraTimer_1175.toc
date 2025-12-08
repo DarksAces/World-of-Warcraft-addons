@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Onyxia_ExtraTimer_1175
-## Notes: Extra timer for Onyxia.
-## Author: Daniel
-## Version: 1.0
-
-Onyxia_ExtraTimer_1175.lua

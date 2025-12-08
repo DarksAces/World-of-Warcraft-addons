@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Garrosh_Timer_v4
-## Notes: Timer variation 4 for Garrosh.
-## Author: Daniel
-## Version: 1.0
-
-Garrosh_Timer_v4.lua

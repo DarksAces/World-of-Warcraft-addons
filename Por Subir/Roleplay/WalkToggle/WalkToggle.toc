@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: WalkToggle
-## Notes: Toggle walk.
-## Author: Daniel
-## Version: 1.0
-
-WalkToggle.lua

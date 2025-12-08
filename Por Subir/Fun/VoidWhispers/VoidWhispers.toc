@@ -1,8 +1,0 @@
-## Interface: 110200
-## Title: |cff9482c9VoidWhispers|r
-## Notes: Whispers from the Void to remind you of your fate.
-## Author: Daniel
-## Version: 1.0
-## SavedVariables: VoidWhispersDB
-
-VoidWhispers.lua

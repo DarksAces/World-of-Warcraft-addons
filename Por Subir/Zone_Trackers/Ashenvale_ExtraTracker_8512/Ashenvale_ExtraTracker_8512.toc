@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Ashenvale_ExtraTracker_8512
-## Notes: Extra tracker for Ashenvale.
-## Author: Daniel
-## Version: 1.0
-
-Ashenvale_ExtraTracker_8512.lua

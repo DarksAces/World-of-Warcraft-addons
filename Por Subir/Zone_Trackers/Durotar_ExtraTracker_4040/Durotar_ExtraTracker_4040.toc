@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Durotar_ExtraTracker_4040
-## Notes: Extra tracker for Durotar.
-## Author: Daniel
-## Version: 1.0
-
-Durotar_ExtraTracker_4040.lua

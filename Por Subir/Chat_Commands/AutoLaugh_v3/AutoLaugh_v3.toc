@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: AutoLaugh_v3
-## Notes: Auto Laugh command variation 3.
-## Author: Daniel
-## Version: 1.0
-
-AutoLaugh_v3.lua

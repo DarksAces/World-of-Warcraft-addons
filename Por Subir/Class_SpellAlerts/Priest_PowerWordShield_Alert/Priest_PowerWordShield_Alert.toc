@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Priest_PowerWordShield_Alert
-## Notes: Alerts when PowerWordShield is cast.
-## Author: Daniel
-## Version: 1.0
-
-Priest_PowerWordShield_Alert.lua

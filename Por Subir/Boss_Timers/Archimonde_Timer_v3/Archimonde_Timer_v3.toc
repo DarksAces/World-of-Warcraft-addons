@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Archimonde_Timer_v3
-## Notes: Timer variation 3 for Archimonde.
-## Author: Daniel
-## Version: 1.0
-
-Archimonde_Timer_v3.lua

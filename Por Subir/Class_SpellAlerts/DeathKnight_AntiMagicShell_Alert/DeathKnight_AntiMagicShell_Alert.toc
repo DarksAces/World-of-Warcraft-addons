@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: DeathKnight_AntiMagicShell_Alert
-## Notes: Alerts when AntiMagicShell is cast.
-## Author: Daniel
-## Version: 1.0
-
-DeathKnight_AntiMagicShell_Alert.lua

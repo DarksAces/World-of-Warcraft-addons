@@ -1,8 +1,0 @@
-## Interface: 110200
-## Title: HousingNotes
-## Notes: Notes for your housing ideas.
-## Author: Daniel
-## Version: 1.0
-## SavedVariables: HousingNotesDB
-
-HousingNotes.lua

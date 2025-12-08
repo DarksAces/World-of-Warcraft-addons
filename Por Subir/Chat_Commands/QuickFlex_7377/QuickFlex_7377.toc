@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: QuickFlex_7377
-## Notes: Quick command for Flex.
-## Author: Daniel
-## Version: 1.0
-
-QuickFlex_7377.lua

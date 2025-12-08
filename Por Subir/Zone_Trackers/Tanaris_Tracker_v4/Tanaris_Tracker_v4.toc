@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Tanaris_Tracker_v4
-## Notes: Tracker variation 4 for Tanaris.
-## Author: Daniel
-## Version: 1.0
-
-Tanaris_Tracker_v4.lua

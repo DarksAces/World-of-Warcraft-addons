@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: AutoApplaud_v3
-## Notes: Auto Applaud command variation 3.
-## Author: Daniel
-## Version: 1.0
-
-AutoApplaud_v3.lua

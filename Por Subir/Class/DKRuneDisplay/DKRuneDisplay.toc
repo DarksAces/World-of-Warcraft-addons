@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: DKRuneDisplay
-## Notes: Rune display.
-## Author: Daniel
-## Version: 1.0
-
-DKRuneDisplay.lua

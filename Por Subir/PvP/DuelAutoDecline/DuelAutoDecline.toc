@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: DuelAutoDecline
-## Notes: Auto decline duels.
-## Author: Daniel
-## Version: 1.0
-
-DuelAutoDecline.lua

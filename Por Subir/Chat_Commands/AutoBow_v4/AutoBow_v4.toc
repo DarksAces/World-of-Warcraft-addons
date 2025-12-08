@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: AutoBow_v4
-## Notes: Auto Bow command variation 4.
-## Author: Daniel
-## Version: 1.0
-
-AutoBow_v4.lua

@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: CartTracker
-## Notes: Cart tracker.
-## Author: Daniel
-## Version: 1.0
-
-CartTracker.lua

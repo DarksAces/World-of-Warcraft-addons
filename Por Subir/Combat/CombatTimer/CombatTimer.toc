@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: CombatTimer
-## Notes: Combat timer.
-## Author: Daniel
-## Version: 1.0
-
-CombatTimer.lua

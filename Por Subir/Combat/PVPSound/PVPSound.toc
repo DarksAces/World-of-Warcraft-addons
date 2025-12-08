@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: PVPSound
-## Notes: PVP Kill sounds.
-## Author: Daniel
-## Version: 1.0
-
-PVPSound.lua

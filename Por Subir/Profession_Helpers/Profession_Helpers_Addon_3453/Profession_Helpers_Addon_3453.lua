@@ -1,1 +1,0 @@
-print('Profession_Helpers_Addon_3453 loaded.')

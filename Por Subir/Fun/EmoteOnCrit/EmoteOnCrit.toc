@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: EmoteOnCrit
-## Notes: Emotes on crit.
-## Author: Daniel
-## Version: 1.0
-
-EmoteOnCrit.lua

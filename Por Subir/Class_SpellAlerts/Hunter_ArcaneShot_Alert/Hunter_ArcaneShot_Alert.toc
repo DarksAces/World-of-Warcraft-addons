@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Hunter_ArcaneShot_Alert
-## Notes: Alerts when ArcaneShot is cast.
-## Author: Daniel
-## Version: 1.0
-
-Hunter_ArcaneShot_Alert.lua

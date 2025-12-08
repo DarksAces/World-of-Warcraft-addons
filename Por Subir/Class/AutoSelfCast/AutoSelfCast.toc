@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: AutoSelfCast
-## Notes: Auto self cast.
-## Author: Daniel
-## Version: 1.0
-
-AutoSelfCast.lua

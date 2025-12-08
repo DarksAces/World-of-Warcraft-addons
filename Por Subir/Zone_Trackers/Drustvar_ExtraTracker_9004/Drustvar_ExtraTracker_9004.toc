@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Drustvar_ExtraTracker_9004
-## Notes: Extra tracker for Drustvar.
-## Author: Daniel
-## Version: 1.0
-
-Drustvar_ExtraTracker_9004.lua

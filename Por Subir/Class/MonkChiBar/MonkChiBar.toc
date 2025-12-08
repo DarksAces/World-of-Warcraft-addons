@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: MonkChiBar
-## Notes: Chi bar.
-## Author: Daniel
-## Version: 1.0
-
-MonkChiBar.lua

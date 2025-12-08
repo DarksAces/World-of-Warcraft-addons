@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: ShieldMonitor
-## Notes: Shield monitor.
-## Author: Daniel
-## Version: 1.0
-
-ShieldMonitor.lua

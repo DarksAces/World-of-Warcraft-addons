@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Hunter_FreezingTrap_Alert
-## Notes: Alerts when FreezingTrap is cast.
-## Author: Daniel
-## Version: 1.0
-
-Hunter_FreezingTrap_Alert.lua

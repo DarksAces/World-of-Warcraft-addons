@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: RangeCheck
-## Notes: Range indicator.
-## Author: Daniel
-## Version: 1.0
-
-RangeCheck.lua

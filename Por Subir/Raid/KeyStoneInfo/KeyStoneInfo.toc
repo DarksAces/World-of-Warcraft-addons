@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: KeyStoneInfo
-## Notes: Keystone info.
-## Author: Daniel
-## Version: 1.0
-
-KeyStoneInfo.lua

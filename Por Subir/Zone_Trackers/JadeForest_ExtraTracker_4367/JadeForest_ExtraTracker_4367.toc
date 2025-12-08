@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: JadeForest_ExtraTracker_4367
-## Notes: Extra tracker for JadeForest.
-## Author: Daniel
-## Version: 1.0
-
-JadeForest_ExtraTracker_4367.lua

@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Druid_BearForm_Extra_5407
-## Notes: Extra alert for BearForm.
-## Author: Daniel
-## Version: 1.0
-
-Druid_BearForm_Extra_5407.lua

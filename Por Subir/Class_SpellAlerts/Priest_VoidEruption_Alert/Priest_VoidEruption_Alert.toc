@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Priest_VoidEruption_Alert
-## Notes: Alerts when VoidEruption is cast.
-## Author: Daniel
-## Version: 1.0
-
-Priest_VoidEruption_Alert.lua

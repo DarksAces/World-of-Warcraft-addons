@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: QuickKiss_2053
-## Notes: Quick command for Kiss.
-## Author: Daniel
-## Version: 1.0
-
-QuickKiss_2053.lua

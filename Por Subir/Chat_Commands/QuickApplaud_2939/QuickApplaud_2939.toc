@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: QuickApplaud_2939
-## Notes: Quick command for Applaud.
-## Author: Daniel
-## Version: 1.0
-
-QuickApplaud_2939.lua

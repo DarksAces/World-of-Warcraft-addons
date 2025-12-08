@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: AutoDrink_v5
-## Notes: Auto Drink command variation 5.
-## Author: Daniel
-## Version: 1.0
-
-AutoDrink_v5.lua

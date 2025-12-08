@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: QuickCheer_7055
-## Notes: Quick command for Cheer.
-## Author: Daniel
-## Version: 1.0
-
-QuickCheer_7055.lua

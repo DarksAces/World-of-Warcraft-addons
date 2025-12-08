@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: MailOpener
-## Notes: Mail opener.
-## Author: Daniel
-## Version: 1.0
-
-MailOpener.lua

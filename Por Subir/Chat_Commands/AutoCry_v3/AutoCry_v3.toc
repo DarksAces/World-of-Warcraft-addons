@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: AutoCry_v3
-## Notes: Auto Cry command variation 3.
-## Author: Daniel
-## Version: 1.0
-
-AutoCry_v3.lua

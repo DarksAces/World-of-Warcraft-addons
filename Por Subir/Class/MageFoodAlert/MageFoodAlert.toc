@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: MageFoodAlert
-## Notes: Reminds to make food.
-## Author: Daniel
-## Version: 1.0
-
-MageFoodAlert.lua

@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Shaman_EarthShock_Alert
-## Notes: Alerts when EarthShock is cast.
-## Author: Daniel
-## Version: 1.0
-
-Shaman_EarthShock_Alert.lua

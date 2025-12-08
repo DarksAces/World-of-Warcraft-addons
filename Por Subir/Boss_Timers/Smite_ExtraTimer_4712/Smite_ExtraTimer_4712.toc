@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Smite_ExtraTimer_4712
-## Notes: Extra timer for Smite.
-## Author: Daniel
-## Version: 1.0
-
-Smite_ExtraTimer_4712.lua

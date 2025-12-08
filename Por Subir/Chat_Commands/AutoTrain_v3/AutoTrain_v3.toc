@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: AutoTrain_v3
-## Notes: Auto Train command variation 3.
-## Author: Daniel
-## Version: 1.0
-
-AutoTrain_v3.lua

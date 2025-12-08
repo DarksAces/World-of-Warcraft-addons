@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Mage_Polymorph_Alert
-## Notes: Alerts when Polymorph is cast.
-## Author: Daniel
-## Version: 1.0
-
-Mage_Polymorph_Alert.lua

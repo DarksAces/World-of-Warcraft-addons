@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: AutoSalute_v2
-## Notes: Auto Salute command variation 2.
-## Author: Daniel
-## Version: 1.0
-
-AutoSalute_v2.lua

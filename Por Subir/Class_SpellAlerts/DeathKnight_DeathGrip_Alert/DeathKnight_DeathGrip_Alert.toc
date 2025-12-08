@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: DeathKnight_DeathGrip_Alert
-## Notes: Alerts when DeathGrip is cast.
-## Author: Daniel
-## Version: 1.0
-
-DeathKnight_DeathGrip_Alert.lua

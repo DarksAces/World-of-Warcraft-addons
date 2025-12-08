@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: Mage_Fireball_Alert
-## Notes: Alerts when Fireball is cast.
-## Author: Daniel
-## Version: 1.0
-
-Mage_Fireball_Alert.lua
