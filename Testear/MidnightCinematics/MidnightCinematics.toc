@@ -1,0 +1,7 @@
+## Interface: 120000
+## Title: MidnightCinematics
+## Notes: Auto skips cinematics and movies
+## Author: Antigravity
+## Version: 1.0.0
+
+MidnightCinematics.lua

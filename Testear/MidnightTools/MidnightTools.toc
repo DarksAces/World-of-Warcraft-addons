@@ -1,0 +1,7 @@
+## Interface: 120000
+## Title: MidnightTools
+## Notes: Useful tools for Midnight (Auto Sell, Auto Repair)
+## Author: Antigravity
+## Version: 1.0.0
+
+MidnightTools.lua

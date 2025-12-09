@@ -1,0 +1,7 @@
+## Interface: 120000
+## Title: MidnightFPS
+## Notes: Simple FPS display
+## Author: Antigravity
+## Version: 1.0.0
+
+MidnightFPS.lua

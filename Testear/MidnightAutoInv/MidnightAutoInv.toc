@@ -1,0 +1,7 @@
+## Interface: 120000
+## Title: MidnightAutoInv
+## Notes: Auto accept invites from friends and BNet friends, and auto accept summons.
+## Author: Antigravity
+## Version: 1.0.0
+
+MidnightAutoInv.lua

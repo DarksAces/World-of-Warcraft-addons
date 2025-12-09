@@ -1,0 +1,7 @@
+## Interface: 120000
+## Title: MidnightSpeed
+## Notes: Display current movement speed
+## Author: Antigravity
+## Version: 1.0.0
+
+MidnightSpeed.lua

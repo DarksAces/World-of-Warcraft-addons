@@ -1,0 +1,7 @@
+## Interface: 120000
+## Title: MidnightCoords
+## Notes: Simple coordinates display
+## Author: Antigravity
+## Version: 1.0.0
+
+MidnightCoords.lua

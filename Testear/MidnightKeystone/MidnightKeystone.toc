@@ -1,0 +1,7 @@
+## Interface: 120000
+## Title: MidnightKeystone
+## Notes: Simply auto slots your Mythic+ Keystone
+## Author: Antigravity
+## Version: 1.0.0
+
+MidnightKeystone.lua

@@ -1,0 +1,7 @@
+## Interface: 120000
+## Title: MidnightDelete
+## Notes: Auto fills DELETE in confirmation dialogs
+## Author: Antigravity
+## Version: 1.0.0
+
+MidnightDelete.lua
