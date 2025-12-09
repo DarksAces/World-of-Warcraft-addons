@@ -1,7 +1,7 @@
 ## Interface: 120000
 ## Title: GeoPoint
 ## Notes: Simple coordinates display
-## Author: Antigravity
+## Author: DarkAce
 ## Version: 1.0.0
 
 GeoPoint.lua

@@ -1,7 +1,7 @@
 ## Interface: 120000
 ## Title: BagWatch
 ## Notes: Simple free bag slots display
-## Author: Antigravity
+## Author: DarkAce
 ## Version: 1.0.0
 
 BagWatch.lua
