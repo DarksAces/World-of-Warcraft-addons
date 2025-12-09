@@ -1,7 +1,0 @@
-## Interface: 120000
-## Title: MidnightReload
-## Notes: Adds /rl and /rc commands to reload UI
-## Author: Antigravity
-## Version: 1.0.0
-
-MidnightReload.lua

@@ -1,7 +1,0 @@
-## Interface: 120000
-## Title: MidnightScreenshots
-## Notes: Auto screenshots on Achievements and Level Ups
-## Author: Antigravity
-## Version: 1.0.0
-
-MidnightScreenshots.lua

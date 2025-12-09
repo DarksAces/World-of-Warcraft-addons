@@ -1,7 +1,0 @@
-## Interface: 120000
-## Title: MidnightZoom
-## Notes: Auto Max Camera Distance
-## Author: Antigravity
-## Version: 1.0.0
-
-MidnightZoom.lua

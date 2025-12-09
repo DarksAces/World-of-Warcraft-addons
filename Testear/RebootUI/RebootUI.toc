@@ -1,0 +1,7 @@
+## Interface: 120000
+## Title: RebootUI
+## Notes: Adds /rl and /rc commands to reload UI
+## Author: Antigravity
+## Version: 1.0.0
+
+RebootUI.lua

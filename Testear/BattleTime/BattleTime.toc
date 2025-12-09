@@ -1,0 +1,7 @@
+## Interface: 120000
+## Title: BattleTime
+## Notes: Tracks time spent in combat
+## Author: Antigravity
+## Version: 1.0.0
+
+BattleTime.lua

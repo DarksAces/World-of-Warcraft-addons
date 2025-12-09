@@ -1,0 +1,7 @@
+## Interface: 120000
+## Title: FrameCheck
+## Notes: Simple FPS display
+## Author: Antigravity
+## Version: 1.0.0
+
+FrameCheck.lua

@@ -1,0 +1,7 @@
+## Interface: 120000
+## Title: WideEye
+## Notes: Auto Max Camera Distance
+## Author: Antigravity
+## Version: 1.0.0
+
+WideEye.lua
