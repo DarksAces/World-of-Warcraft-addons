@@ -1,0 +1,8 @@
+## Interface: 120000
+## Title: BattleTime
+## Notes: Simple combat timer
+## IconTexture: Interface\AddOns\BattleTime\icon.png spent in combat
+## Author: DarkAce
+## Version: 1.0.0
+
+BattleTime.lua

@@ -3,5 +3,7 @@
 ## Notes: Simple free bag slots display
 ## Author: DarkAce
 ## Version: 1.0.0
+## SavedVariables: BagWatchDB
+## IconTexture: Interface\AddOns\BagWatch\icon.png
 
 BagWatch.lua

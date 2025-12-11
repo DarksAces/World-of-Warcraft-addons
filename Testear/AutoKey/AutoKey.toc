@@ -1,7 +1,0 @@
-## Interface: 120000
-## Title: AutoKey
-## Notes: Simply auto slots your Mythic+ Keystone
-## Author: DarkAce
-## Version: 1.0.0
-
-AutoKey.lua
