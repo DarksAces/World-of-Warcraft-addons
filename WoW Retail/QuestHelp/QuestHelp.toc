@@ -1,4 +1,4 @@
-## Interface: 110200
+## Interface: 120000, 110200
 ## Title: Quest Help
 ## Notes: Botón “? Help” el comando /qh para abrir/copiar el enlace de Wowhead de la misión seleccionada o por ID
 ## Author: DarkAce

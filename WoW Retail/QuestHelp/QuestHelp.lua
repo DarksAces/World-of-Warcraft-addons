@@ -229,11 +229,23 @@ SlashCmdList["BETTERQUESTHELP"] = function(msg)
         return
     end
 
+    -- /qh auto
+    if msg:lower() == "auto" then
+        BetterQuestHelpDB.autoAccept = not BetterQuestHelpDB.autoAccept
+        if BetterQuestHelpDB.autoAccept then
+            print("|cff00ff88[BQH]|r Auto-Aceptar misiones: |cff00ff00ACTIVADO|r")
+        else
+            print("|cff00ff88[BQH]|r Auto-Aceptar misiones: |cffff0000DESACTIVADO|r")
+        end
+        return
+    end
+
     -- Ayuda
     print("|cff00ff88[BQH]|r Uso:")
     print("  /qh                 -> Link de la misión seleccionada")
     print("  /qh 12345           -> Link por QuestID")
     print("  /qh find <texto>    -> Busca por nombre en tu Quest Log")
+    print("  /qh auto            -> Activa/Desactiva auto-aceptar misiones")
 end
 
 ------------------------------------------------------------------------
@@ -243,6 +255,12 @@ end
 local f = CreateFrame("Frame")
 f:RegisterEvent("PLAYER_LOGIN")
 f:SetScript("OnEvent", function()
+    -- Inicializar SavedVariables
+    if not BetterQuestHelpDB then BetterQuestHelpDB = {} end
+    if type(BetterQuestHelpDB.autoAccept) ~= "boolean" then
+        BetterQuestHelpDB.autoAccept = false
+    end
+
     -- Botón en Detalles (Retail)
     C_Timer.After(1, function()
         pcall(CreateHelpButton_Retail)
@@ -252,4 +270,73 @@ f:SetScript("OnEvent", function()
     end)
 
     print("|cff00ff88[BQH]|r Cargado. Usa /qh o el botón 'Help' en el Quest Log.")
+    if BetterQuestHelpDB.autoAccept then
+        print("|cff00ff88[BQH]|r Auto-Aceptar misiones: |cff00ff00ACTIVADO|r")
+    end
+end)
+
+------------------------------------------------------------------------
+-- Auto Accept Logic
+------------------------------------------------------------------------
+
+local autoQuestFrame = CreateFrame("Frame")
+
+local function IsModifierKeyDown()
+    return IsShiftKeyDown() or IsControlKeyDown() or IsAltKeyDown()
+end
+
+local function OnQuestDetail()
+    if not BetterQuestHelpDB.autoAccept then return end
+    if IsModifierKeyDown() then return end
+    -- Aceptar la misión mostrada
+    if AcceptQuest then AcceptQuest() end
+end
+
+local function OnGossipShow()
+    if not BetterQuestHelpDB.autoAccept then return end
+    if IsModifierKeyDown() then return end
+    
+    -- Autoseleccionar misiones disponibles (Solo aceptar, no completar)
+    
+    -- Retail uses C_GossipInfo
+    if C_GossipInfo and C_GossipInfo.GetAvailableQuests then
+        local quests = C_GossipInfo.GetAvailableQuests()
+        for _, quest in ipairs(quests) do
+            C_GossipInfo.SelectAvailableQuest(quest.questID)
+        end
+    elseif GetGossipAvailableQuests then
+        -- Classic / Older API
+        local availableQuests = {GetGossipAvailableQuests()}
+        -- GetGossipAvailableQuests returns a flat list: title, level, isLowLevel, isDaily, isRepeatable, ...
+        -- We loop through them. The index for SelectGossipAvailableQuest is 1-based index among available quests.
+        local numQuests = GetNumGossipAvailableQuests()
+        for i = 1, numQuests do
+             SelectGossipAvailableQuest(i)
+        end
+    end
+end
+
+local function OnQuestGreeting()
+    if not BetterQuestHelpDB.autoAccept then return end
+    if IsModifierKeyDown() then return end
+
+    local numAvailable = GetNumAvailableQuests()
+    if numAvailable > 0 then
+        for i = 1, numAvailable do
+            SelectAvailableQuest(i)
+        end
+    end
+end
+
+autoQuestFrame:RegisterEvent("QUEST_DETAIL")
+autoQuestFrame:RegisterEvent("GOSSIP_SHOW")
+autoQuestFrame:RegisterEvent("QUEST_GREETING")
+autoQuestFrame:SetScript("OnEvent", function(self, event, ...)
+    if event == "QUEST_DETAIL" then
+        OnQuestDetail()
+    elseif event == "GOSSIP_SHOW" then
+        OnGossipShow()
+    elseif event == "QUEST_GREETING" then
+        OnQuestGreeting()
+    end
 end)
