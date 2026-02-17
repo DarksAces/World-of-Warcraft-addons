@@ -1,0 +1,8 @@
+## Interface: 120000, 110200
+## Title: MountFlex
+## Notes: Frases automáticas RP al usar monturas (multilenguaje)
+## Author: Daniel
+## Version: 1.01
+## SavedVariables: MountFlexConfig
+MountFlex_Locales.lua
+MountFlex.lua

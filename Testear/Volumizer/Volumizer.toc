@@ -1,7 +1,0 @@
-## Interface: 120000
-## Title: Volumizer
-## Notes: Adds /vol command (0-100)
-## Author: DarkAce
-## Version: 1.0.0
-
-Volumizer.lua

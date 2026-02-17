@@ -1,0 +1,8 @@
+## Interface: 120001
+## Title: CleanChat
+## Notes: Mejora la interfaz del chat (oculta botones, scroll, timestamps, etc).
+## Author: Antigravity
+## Version: 1.0
+## SavedVariables: CleanChatDB
+
+CleanChat.lua

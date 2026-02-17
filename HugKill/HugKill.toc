@@ -1,0 +1,7 @@
+## Interface: 120000, 110200, 110207, 120000, 11505, 11506, 50400, 50401, 20505
+## Title: HugKill
+## Notes: Realiza una la emocion /amor cada vez que matas a un NPC o jugador.
+## Version: 1.0.0
+## Author: DarkAce
+## DefaultState: Enabled
+HugKill.lua

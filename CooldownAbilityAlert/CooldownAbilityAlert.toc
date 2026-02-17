@@ -1,0 +1,7 @@
+## Interface: 120000, 11307
+## Title: CooldownAbilityAlert
+## Notes: Simple alert when abilities are off cooldown
+## Author: Daniel
+## SavedVariables: CooldownDJ_Saved
+## Version: 1.0.1
+CooldownAbilityAlert.lua

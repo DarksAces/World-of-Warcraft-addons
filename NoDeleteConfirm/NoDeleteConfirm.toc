@@ -1,0 +1,5 @@
+## Interface: 120000, 110200
+## Title: NoDeleteConfirm
+## Notes: Autocompleta el texto de confirmación de borrado
+## Author: Daniel
+NoDeleteConfirm.lua

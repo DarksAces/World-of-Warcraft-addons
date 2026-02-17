@@ -1,6 +1,0 @@
-## Interface: 110200
-## Title: RandomColor
-## Notes: Cambia el color de la barra de vida según tipo de unidad con color aleatorio fijo y sin repetir por sesión
-## Author: Daniel
-## Version: 1.0
-RandomColor.lua

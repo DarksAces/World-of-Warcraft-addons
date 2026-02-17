@@ -1,0 +1,8 @@
+## Interface: 120000, 110007
+## Title: |cff00ff00Azeroth Candlesticks|r
+## Notes: Advanced financial visualization for the Auction House.
+## Author: DarkAce
+## Version: 1.0.1
+## SavedVariables: AzerothCandlesticksDB
+
+Core.lua

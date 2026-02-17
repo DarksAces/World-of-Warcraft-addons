@@ -1,7 +1,0 @@
-## Interface: 120000
-## Title: MerchantMate
-## Notes: Auto Sell and Repair
-## Author: DarkAce
-## Version: 1.0.0
-
-MerchantMate.lua

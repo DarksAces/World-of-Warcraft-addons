@@ -1,7 +1,0 @@
-## Interface: 120000
-## Title: CinemaSkip
-## Notes: Auto skips cinematics and movies
-## Author: DarkAce
-## Version: 1.0.0
-
-CinemaSkip.lua

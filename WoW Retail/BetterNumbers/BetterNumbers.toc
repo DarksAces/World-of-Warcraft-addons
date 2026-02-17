@@ -1,6 +1,0 @@
-## Interface: 110200
-## Title: BetterNumbers
-## Notes: Muestra vida , maná/poder con números acortados (K/M/B). Añadida configuración para decimales con comandos /decimals y /decimales.
-## Version: 1.0.0
-## Author: DarkAce
-BetterNumbers.lua

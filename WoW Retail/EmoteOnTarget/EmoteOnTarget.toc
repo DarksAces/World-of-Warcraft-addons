@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: EmoteOnTarget
-## Notes: ¡Ejecuta emotes personalizados al seleccionar un objetivo!
-## Author: DarkAce
-## Version: 1.0
-
-EmoteOnTarget.lua

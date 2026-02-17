@@ -1,6 +1,0 @@
-## Interface: 110200
-## Title: MobCounter
-## Notes: Un addon para contar monstruos y jugadores enemigos asesinados
-## Author: Daniel
-## Version: 1.02
-MobCounter.lua

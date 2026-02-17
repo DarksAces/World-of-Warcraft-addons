@@ -1,7 +1,0 @@
-## Interface: 120000
-## Title: SpeedForce
-## Notes: Display current movement speed
-## Author: DarkAce
-## Version: 1.0.0
-
-SpeedForce.lua

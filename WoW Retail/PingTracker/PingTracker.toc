@@ -1,7 +1,0 @@
-## Interface: 110200
-## Title: PingTracker
-## Notes: Mide tu latencia actual y detecta picos de lag.
-## Author: Daniel
-## Version: 1.02
-## SavedVariables: PingTrackerDB
-PingTracker.lua

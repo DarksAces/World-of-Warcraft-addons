@@ -1,0 +1,6 @@
+## Interface: 120001, 110200
+## Title: Auto Loot Filter Lite
+## Notes: Filtra automáticamente loot gris y permite bloquear objetos por nombre o calidad.
+## Author: Daniel
+## Version: 1.0
+AutoLootFilterLite.lua

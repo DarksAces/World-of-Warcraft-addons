@@ -1,0 +1,27 @@
+## Interface: 110200, 110207, 11505, 11506, 50400, 50401, 20505
+## Title: Better Combat Text Enhanced
+## Notes: Enhanced combat text with modern UI and improved functionality.
+## Author: DarkAce
+## Version: 3.0.1
+## SavedVariables: BCT_SavedSettings
+## OptionalDeps: 
+## X-Category: Combat
+
+# Utilities (load first)
+Utils\Colors.lua
+Utils\Formatting.lua
+
+# Core configuration
+Config.lua
+
+# UI Components
+UI\FloatingText.lua
+UI\CombatLog.lua
+UI\ConfigFrame.lua
+
+# Combat System
+Combat\GroupManager.lua
+Combat\Parser.lua
+
+# Main Core (load last)
+Core.lua

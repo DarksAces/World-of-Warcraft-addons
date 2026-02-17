@@ -1,0 +1,7 @@
+## Interface: 120000, 11405
+## Title: Personal Notes
+## Author: DarkAce
+## Version: 1.02
+## Notes: Allows you to take personal notes in-game
+## SavedVariables: PersonalNotesDB
+PersonalNotes.lua

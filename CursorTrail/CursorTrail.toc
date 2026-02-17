@@ -1,0 +1,8 @@
+## Interface: 120000, 110200, 110207, 120000, 11505, 11506, 50400, 50401, 20505
+## Title: CursorTrail
+## Notes: Deja un rastro detrás del cursor.
+## Author: Daniel
+## Version: 1.0.2.0
+## SavedVariables: CursorTrailDB
+
+CursorTrail.lua

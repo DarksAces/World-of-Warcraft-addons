@@ -1,0 +1,149 @@
+-- NEW: Update Statistics Stats
+function private.UpdateStatisticsStats(frame)
+    local format = TimeTrackerDB.settings.timeFormat or "complete"
+    
+    -- Clear previous frames
+    if frame.statsFrames then for _, f in pairs(frame.statsFrames) do f:Hide() end end
+    frame.statsFrames = frame.statsFrames or {}
+    
+    frame.statsMiscFS = frame.statsMiscFS or {}
+    for _, fs in ipairs(frame.statsMiscFS) do fs:Hide() end
+    local miscFSIndex = 0
+    local function GetMiscStatsFS()
+        miscFSIndex = miscFSIndex + 1
+        return CreateOrReuseFontString(frame.statsMiscFS, frame.statsContent, miscFSIndex, "GameFontHighlight")
+    end
+    
+    local yOffset = -10
+    
+    -- Initialization
+    local maxDay, maxWeek, maxMonth, maxYear = {key="", val=0}, {key="", val=0}, {key="", val=0}, {key="", val=0}
+    local totalAllTime = 0
+    local firstLogin = time() -- default to now
+    local dayOfWeekStats = {0,0,0,0,0,0,0} -- Sunday to Saturday
+    
+    -- Helper to check max
+    local function CheckMax(currentMax, key, val)
+        if val > currentMax.val then
+            currentMax.key = key
+            currentMax.val = val
+        end
+    end
+    
+    -- Iterate all CHARACTERS
+    -- We need to aggregate across all chars because records are Account Wide typically
+    -- But since we don't have a centralized account-wide table for *dates*, we have to merge them.
+    -- Merging daily data from all chars:
+    local accountDaily = {}
+    local accountWeekly = {}
+    local accountMonthly = {}
+    local accountYearly = {}
+    
+    for _, char in pairs(TimeTrackerDB.characters) do
+        if char.firstLogin and char.firstLogin < firstLogin then firstLogin = char.firstLogin end
+        
+        if char.daily then
+            for d, t in pairs(char.daily) do
+                accountDaily[d] = (accountDaily[d] or 0) + t
+                
+                -- Day of Week Analysis
+                 local y, m, day = string.match(d, "(%d+)-(%d+)-(%d+)")
+                 if y then
+                    local tDate = time({year=y, month=m, day=day})
+                    local wday = tonumber(date("%w", tDate)) + 1 -- Lua Sunday=1
+                    dayOfWeekStats[wday] = dayOfWeekStats[wday] + t
+                 end
+            end
+        end
+        if char.weekly then
+            for w, t in pairs(char.weekly) do accountWeekly[w] = (accountWeekly[w] or 0) + t end
+        end
+        if char.monthly then
+            for m, t in pairs(char.monthly) do accountMonthly[m] = (accountMonthly[m] or 0) + t end
+        end
+        if char.yearly then
+            for y, t in pairs(char.yearly) do accountYearly[y] = (accountYearly[y] or 0) + t end
+        end
+        if char.totalTime then totalAllTime = totalAllTime + char.totalTime end
+    end
+    
+    -- Calculate Max Records
+    for k, v in pairs(accountDaily) do CheckMax(maxDay, k, v) end
+    for k, v in pairs(accountWeekly) do CheckMax(maxWeek, k, v) end
+    for k, v in pairs(accountMonthly) do CheckMax(maxMonth, k, v) end
+    for k, v in pairs(accountYearly) do CheckMax(maxYear, k, v) end
+    
+    -- Calculate Averages
+    local daysSinceStart = math.max(1, math.ceil((time() - firstLogin) / 86400))
+    local dailyAvg = totalAllTime / daysSinceStart
+    
+    -- Calculate Favorite Day
+    local favDayIndex = 1
+    local favDayVal = 0
+    for i=1, 7 do
+        if dayOfWeekStats[i] > favDayVal then
+            favDayVal = dayOfWeekStats[i]
+            favDayIndex = i
+        end
+    end
+    local weekDays = {CALENDAR_SUNDAY, CALENDAR_MONDAY, CALENDAR_TUESDAY, CALENDAR_WEDNESDAY, CALENDAR_THURSDAY, CALENDAR_FRIDAY, CALENDAR_SATURDAY}
+    local favDayName = weekDays[favDayIndex]
+    
+    -- Calculate Projection
+    local currentYear = date("%Y")
+    local yearSoFar = accountYearly[currentYear] or 0
+    local dayOfYear = tonumber(date("%j"))
+    local projected = 0
+    if dayOfYear > 0 then
+        projected = (yearSoFar / dayOfYear) * 365
+    end
+
+    -- RENDER UI
+    local h = GetMiscStatsFS()
+    h:SetFontObject("GameFontNormalLarge")
+    h:SetPoint("TOPLEFT", 10, yOffset)
+    h:SetText(private.GetLocalizedText("RECORDS_TITLE"))
+    h:SetTextColor(1, 0.8, 0)
+    yOffset = yOffset - 30
+    
+    local function AddRecord(label, key, val, color)
+        local t = GetMiscStatsFS()
+        t:SetPoint("TOPLEFT", 20, yOffset)
+        t:SetText(label .. ":")
+        t:SetTextColor(0.7, 0.7, 0.7)
+        
+        local v = GetMiscStatsFS()
+        v:SetPoint("TOPLEFT", 200, yOffset)
+        local valStr = private.FormatTime(val, format)
+        if key ~= "" then valStr = valStr .. " |cff888888(" .. key .. ")|r" end
+        v:SetText(valStr)
+        if color then v:SetTextColor(unpack(color)) else v:SetTextColor(1, 1, 1) end
+        
+        yOffset = yOffset - 20
+    end
+    
+    AddRecord(private.GetLocalizedText("RECORD_DAY"), maxDay.key, maxDay.val, {1, 0.5, 0})
+    AddRecord(private.GetLocalizedText("RECORD_WEEK"), maxWeek.key, maxWeek.val, {1, 0.8, 0}) -- Orange
+    AddRecord(private.GetLocalizedText("RECORD_MONTH"), maxMonth.key, maxMonth.val, {0, 1, 0}) -- Green
+    AddRecord(private.GetLocalizedText("RECORD_YEAR"), maxYear.key, maxYear.val, {0, 0.6, 1}) -- Blue
+    
+    yOffset = yOffset - 20
+    h = GetMiscStatsFS(); h:SetFontObject("GameFontNormalLarge"); h:SetPoint("TOPLEFT", 10, yOffset); h:SetText("--- Insights ---"); h:SetTextColor(0.5, 0.8, 1); yOffset = yOffset - 30
+
+    AddRecord(private.GetLocalizedText("AVG_DAILY"), "", dailyAvg, {1, 1, 1})
+    
+    local t = GetMiscStatsFS()
+    t:SetPoint("TOPLEFT", 20, yOffset)
+    t:SetText(private.GetLocalizedText("MOST_PLAYED_DAY") .. ":")
+    t:SetTextColor(0.7, 0.7, 0.7)
+    local v = GetMiscStatsFS()
+    v:SetPoint("TOPLEFT", 200, yOffset)
+    v:SetText(favDayName)
+    v:SetTextColor(1, 1, 0)
+    yOffset = yOffset - 20
+    
+    AddRecord(private.GetLocalizedText("PROJECTED_YEAR"), currentYear, projected, {0.8, 0.5, 1})
+
+    local neededHeight = math.abs(yOffset) + 50
+    frame.statsContent:SetHeight(math.max(450, neededHeight))
+end

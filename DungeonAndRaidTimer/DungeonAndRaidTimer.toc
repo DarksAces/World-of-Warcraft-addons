@@ -1,0 +1,7 @@
+## Interface: 120000, 100207
+## Title: Dungeon and Raid Timer
+## Notes: Cronometra el tiempo de tus mazmorras y bandas, guarda mejores tiempos y promedio.
+## Author: Daniel
+## Version: 1.0.1
+## SavedVariables: DART_SavedTimes
+DungeonAndRaidTimer.lua
