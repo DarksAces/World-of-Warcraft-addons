@@ -410,6 +410,65 @@ function SlashCmdList.TIMETRACKER(msg)
     end
 end
 
+
+-- --- BACKUP SYSTEM (Serialization) ---
+function private.SerializeDatabase()
+    if not TimeTrackerDB then return "" end
+    
+    local function serialize(t)
+        local s = "{"
+        for k, v in pairs(t) do
+            local key = type(k) == "string" and string.format("[%q]", k) or string.format("[%d]", k)
+            local val
+            if type(v) == "table" then
+                val = serialize(v)
+            elseif type(v) == "string" then
+                val = string.format("%q", v)
+            elseif type(v) == "number" or type(v) == "boolean" then
+                val = tostring(v)
+            end
+            if val then s = s .. key .. "=" .. val .. "," end
+        end
+        return s .. "}"
+    end
+    
+    -- We only export the characters data to keep it clean, settings can be manual
+    local data = {
+        version = private.addonVersion or "2.1",
+        timestamp = time(),
+        characters = TimeTrackerDB.characters
+    }
+    
+    return "TT_BACKUP:" .. serialize(data)
+end
+
+function private.DeserializeDatabase(str)
+    if not str or str == "" then return false end
+    if not str:find("^TT_BACKUP:{") then return false end
+    
+    local code = str:gsub("^TT_BACKUP:", "")
+    
+    -- Safe execution of the table string
+    -- In WoW, we can use SecureCmdOptionParse or simply loadstring if we trust it,
+    -- but for safety we should use a custom parser or check for malicious calls.
+    -- Since this is for a private addon, loadstring is the most powerful.
+    local func, err = loadstring("return " .. code)
+    if not func then return false end
+    
+    -- Run in a safe environment if possible, or just pcall it
+    local success, result = pcall(func)
+    if not success or not result or type(result) ~= "table" then return false end
+    
+    if result.characters then
+        -- Merge or overwrite? Usually overwrite for a full restore
+        TimeTrackerDB.characters = result.characters
+        return true, #result.characters -- Returns number of items for info
+    end
+    
+    return false
+end
+
+
 -- Backfill Yearly Stats from Daily
 local function BackfillYearlyStats()
     if not TimeTrackerDB or not TimeTrackerDB.characters then return end

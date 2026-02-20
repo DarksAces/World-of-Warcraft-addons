@@ -100,6 +100,14 @@ L["en"] = {
     VIEW_MONTHS = "Months View",
     VIEW_DAYS = "Days View",
     CLICK_DETAILS = "Click for details",
+    BACKUP_TAB = "Backup",
+    EXPORT_BUTTON = "Export Data",
+    IMPORT_BUTTON = "Import Data",
+    BACKUP_DESC = "Use these tools to save your data outside of World of Warcraft. Copy the export code and save it in a safe place. To restore, paste the code in the box and click Import.",
+    EXPORT_SUCCESS = "Data exported to the box below. Copy it (Ctrl+C).",
+    IMPORT_SUCCESS = "Data imported successfully! Characters restored: %d",
+    IMPORT_ERROR = "Invalid backup code. Please check that you copied the full text.",
+    CONFIRM_IMPORT = "Warning: Importing data will overwrite your current statistics. Are you sure?",
 }
 
 -- Spanish
@@ -211,6 +219,14 @@ L["es"] = {
     VIEW_MONTHS = "Vista Mensual",
     VIEW_DAYS = "Vista Diaria",
     CLICK_DETAILS = "Haz clic para ver detalles",
+    BACKUP_TAB = "Copia Seguridad",
+    EXPORT_BUTTON = "Exportar Datos",
+    IMPORT_BUTTON = "Importar Datos",
+    BACKUP_DESC = "Usa estas herramientas para guardar tus datos fuera de World of Warcraft. Copia el código de exportación y guárdalo en un lugar seguro. Para restaurar, pega el código en el cuadro y pulsa Importar.",
+    EXPORT_SUCCESS = "Datos exportados al cuadro inferior. Cópialos (Ctrl+C).",
+    IMPORT_SUCCESS = "¡Datos importados con éxito! Personajes restaurados: %d",
+    IMPORT_ERROR = "Código de copia de seguridad no válido. Asegúrate de haber copiado todo el texto.",
+    CONFIRM_IMPORT = "Aviso: Importar datos sobrescribirá tus estadísticas actuales. ¿Estás seguro?",
 }
 
 -- Get localized string function

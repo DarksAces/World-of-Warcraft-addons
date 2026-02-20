@@ -4,10 +4,21 @@ local addonName, private = ...
 local TimeTrackerFrame = nil
 
 -- UI Helper: Create Dropdown
+-- UI Helper: Create Dropdown (Modernized)
+local dropdownIndex = 0
 local function CreateTimeFormatDropdown(parent, xOffset, yOffset)
-    local dropdown = CreateFrame("Button", nil, parent, "UIDropDownMenuTemplate")
+    dropdownIndex = dropdownIndex + 1
+    local name = addonName .. "Dropdown" .. dropdownIndex
+    local dropdown = CreateFrame("Button", name, parent, "UIDropDownMenuTemplate")
     dropdown:SetPoint("TOPLEFT", parent, "TOPLEFT", xOffset, yOffset)
     UIDropDownMenu_SetWidth(dropdown, 150)
+    
+    -- Text styling
+    local text = _G[name.."Text"]
+    if text then text:SetFontObject("GameFontNormal") end
+
+
+    
     UIDropDownMenu_SetText(dropdown, private.GetLocalizedText("COMPLETE_FORMAT"))
     
     local function OnClick(self, arg1, arg2)
@@ -31,26 +42,27 @@ local function CreateTimeFormatDropdown(parent, xOffset, yOffset)
     local function Initialize()
         local info = UIDropDownMenu_CreateInfo()
         info.func = OnClick
+        info.padding = 10
 
-        info.text = private.GetLocalizedText("ONLY_HOURS")
+        info.text = "|cffffffff" .. private.GetLocalizedText("ONLY_HOURS") .. "|r"
         info.arg1 = "hours"
         info.arg2 = private.GetLocalizedText("ONLY_HOURS")
         info.checked = (TimeTrackerDB.settings.timeFormat == "hours")
         UIDropDownMenu_AddButton(info)
         
-        info.text = private.GetLocalizedText("ONLY_MINUTES")
+        info.text = "|cffffffff" .. private.GetLocalizedText("ONLY_MINUTES") .. "|r"
         info.arg1 = "minutes"
         info.arg2 = private.GetLocalizedText("ONLY_MINUTES")
         info.checked = (TimeTrackerDB.settings.timeFormat == "minutes")
         UIDropDownMenu_AddButton(info)
         
-        info.text = private.GetLocalizedText("ONLY_SECONDS")
+        info.text = "|cffffffff" .. private.GetLocalizedText("ONLY_SECONDS") .. "|r"
         info.arg1 = "seconds"
         info.arg2 = private.GetLocalizedText("ONLY_SECONDS")
         info.checked = (TimeTrackerDB.settings.timeFormat == "seconds")
         UIDropDownMenu_AddButton(info)
         
-        info.text = private.GetLocalizedText("COMPLETE_FORMAT")
+        info.text = "|cffffffff" .. private.GetLocalizedText("COMPLETE_FORMAT") .. "|r"
         info.arg1 = "complete"
         info.arg2 = private.GetLocalizedText("COMPLETE_FORMAT")
         info.checked = (TimeTrackerDB.settings.timeFormat == "complete")
@@ -62,57 +74,95 @@ local function CreateTimeFormatDropdown(parent, xOffset, yOffset)
 end
 
 
+
 -- UI Helper: Create Standard List Entry
 local function CreateEntryFrame(parent)
-    local frame = CreateFrame("Button", nil, parent)
-    frame:SetSize(430, 50)
+    local frame = CreateFrame("Button", nil, parent, "BackdropTemplate")
+    frame:SetSize(430, 52)
     
-    -- Background for striping/hover
-    frame.bg = frame:CreateTexture(nil, "BACKGROUND")
-    frame.bg:SetAllPoints()
-    frame.bg:SetColorTexture(1, 1, 1, 0.05)
-    frame.bg:Hide()
+    -- Background with rounded edges effect
+    frame:SetBackdrop({
+        bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
+        edgeFile = "Interface\\Buttons\\WHITE8X8",
+        tile = true, tileSize = 16, edgeSize = 1,
+        insets = { left = 0, right = 0, top = 0, bottom = 0 }
+    })
+    frame:SetBackdropColor(0.05, 0.05, 0.05, 0.5)
+    frame:SetBackdropBorderColor(1, 1, 1, 0.1)
     
     frame:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight")
-    frame:GetHighlightTexture():SetAlpha(0.3)
+    frame:GetHighlightTexture():SetAlpha(0.15)
     
-    -- Icon (optional)
-    frame.icon = frame:CreateTexture(nil, "ARTWORK")
-    frame.icon:SetSize(36, 36)
-    frame.icon:SetPoint("LEFT", 5, 0)
-    frame.icon:Hide() 
+    -- Icon (optional) with border
+    frame.iconContainer = CreateFrame("Frame", nil, frame, "BackdropTemplate")
+    frame.iconContainer:SetSize(38, 38)
+    frame.iconContainer:SetPoint("LEFT", 6, 0)
+    frame.iconContainer:SetBackdrop({
+        edgeFile = "Interface\\Buttons\\WHITE8X8",
+        edgeSize = 1,
+    })
+    frame.iconContainer:SetBackdropBorderColor(0.4, 0.4, 0.4, 0.5)
+
+    frame.icon = frame.iconContainer:CreateTexture(nil, "ARTWORK")
+    frame.icon:SetAllPoints()
+    frame.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 
     -- Name
-    frame.name = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightMedium")
-    frame.name:SetPoint("TOPLEFT", 45, -5)
+    frame.name = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+
+    frame.name:SetPoint("TOPLEFT", 50, -8)
     frame.name:SetJustifyH("LEFT")
     
     -- Right Text (Total Time)
     frame.rightText = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    frame.rightText:SetPoint("TOPRIGHT", -10, -5)
+    frame.rightText:SetPoint("TOPRIGHT", -12, -8)
     
-    -- Status Bar
+    -- Status Bar (Modern style)
     frame.bar = CreateFrame("StatusBar", nil, frame)
-    frame.bar:SetSize(380, 14)
-    frame.bar:SetPoint("TOPLEFT", frame.name, "BOTTOMLEFT", 0, -3)
+    frame.bar:SetSize(370, 10)
+    frame.bar:SetPoint("TOPLEFT", frame.name, "BOTTOMLEFT", 0, -4)
     frame.bar:SetStatusBarTexture("Interface\\RaidFrame\\Raid-Bar-Hp-Fill")
     frame.bar:GetStatusBarTexture():SetHorizTile(false)
     
     local barBg = frame.bar:CreateTexture(nil, "BACKGROUND")
     barBg:SetAllPoints()
-    barBg:SetColorTexture(0.1, 0.1, 0.1, 0.5)
+    barBg:SetColorTexture(0, 0, 0, 0.6)
     
+    -- Bar Glow/Gloss
+    local barGloss = frame.bar:CreateTexture(nil, "OVERLAY")
+    barGloss:SetAllPoints()
+    barGloss:SetTexture("Interface\\Buttons\\WHITE8X8")
+    barGloss:SetGradient("VERTICAL", CreateColor(1,1,1,0.1), CreateColor(1,1,1,0))
+
     -- Bar Text (Overlay on bar)
     frame.barText = frame.bar:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-    frame.barText:SetPoint("CENTER", 0, 0)
+    frame.barText:SetPoint("CENTER", 0, 1)
+    frame.barText:SetScale(0.9)
     
     -- Subtext (Details below bar)
     frame.subText = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     frame.subText:SetPoint("TOPLEFT", frame.bar, "BOTTOMLEFT", 0, -3)
-    frame.subText:SetTextColor(0.6, 0.6, 0.6)
+    frame.subText:SetTextColor(0.5, 0.5, 0.5)
+
+    -- Helper to toggle icon
+    frame.ToggleIcon = function(self, show)
+        if show then
+            self.iconContainer:Show()
+            self.name:SetPoint("TOPLEFT", 50, -8)
+            self.bar:SetPoint("TOPLEFT", self.name, "BOTTOMLEFT", 0, -4)
+            self.bar:SetWidth(370)
+        else
+            self.iconContainer:Hide()
+            self.name:SetPoint("TOPLEFT", 10, -8)
+            self.bar:SetPoint("TOPLEFT", self.name, "BOTTOMLEFT", 0, -4)
+            self.bar:SetWidth(410)
+        end
+    end
     
     return frame
 end
+
+
 
 -- Helper: Create/Reuse FontString
 local function CreateOrReuseFontString(framePool, parent, index, fontTemplate)
@@ -309,7 +359,12 @@ function private.UpdateClassesStats(frame)
         entry:SetPoint("TOPLEFT", 10, yOffset)
         entry:Show()
         
-        if i % 2 == 1 then entry.bg:Show() else entry.bg:Hide() end
+        if i % 2 == 1 then 
+            entry:SetBackdropColor(0.08, 0.08, 0.08, 0.8) 
+        else 
+            entry:SetBackdropColor(0.03, 0.03, 0.03, 0.4) 
+        end
+
         
         local hex = private.GetClassHexColor and private.GetClassHexColor(classData.english) or "ffffffff"
         local r,g,b = 1,1,1
@@ -319,7 +374,7 @@ function private.UpdateClassesStats(frame)
         if type(r) ~= "number" then r,g,b = 1,1,1 end
         
         -- Icon
-        entry.icon:Show()
+        entry:ToggleIcon(true)
         entry.icon:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
         local coords = CLASS_ICON_TCOORDS[classData.english]
         if coords then
@@ -336,6 +391,7 @@ function private.UpdateClassesStats(frame)
         entry.bar:SetValue(classData.time)
         entry.bar:SetStatusBarColor(r,g,b)
         entry.barText:SetText(string.format("%.1f%%", pct * 100))
+
         
         entry.subText:SetText(private.GetLocalizedText("THIS_YEAR_LABEL") .. ": " .. private.FormatTime(classData.yearly, format))
         
@@ -432,15 +488,19 @@ function private.UpdateRacesStats(frame)
         entry:SetPoint("TOPLEFT", 10, yOffset)
         entry:Show()
         
-        if i % 2 == 1 then entry.bg:Show() else entry.bg:Hide() end
+        if i % 2 == 1 then 
+            entry:SetBackdropColor(0.08, 0.08, 0.08, 0.8) 
+        else 
+            entry:SetBackdropColor(0.03, 0.03, 0.03, 0.4) 
+        end
+
         
         -- Icon
-        entry.icon:Hide()
-        entry.name:SetPoint("TOPLEFT", 10, -5) -- Adjust name since no icon
-        entry.bar:SetWidth(410)
+        entry:ToggleIcon(false)
         
         entry.name:SetText(raceData.name)
         entry.rightText:SetText(private.FormatTime(raceData.time, format))
+
         
         local pct = totalAccountTime > 0 and (raceData.time / totalAccountTime) or 0
         entry.bar:SetMinMaxValues(0, totalAccountTime > 0 and totalAccountTime or 1)
@@ -528,7 +588,12 @@ function private.UpdateCharactersStats(frame)
         entry:Show()
         
         -- Striping
-        if i % 2 == 1 then entry.bg:Show() else entry.bg:Hide() end
+        if i % 2 == 1 then 
+            entry:SetBackdropColor(0.08, 0.08, 0.08, 0.8) 
+        else 
+            entry:SetBackdropColor(0.03, 0.03, 0.03, 0.4) 
+        end
+
         
         local char = charData.char
         local hex = private.GetClassHexColor and private.GetClassHexColor(char.classFile) or "ffffffff"
@@ -539,7 +604,7 @@ function private.UpdateCharactersStats(frame)
         if type(classColorR) ~= "number" then classColorR, classColorG, classColorB = 1, 1, 1 end
 
         -- Icon
-        entry.icon:Show()
+        entry:ToggleIcon(true)
         SetPortraitTexture(entry.icon, "player") -- Fallback or placeholder, ideal would be class icon
         entry.icon:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
         local coords =CLASS_ICON_TCOORDS[char.classFile]
@@ -553,6 +618,7 @@ function private.UpdateCharactersStats(frame)
         if charData.key == private.playerKey then nameStr = nameStr .. " |cff00ff00(" .. private.GetLocalizedText("CURRENT") .. ")" .. "|r" end
         entry.name:SetText(nameStr)
         entry.rightText:SetText(private.FormatTime(char.totalTime, format))
+
         
         local pct = totalAccountTime > 0 and (char.totalTime / totalAccountTime) or 0
         entry.bar:SetMinMaxValues(0, totalAccountTime > 0 and totalAccountTime or 1)
@@ -688,59 +754,44 @@ function private.UpdateActivitiesStats(frame)
     for i, data in ipairs(characters) do
         local entry = frame.activityFrames[i]
         if not entry then
-            entry = CreateFrame("Frame", nil, frame.activitiesContent)
-            entry:SetSize(410, 50)
-            
-            -- Striped background
-            entry.bg = entry:CreateTexture(nil, "BACKGROUND")
-            entry.bg:SetAllPoints()
-            entry.bg:SetColorTexture(1, 1, 1, 0.05)
-            
-            entry.name = entry:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-            entry.name:SetPoint("TOPLEFT", entry, "TOPLEFT", 5, -5)
-            
-            entry.bar = CreateFrame("StatusBar", nil, entry)
-            entry.bar:SetSize(280, 10)
-            entry.bar:SetPoint("TOPLEFT", entry.name, "BOTTOMLEFT", 0, -5)
-            entry.bar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
-            entry.bar:GetStatusBarTexture():SetHorizTile(false)
-            local bg = entry.bar:CreateTexture(nil, "BACKGROUND"); bg:SetAllPoints(); bg:SetColorTexture(0.2,0.2,0.2,0.5)
-            entry.timeText = entry.bar:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-            entry.timeText:SetPoint("CENTER", 0, 0)
-            
-            -- Details line
-            entry.details = entry:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-            entry.details:SetPoint("TOPLEFT", entry.bar, "BOTTOMLEFT", 0, -3)
-            entry.details:SetTextColor(0.7, 0.7, 0.7)
-            
+            entry = CreateEntryFrame(frame.activitiesContent)
             frame.activityFrames[i] = entry
         end
         entry:SetPoint("TOPLEFT", frame.activitiesContent, "TOPLEFT", 10, yOffset)
         entry:Show()
         
-        -- Stripe visibility
-        if i % 2 == 0 then entry.bg:Show() else entry.bg:Hide() end
+        if i % 2 == 1 then 
+            entry:SetBackdropColor(0.08, 0.08, 0.08, 0.8) 
+        else 
+            entry:SetBackdropColor(0.03, 0.03, 0.03, 0.4) 
+        end
         
         local char = data.char
         local hex = private.GetClassHexColor and private.GetClassHexColor(char.classFile) or "ffffffff"
         local r,g,b = private.GetClassRGB and private.GetClassRGB(char.classFile) or 1,1,1
         
+        -- Customizing the standard entry for activities
+        entry:ToggleIcon(true)
+        entry.icon:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
+        local coords = CLASS_ICON_TCOORDS[char.classFile]
+        if coords then entry.icon:SetTexCoord(unpack(coords)) end
+
         entry.name:SetText("|c" .. hex .. char.name .. "|r (" .. (char.realm or "") .. ")")
+        entry.rightText:SetText(private.FormatTime(data.val, format))
+
         
         local pct = totalActivityTime > 0 and (data.val / totalActivityTime) or 0
         entry.bar:SetMinMaxValues(0, totalActivityTime > 0 and totalActivityTime or 1)
         entry.bar:SetValue(data.val)
         entry.bar:SetStatusBarColor(r, g, b, 0.8)
+        entry.barText:SetText(string.format("%.1f%%", pct * 100))
         
-        entry.timeText:SetText(private.FormatTime(data.val, format) .. string.format(" (%.1f%%)", pct * 100))
-        
-        -- Detailed text for this character
-        entry.details:SetText(
+        entry.subText:SetText(
             private.GetLocalizedText("THIS_YEAR_LABEL") .. ": " .. private.FormatTime(data.valYear, format) .. " | " ..
             private.GetLocalizedText("TODAY") .. ": " .. private.FormatTime(data.valToday, format)
         )
         
-        yOffset = yOffset - 50
+        yOffset = yOffset - 55
     end
     
     local neededHeight = math.abs(yOffset) + 50
@@ -750,52 +801,63 @@ end
 -- UI Helper: Create Custom Tab Button
 local function CreateTabButton(parent, text, width)
     local btn = CreateFrame("Button", nil, parent, "BackdropTemplate")
-    btn:SetSize(width, 30)
+    btn:SetSize(width, 32)
     
     btn:SetBackdrop({
         bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
-        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-        tile = true, tileSize = 16, edgeSize = 12,
-        insets = { left = 3, right = 3, top = 3, bottom = 3 }
+        edgeFile = "Interface\\Buttons\\WHITE8X8",
+        tile = true, tileSize = 16, edgeSize = 1,
+        insets = { left = 0, right = 0, top = 0, bottom = 0 }
     })
-    btn:SetBackdropColor(0.1, 0.1, 0.1, 0.9)
-    btn:SetBackdropBorderColor(0.4, 0.4, 0.4)
+    btn:SetBackdropColor(0.08, 0.08, 0.1, 0.95)
+    btn:SetBackdropBorderColor(1, 1, 1, 0.1)
     
     btn.text = btn:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    btn.text:SetPoint("CENTER")
+    btn.text:SetPoint("CENTER", 0, 1)
     btn.text:SetText(text)
+    btn.text:SetScale(0.95)
     
-    -- Highlight Texture
-    local hl = btn:CreateTexture(nil, "HIGHLIGHT")
-    hl:SetAllPoints()
-    hl:SetColorTexture(1, 1, 1, 0.1)
-    
-    -- Selected Indicator (Bottom Bar)
+    -- Highlight state
+    btn:SetScript("OnEnter", function(self)
+        if not self.selected then
+            self:SetBackdropColor(0.15, 0.15, 0.2, 1)
+            self:SetBackdropBorderColor(1, 1, 1, 0.3)
+        end
+    end)
+    btn:SetScript("OnLeave", function(self)
+        if not self.selected then
+            self:SetBackdropColor(0.08, 0.08, 0.1, 0.95)
+            self:SetBackdropBorderColor(1, 1, 1, 0.1)
+        end
+    end)
+
+    -- Selected Indicator (Top Bar - more modern)
     btn.selectedBar = btn:CreateTexture(nil, "OVERLAY")
-    btn.selectedBar:SetHeight(3)
-    btn.selectedBar:SetPoint("BOTTOMLEFT", 4, 3)
-    btn.selectedBar:SetPoint("BOTTOMRIGHT", -4, 3)
-    btn.selectedBar:SetColorTexture(1, 0.8, 0)
+    btn.selectedBar:SetHeight(2)
+    btn.selectedBar:SetPoint("TOPLEFT", 1, -1)
+    btn.selectedBar:SetPoint("TOPRIGHT", -1, -1)
+    btn.selectedBar:SetColorTexture(0, 0.8, 1) -- Cyan accent for modern feel
     btn.selectedBar:Hide()
 
     -- Method to set state
     btn.SetSelected = function(self, isSelected)
         self.selected = isSelected
         if isSelected then
-            self:SetBackdropColor(0.2, 0.2, 0.2, 1)
-            self:SetBackdropBorderColor(1, 0.8, 0) -- Gold border
+            self:SetBackdropColor(0.02, 0.02, 0.05, 1)
+            self:SetBackdropBorderColor(0, 0.8, 1, 0.6)
             self.text:SetTextColor(1, 1, 1)
             self.selectedBar:Show()
         else
-            self:SetBackdropColor(0.1, 0.1, 0.1, 0.9)
-            self:SetBackdropBorderColor(0.4, 0.4, 0.4)
-            self.text:SetTextColor(1, 0.82, 0) -- Normal yellow
+            self:SetBackdropColor(0.08, 0.08, 0.1, 0.95)
+            self:SetBackdropBorderColor(1, 1, 1, 0.1)
+            self.text:SetTextColor(0.7, 0.7, 0.8)
             self.selectedBar:Hide()
         end
     end
     
     return btn
 end
+
 
 -- Update Tab Appearance (Updated for new buttons)
 local function UpdateTabAppearance(frame)
@@ -964,8 +1026,14 @@ function private.UpdateSummaryStats(frame)
         entry.dataKey = data.key
         entry:SetPoint("TOPLEFT", 10, yOffset)
         entry:Show()
-        if i % 2 == 1 then entry.bg:Show() else entry.bg:Hide() end
-        entry.icon:Hide(); entry.name:SetPoint("TOPLEFT", 10, -5); entry.bar:SetWidth(410)
+        if i % 2 == 1 then 
+            entry:SetBackdropColor(0.08, 0.08, 0.08, 0.8) 
+        else 
+            entry:SetBackdropColor(0.03, 0.03, 0.03, 0.4) 
+        end
+
+        entry:ToggleIcon(false)
+
         
         local displayName = data.key
         if state.view == "months" then
@@ -998,8 +1066,9 @@ function private.UpdateSummaryStats(frame)
              sub = private.GetLocalizedText("TIME_COLON") .. " " .. private.FormatTime(data.time, format)
              
              -- Colors only (No Icons)
-             entry.icon:Hide()
+             entry:ToggleIcon(false)
              local r, g, b = 1, 1, 1
+
              
              if actKey == "afk" then 
                 r,g,b = 0.5, 0.5, 0.5 -- Grey
@@ -1035,11 +1104,8 @@ function private.UpdateSummaryStats(frame)
              
              -- Override display name as we set it above
              displayName = actName
-             
-             -- Standard layout
-             entry.name:SetPoint("TOPLEFT", 10, -5)
-             entry.bar:SetWidth(410)
         elseif state.view == "days" then
+
             sub = private.GetLocalizedText("CLICK_DETAILS") or "Click for details"
         elseif state.view == "years" then 
             sub = private.GetLocalizedText("TOTAL_YEAR")
@@ -1259,10 +1325,18 @@ function private.UpdateStatisticsStats(frame)
     frame.statsContent:SetHeight(math.max(450, neededHeight))
 end
 
+-- Update Backup Panel
+function private.UpdateBackupPanel(frame)
+    if not frame.backupPanel then return end
+    -- The panel is static, but we can clear the box if needed
+    -- frame.backupEditBox:SetText("")
+end
+
+
 -- Create Main Frame
 function private.CreateMainFrame()
-    local frame = CreateFrame("Frame", "TimeTrackerFrame", UIParent, "BasicFrameTemplateWithInset")
-    frame:SetSize(660, 600) -- Slightly wider to fit tabs nicely
+    local frame = CreateFrame("Frame", "TimeTrackerFrame", UIParent, "BasicFrameTemplateWithInset, BackdropTemplate")
+    frame:SetSize(720, 620) -- Slightly larger for a more spacious feel
     frame:SetPoint("CENTER")
     frame:SetMovable(true)
     frame:EnableMouse(true)
@@ -1271,16 +1345,32 @@ function private.CreateMainFrame()
     frame:SetScript("OnDragStop", frame.StopMovingOrSizing)
     frame:Hide()
     
+    -- Close button override for better look
+    if frame.CloseButton then
+        frame.CloseButton:SetScale(0.8)
+        frame.CloseButton:SetPoint("TOPRIGHT", -5, -5)
+    end
+
+    -- Main Frame Styling
+    frame:SetBackdrop({
+        bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
+        edgeFile = "Interface\\Buttons\\WHITE8X8",
+        tile = true, tileSize = 16, edgeSize = 1,
+        insets = { left = 0, right = 0, top = 0, bottom = 0 }
+    })
+    frame:SetBackdropColor(0, 0, 0, 0.95)
+    frame:SetBackdropBorderColor(0, 0.8, 1, 0.5) -- Cyan glow
+
     frame.title = frame:CreateFontString(nil, "OVERLAY")
     frame.title:SetFontObject("GameFontHighlightLarge")
-    frame.title:SetPoint("TOP", frame.TitleBg, "TOP", 0, -5)
-    frame.title:SetText(private.GetLocalizedText("ADDON_NAME"))
+    frame.title:SetPoint("TOP", frame, "TOP", 0, -5)
+    frame.title:SetText("|cff00ccff" .. private.GetLocalizedText("ADDON_NAME") .. "|r")
 
-    if frame.Inset and frame.Inset.Bg then
-        frame.Inset.Bg:SetTexture("Interface\\FrameGeneral\\UI-Background-Marble")
-        frame.Inset.Bg:SetHorizTile(true)
-        frame.Inset.Bg:SetVertTile(true)
+    if frame.Inset then
+        frame.Inset:SetPoint("TOPLEFT", frame, "TOPLEFT", 10, -50)
+        frame.Inset:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -10, 10)
     end
+
 
     -- Tab Container (to center them if needed, or just position relative)
     local startX = 15
@@ -1308,6 +1398,11 @@ function private.CreateMainFrame()
     -- Tab Statistics (New)
     frame.tabStatistics = CreateTabButton(frame, private.GetLocalizedText("STATISTICS_TAB"), 90)
     frame.tabStatistics:SetPoint("LEFT", frame.tabSummary, "RIGHT", 5, 0)
+    
+    -- Tab Backup (Newest)
+    frame.tabBackup = CreateTabButton(frame, private.GetLocalizedText("BACKUP_TAB"), 70)
+    frame.tabBackup:SetPoint("LEFT", frame.tabStatistics, "RIGHT", 5, 0)
+
 
     frame.personalPanel = CreateFrame("Frame", nil, frame)
     frame.personalPanel:SetPoint("TOPLEFT", frame, "TOPLEFT", 15, -55)
@@ -1525,6 +1620,86 @@ function private.CreateMainFrame()
     frame.statsContent:SetSize(600, 500)
     frame.statsScrollFrame:SetScrollChild(frame.statsContent)
 
+    -- Panel Backup
+    frame.backupPanel = CreateFrame("Frame", nil, frame)
+    frame.backupPanel:SetPoint("TOPLEFT", frame, "TOPLEFT", 15, -55)
+    frame.backupPanel:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -15, 15)
+    frame.backupPanel:Hide()
+
+    local backupTitle = frame.backupPanel:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    backupTitle:SetPoint("TOPLEFT", 10, -10)
+    backupTitle:SetText(private.GetLocalizedText("BACKUP_TAB"))
+    backupTitle:SetTextColor(1, 0.8, 0)
+
+    local backupDesc = frame.backupPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    backupDesc:SetPoint("TOPLEFT", 10, -40)
+    backupDesc:SetPoint("TOPRIGHT", -10, -40)
+    backupDesc:SetJustifyH("LEFT")
+    backupDesc:SetText(private.GetLocalizedText("BACKUP_DESC"))
+
+    -- Scrollable EditBox for the code
+    local ebScroll = CreateFrame("ScrollFrame", "TimeTrackerBackupScroll", frame.backupPanel, "UIPanelScrollFrameTemplate, BackdropTemplate")
+    ebScroll:SetSize(600, 300)
+    ebScroll:SetPoint("TOPLEFT", 10, -100)
+    ebScroll:SetBackdrop({
+        bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
+        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+        tile = true, tileSize = 16, edgeSize = 12,
+        insets = { left = 3, right = 3, top = 3, bottom = 3 }
+    })
+    ebScroll:SetBackdropColor(0, 0, 0, 0.5)
+
+    local editBox = CreateFrame("EditBox", nil, ebScroll)
+    editBox:SetMultiLine(true)
+    editBox:SetMaxLetters(0)
+    editBox:SetFontObject("ChatFontNormal")
+    editBox:SetWidth(580)
+    editBox:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
+    ebScroll:SetScrollChild(editBox)
+    frame.backupEditBox = editBox
+
+    -- Buttons
+    local exportBtn = CreateFrame("Button", nil, frame.backupPanel, "UIPanelButtonTemplate")
+    exportBtn:SetSize(150, 30)
+    exportBtn:SetPoint("TOPLEFT", ebScroll, "BOTTOMLEFT", 0, -10)
+    exportBtn:SetText(private.GetLocalizedText("EXPORT_BUTTON"))
+    exportBtn:SetScript("OnClick", function()
+        local code = private.SerializeDatabase()
+        editBox:SetText(code)
+        editBox:SetFocus()
+        editBox:HighlightText()
+        print("|cff00ff00Time Tracker:|r " .. private.GetLocalizedText("EXPORT_SUCCESS"))
+    end)
+
+    local importBtn = CreateFrame("Button", nil, frame.backupPanel, "UIPanelButtonTemplate")
+    importBtn:SetSize(150, 30)
+    importBtn:SetPoint("LEFT", exportBtn, "RIGHT", 10, 0)
+    importBtn:SetText(private.GetLocalizedText("IMPORT_BUTTON"))
+    importBtn:SetScript("OnClick", function()
+        StaticPopup_Show("TIMETRACKER_CONFIRM_IMPORT")
+    end)
+
+    -- Confirmation Popup
+    StaticPopupDialogs["TIMETRACKER_CONFIRM_IMPORT"] = {
+        text = private.GetLocalizedText("CONFIRM_IMPORT"),
+        button1 = YES,
+        button2 = NO,
+        OnAccept = function()
+            local code = editBox:GetText()
+            local success, count = private.DeserializeDatabase(code)
+            if success then
+                print("|cff00ff00Time Tracker:|r " .. string.format(private.GetLocalizedText("IMPORT_SUCCESS"), count or 0))
+                ReloadUI()
+            else
+                print("|cffff0000Time Tracker:|r " .. private.GetLocalizedText("IMPORT_ERROR"))
+            end
+        end,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+    }
+
+
     -- Update Tabs
     local function HideAllPanels()
         frame.personalPanel:Hide()
@@ -1534,6 +1709,8 @@ function private.CreateMainFrame()
         frame.activitiesPanel:Hide()
         frame.summaryPanel:Hide()
         frame.statsPanel:Hide()
+        frame.backupPanel:Hide()
+
         
         -- Also hide temporary buttons from other tabs if any
         if frame.summaryBackButton then frame.summaryBackButton:Hide() end
@@ -1547,7 +1724,9 @@ function private.CreateMainFrame()
         frame.tabActivities.selected = false
         frame.tabSummary.selected = false
         frame.tabStatistics.selected = false
+        frame.tabBackup.selected = false
     end
+
 
     frame.tabPersonal:SetScript("OnClick", function()
         DeselectAllTabs(); frame.tabPersonal.selected = true; UpdateTabAppearance(frame); HideAllPanels(); frame.personalPanel:Show(); private.UpdateCurrentCharacterStats(frame)
@@ -1570,6 +1749,10 @@ function private.CreateMainFrame()
     frame.tabStatistics:SetScript("OnClick", function()
         DeselectAllTabs(); frame.tabStatistics.selected = true; UpdateTabAppearance(frame); HideAllPanels(); frame.statsPanel:Show(); private.UpdateStatisticsStats(frame)
     end)
+    frame.tabBackup:SetScript("OnClick", function()
+        DeselectAllTabs(); frame.tabBackup.selected = true; UpdateTabAppearance(frame); HideAllPanels(); frame.backupPanel:Show(); private.UpdateBackupPanel(frame)
+    end)
+
 
     UpdateTabAppearance(frame)
     TimeTrackerFrame = frame
