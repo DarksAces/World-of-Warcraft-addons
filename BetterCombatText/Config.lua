@@ -31,6 +31,7 @@ BCT.defaults = {
     autoHide = false,
     autoHideDelay = 5.0,
     showPercentages = false, -- <--- ¡NUEVO!
+    abbreviateNumbers = true, -- <--- ¡NUEVO!
     -- Added defaults for combat log frame position/size (Persistencia)
     logPanelX = 0,
     logPanelY = 0,

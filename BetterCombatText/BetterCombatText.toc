@@ -2,7 +2,7 @@
 ## Title: Better Combat Text Enhanced
 ## Notes: Enhanced combat text with modern UI and improved functionality.
 ## Author: DarkAce
-## Version: 3.0.1
+## Version: 3.0.2
 ## SavedVariables: BCT_SavedSettings
 ## OptionalDeps: 
 ## X-Category: Combat

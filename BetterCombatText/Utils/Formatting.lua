@@ -11,6 +11,11 @@ local BCT = _G[addonName]
 function BCT:FormatNumber(number)
     if not number then return "0" end
     
+    -- If abbreviation is disabled, return the full number
+    if self.config.abbreviateNumbers == false then
+        return tostring(math.floor(number))
+    end
+    
     if number >= 1000000 then
         return string.format("%.1fM", number / 1000000)
     elseif number >= 1000 then

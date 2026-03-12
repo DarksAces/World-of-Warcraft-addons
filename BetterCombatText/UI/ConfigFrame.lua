@@ -275,6 +275,18 @@ function BCT:CreateDisplayTab(parent)
     end)
     yOffset = yOffset - 30
     
+    -- NUEVO: Abreviar Números
+    local abbreviateCheck = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
+    abbreviateCheck:SetPoint("TOPLEFT", parent, "TOPLEFT", 20, yOffset)
+    abbreviateCheck:SetChecked(self.config.abbreviateNumbers)
+    abbreviateCheck.text = abbreviateCheck:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    abbreviateCheck.text:SetPoint("LEFT", abbreviateCheck, "RIGHT", 5, 0)
+    abbreviateCheck.text:SetText("Abbreviate Numbers (e.g. 2.1k)")
+    abbreviateCheck:SetScript("OnClick", function(self)
+        BCT.config.abbreviateNumbers = self:GetChecked()
+    end)
+    yOffset = yOffset - 30
+    
     -- Compact Mode
     local compactCheck = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
     compactCheck:SetPoint("TOPLEFT", parent, "TOPLEFT", 20, yOffset)

@@ -45,7 +45,7 @@ function BCT:AddToGroup(amount, color, size, isOutgoing)
     
     -- El total y count ya fueron actualizados en ShouldGroup
     
-    local text = self:FormatNumber(group.total) .. " (" .. group.count .. ")"
+    local text = self:FormatNumber(group.total)
     self:DisplayFloatingText(text, color, size, false, false, false, true)
     
     -- IMPORTANTE: Reiniciar el grupo después de mostrar el número acumulado (Fix)
