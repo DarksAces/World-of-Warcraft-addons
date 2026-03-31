@@ -46,6 +46,31 @@ local function SanitizeData()
     end
 end
 
+-- NEW: Cleanup old data (+1 year)
+local function CleanupOldData()
+    if not TimeTrackerDB or not TimeTrackerDB.characters then return end
+    
+    local thresholdTime = time() - (365 * 24 * 60 * 60)
+    local thresholdStr = date("%Y-%m-%d", thresholdTime)
+    
+    for _, char in pairs(TimeTrackerDB.characters) do
+        if char.daily then
+            for dateStr, _ in pairs(char.daily) do
+                if dateStr < thresholdStr then
+                    char.daily[dateStr] = nil
+                end
+            end
+        end
+        if char.activityHistory and char.activityHistory.daily then
+            for dateStr, _ in pairs(char.activityHistory.daily) do
+                if dateStr < thresholdStr then
+                    char.activityHistory.daily[dateStr] = nil
+                end
+            end
+        end
+    end
+end
+
 -- Format Helpers (Exposed to private for UI)
 function private.GetCurrentDate()
     return date("%Y-%m-%d")
@@ -314,8 +339,10 @@ local function UpdatePlayTime(totalTime, levelTime)
         
         -- ALWAYS update lastKnownTime to avoid getting stuck in a loop where difference keeps growing
         char.lastKnownTime = totalTime
-        lastUpdateTime = currentTime
     end
+
+    SanitizeData()
+    CleanupOldData()
 end
 
 -- Request Time
@@ -356,16 +383,24 @@ function SlashCmdList.TIMETRACKER(msg)
             else
                 TimeTrackerFrame:Show()
                 -- Refresh active tab
-                if TimeTrackerFrame.tabPersonal.selected then
+                if TimeTrackerFrame.tabDashboard and TimeTrackerFrame.tabDashboard.selected then
+                    private.UpdateDashboard(TimeTrackerFrame)
+                elseif TimeTrackerFrame.tabPersonal and TimeTrackerFrame.tabPersonal.selected then
                     private.UpdateCurrentCharacterStats(TimeTrackerFrame)
-                elseif TimeTrackerFrame.tabCharacters.selected then
+                elseif TimeTrackerFrame.tabCharacters and TimeTrackerFrame.tabCharacters.selected then
                     private.UpdateCharactersStats(TimeTrackerFrame)
-                elseif TimeTrackerFrame.tabClasses.selected then
+                elseif TimeTrackerFrame.tabClasses and TimeTrackerFrame.tabClasses.selected then
                     private.UpdateClassesStats(TimeTrackerFrame)
-                elseif TimeTrackerFrame.tabRaces.selected then
+                elseif TimeTrackerFrame.tabRaces and TimeTrackerFrame.tabRaces.selected then
                     private.UpdateRacesStats(TimeTrackerFrame)
-                elseif TimeTrackerFrame.tabHistory and TimeTrackerFrame.tabHistory.selected then
-                    private.UpdateHistoryStats(TimeTrackerFrame)
+                elseif TimeTrackerFrame.tabActivities and TimeTrackerFrame.tabActivities.selected then
+                    private.UpdateActivitiesStats(TimeTrackerFrame)
+                elseif TimeTrackerFrame.tabSummary and TimeTrackerFrame.tabSummary.selected then
+                    private.UpdateSummaryStats(TimeTrackerFrame)
+                elseif TimeTrackerFrame.tabStatistics and TimeTrackerFrame.tabStatistics.selected then
+                    private.UpdateStatisticsStats(TimeTrackerFrame)
+                elseif TimeTrackerFrame.tabBackup and TimeTrackerFrame.tabBackup.selected then
+                    private.UpdateBackupPanel(TimeTrackerFrame)
                 end
                 
                 -- Update Buttons text if needed
@@ -376,10 +411,11 @@ function SlashCmdList.TIMETRACKER(msg)
                     seconds = GetLocalizedText("ONLY_SECONDS"), 
                     complete = GetLocalizedText("COMPLETE_FORMAT")
                 }
-                UIDropDownMenu_SetText(TimeTrackerFrame.personalFormatDropdown, textMap[fmt])
-                UIDropDownMenu_SetText(TimeTrackerFrame.charFormatDropdown, textMap[fmt])
-                UIDropDownMenu_SetText(TimeTrackerFrame.classFormatDropdown, textMap[fmt])
-                UIDropDownMenu_SetText(TimeTrackerFrame.raceFormatDropdown, textMap[fmt])
+                local text = textMap[fmt]
+                if TimeTrackerFrame.personalFormatDropdown then UIDropDownMenu_SetText(TimeTrackerFrame.personalFormatDropdown, text) end
+                if TimeTrackerFrame.charFormatDropdown then UIDropDownMenu_SetText(TimeTrackerFrame.charFormatDropdown, text) end
+                if TimeTrackerFrame.classFormatDropdown then UIDropDownMenu_SetText(TimeTrackerFrame.classFormatDropdown, text) end
+                if TimeTrackerFrame.raceFormatDropdown then UIDropDownMenu_SetText(TimeTrackerFrame.raceFormatDropdown, text) end
             end
         end
     elseif command == "time" then
@@ -503,6 +539,7 @@ TimeTracker:SetScript("OnEvent", function(self, event, ...)
         
         -- Run sanitization
         SanitizeData()
+        CleanupOldData()
 
         -- Run backfill to populate yearly stats from existing daily data
         BackfillYearlyStats()

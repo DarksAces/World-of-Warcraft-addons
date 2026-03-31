@@ -108,6 +108,13 @@ L["en"] = {
     IMPORT_SUCCESS = "Data imported successfully! Characters restored: %d",
     IMPORT_ERROR = "Invalid backup code. Please check that you copied the full text.",
     CONFIRM_IMPORT = "Warning: Importing data will overwrite your current statistics. Are you sure?",
+    SEARCH_PLACEHOLDER = "Search character...",
+    DELETE_CHARACTER = "Delete character",
+    CONFIRM_DELETE = "Are you sure you want to delete %s? All history for this character will be lost.",
+    DASHBOARD_TAB = "Dashboard",
+    ACTIVITY_HEATMAP = "Activity Heatmap (Last 30 Days)",
+    LAST_30_DAYS = "Last 30 Days",
+    CATEGORY = "Category",
 }
 
 -- Spanish
@@ -227,6 +234,13 @@ L["es"] = {
     IMPORT_SUCCESS = "¡Datos importados con éxito! Personajes restaurados: %d",
     IMPORT_ERROR = "Código de copia de seguridad no válido. Asegúrate de haber copiado todo el texto.",
     CONFIRM_IMPORT = "Aviso: Importar datos sobrescribirá tus estadísticas actuales. ¿Estás seguro?",
+    SEARCH_PLACEHOLDER = "Buscar personaje...",
+    DELETE_CHARACTER = "Borrar personaje",
+    CONFIRM_DELETE = "¿Estás seguro de que quieres borrar a %s? Se perderá todo el historial de este personaje.",
+    DASHBOARD_TAB = "Panel",
+    ACTIVITY_HEATMAP = "Mapa de Actividad (Últimos 30 Días)",
+    LAST_30_DAYS = "Últimos 30 Días",
+    CATEGORY = "Categoría",
 }
 
 -- Get localized string function
