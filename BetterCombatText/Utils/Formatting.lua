@@ -10,6 +10,7 @@ local BCT = _G[addonName]
 -- Format number with K/M suffixes
 function BCT:FormatNumber(number)
     if not number then return "0" end
+    if type(number) == "string" then return number end
     
     -- If abbreviation is disabled, return the full number
     if self.config.abbreviateNumbers == false then

@@ -1,5 +1,89 @@
 local addonName, NS = ...
 
+-- Localization
+local L = (GetLocale() == "esES" or GetLocale() == "esMX") and {
+    ITEM_NAME = "Nombre del ítem",
+    PRICE_GOLD = "Precio (Oro)",
+    UPDATE = "ACTUALIZAR",
+    SCAN = "ESCANEAR",
+    SINGLE = "INDIVIDUAL",
+    DASHBOARD = "TABLERO",
+    GALLERY = "GALERÍA",
+    GRID = "CUADRÍCULA",
+    LAYOUT = "DISEÑO",
+    SIGNAL = "Señal",
+    STAGNANT = "Estancado",
+    VOID_ASC = "Ascendencia del Vacío",
+    VOID_CRASH = "Caída del Vacío",
+    WATCHLIST_EMPTY = "Lista vacía",
+    ADD_ITEMS = "Añade ítems con el botón +",
+    MARKET_DATA = "Datos de mercado",
+    MAX = "Máximo",
+    OPEN = "Inicio",
+    CLOSE = "Cierre",
+    MIN = "Mínimo",
+    LOADED = "v5.0 (Custom) CARGADO. Escribe /ac para abrir.",
+    MATCH_FOUND = "COINCIDENCIA: %s @ %s",
+    SCAN_COMPLETE = "Escaneo completo. No se encontró coincidencia exacta.",
+    SCANNING = "Escaneando coincidencia EXACTA: [%s]...",
+    AH_NOT_OPEN = "Subasta no abierta. Usando entrada manual.",
+    ITEM_ADDED = "Ítem añadido a la lista: ",
+} or {
+    ITEM_NAME = "Item Name",
+    PRICE_GOLD = "Price (Gold)",
+    UPDATE = "UPDATE",
+    SCAN = "SCAN",
+    SINGLE = "SINGLE",
+    DASHBOARD = "DASHBOARD",
+    GALLERY = "GALLERY",
+    GRID = "GRID",
+    LAYOUT = "LAYOUT",
+    SIGNAL = "Signal",
+    STAGNANT = "Stagnant",
+    VOID_ASC = "Void Ascendance",
+    VOID_CRASH = "Void Crash",
+    WATCHLIST_EMPTY = "Watchlist is Empty",
+    ADD_ITEMS = "Add items using the + button.",
+    MARKET_DATA = "Market Data",
+    MAX = "High",
+    OPEN = "Open",
+    CLOSE = "Close",
+    MIN = "Low",
+    LOADED = "v5.0 (Custom) LOADED. Type /ac to open.",
+    MATCH_FOUND = "MATCH FOUND: %s @ %s",
+    SCAN_COMPLETE = "Scan complete. Exact match not found.",
+    SCANNING = "Scanning for EXACT match: [%s]...",
+    AH_NOT_OPEN = "AH Not Open. Using Manual Inputs.",
+    ITEM_ADDED = "Item added to Watchlist: ",
+}
+
+-- Forward declarations for scope
+local MainChart, DrawSlice, ZoomButtons = {}, nil, {}
+
+-- Steady Storage Initialization
+local function InitDB()
+    if not AzerothCandlesticksDB then
+        AzerothCandlesticksDB = {
+            watchlist = {
+                { name = "Copper Ore", lastPrice = "0.50" },
+                { name = "Tin Ore", lastPrice = "1.20" },
+            },
+            config = {
+                viewMode = "SINGLE",
+                dashboardIndex = 1,
+                dashboardType = "GALLERY", -- or "GRID"
+                currentZoom = 168, -- 7D = 168, 24H = 24, 1H = 6
+            }
+        }
+    else
+        -- Patching existing DB if needed
+        if not AzerothCandlesticksDB.config then AzerothCandlesticksDB.config = {} end
+        if not AzerothCandlesticksDB.config.dashboardIndex then AzerothCandlesticksDB.config.dashboardIndex = 1 end
+        if not AzerothCandlesticksDB.config.dashboardType then AzerothCandlesticksDB.config.dashboardType = "GALLERY" end
+        if not AzerothCandlesticksDB.config.currentZoom then AzerothCandlesticksDB.config.currentZoom = 168 end
+    end
+end
+
 -- Configuration: Midnight / TWW Theme
 local CONFIG = {
     colors = {
@@ -77,139 +161,179 @@ signalText:SetPoint("CENTER")
 signalText:SetTextColor(0.9, 0.9, 1.0) -- Pale Blue/White text
 signalText:SetText("Signal: Neutral")
 
--- Canvas for drawing
-local Canvas = CreateFrame("Frame", nil, MainFrame)
-Canvas:SetPoint("TOPLEFT", 10, -50)
-Canvas:SetPoint("BOTTOMRIGHT", -10, 10)
-Canvas.content = Canvas:CreateTexture(nil, "BACKGROUND")
-Canvas.content:SetAllPoints()
-Canvas.content:SetColorTexture(unpack(CONFIG.colors.grid))
-Canvas:SetClipsChildren(true) -- FIX: Cuts off any overflow
+-- (Old Canvas removed, using MainChart instead)
 
 -- Candle Frame Pool (Interactive)
-local candlePool = {}
-local activeCandles = {}
+local globalCandlePool = {}
 
 local function FormatPriceTooltip(val)
-    -- Internal 'val' is roughly Silver (0.50g input -> 50.0 val).
-    -- We want to display it exactly as the input: "0.50 g"
     return string.format("|cffffd100%.2f g|r", val / 100)
 end
 
-local function AcquireCandle()
-    local f = table.remove(candlePool)
-    if not f then
-        f = CreateFrame("Button", nil, Canvas)
-        f:SetFrameLevel(10)
-        
-        f.wick = f:CreateTexture(nil, "ARTWORK")
-        f.body = f:CreateTexture(nil, "ARTWORK")
-        
-        f:SetScript("OnEnter", function(self)
-            local d = self.data
-            if not d then return end
+-- Modular Chart Component Factory
+local function CreateChartView(parent, width, height)
+    local view = CreateFrame("Frame", nil, parent)
+    view:SetSize(width, height)
+    
+    view.canvas = CreateFrame("Frame", nil, view)
+    view.canvas:SetAllPoints()
+    view.canvas.content = view.canvas:CreateTexture(nil, "BACKGROUND")
+    view.canvas.content:SetAllPoints()
+    view.canvas.content:SetColorTexture(unpack(CONFIG.colors.grid))
+    view.canvas:SetClipsChildren(true)
+
+    view.activeCandles = {}
+    view.data = {}
+
+    function view:AcquireCandle()
+        local f = table.remove(globalCandlePool)
+        if not f then
+            f = CreateFrame("Button", nil, self.canvas)
+            f:SetFrameLevel(10)
+            f.wick = f:CreateTexture(nil, "ARTWORK")
+            f.body = f:CreateTexture(nil, "ARTWORK")
             
-            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-            GameTooltip:SetText("Datos de Mercado", 0.4, 0.2, 0.8)
-            GameTooltip:AddLine("Máximo: |cffffffff"..FormatPriceTooltip(d.high).."|r")
-            GameTooltip:AddLine("Inicio: |cffffffff"..FormatPriceTooltip(d.open).."|r")
-            GameTooltip:AddLine("Cierre: |cffffffff"..FormatPriceTooltip(d.close).."|r")
-            GameTooltip:AddLine("Mínimo: |cffffffff"..FormatPriceTooltip(d.low).."|r")
-            GameTooltip:Show()
-            self.body:SetAlpha(0.6)
-        end)
-        
-        f:SetScript("OnLeave", function(self)
-            GameTooltip:Hide()
-            self.body:SetAlpha(1.0)
-        end)
+            f:SetScript("OnEnter", function(self)
+                local d = self.data
+                if not d then return end
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                GameTooltip:SetText(L.MARKET_DATA, 0.4, 0.2, 0.8)
+                GameTooltip:AddLine(L.MAX .. ": |cffffffff"..FormatPriceTooltip(d.high).."|r")
+                GameTooltip:AddLine(L.OPEN .. ": |cffffffff"..FormatPriceTooltip(d.open).."|r")
+                GameTooltip:AddLine(L.CLOSE .. ": |cffffffff"..FormatPriceTooltip(d.close).."|r")
+                GameTooltip:AddLine(L.MIN .. ": |cffffffff"..FormatPriceTooltip(d.low).."|r")
+                GameTooltip:Show()
+                self.body:SetAlpha(0.6)
+            end)
+            f:SetScript("OnLeave", function(self)
+                GameTooltip:Hide()
+                self.body:SetAlpha(1.0)
+            end)
+        end
+        f:SetParent(self.canvas)
+        table.insert(self.activeCandles, f)
+        f:Show()
+        return f
     end
-    table.insert(activeCandles, f)
-    f:Show()
-    return f
-end
 
-local function ReleaseAllCandles()
-    for _, f in ipairs(activeCandles) do
-        f:Hide()
-        table.insert(candlePool, f)
+    function view:ReleaseAllCandles()
+        for _, f in ipairs(self.activeCandles) do
+            f:Hide()
+            table.insert(globalCandlePool, f)
+        end
+        self.activeCandles = {}
+        if self.trendLines then
+            for _, l in ipairs(self.trendLines) do l:Hide() end
+        end
     end
-    activeCandles = {}
-end
+    
+    view.icon = view:CreateTexture(nil, "OVERLAY")
+    view.icon:SetSize(24, 24)
+    view.icon:SetPoint("TOPLEFT", 5, -5)
+    view.icon:SetAlpha(0.7)
 
--- Drawing Logic
-local function DrawChart(data)
-    ReleaseAllCandles()
-    
-    local width = Canvas:GetWidth()
-    local height = Canvas:GetHeight()
-    local numCandles = #data
-    
-    if numCandles == 0 then return end
-    
-    -- Find ranges
-    local minPrice, maxPrice = data[1].low, data[1].high
-    for _, candle in ipairs(data) do
-        if candle.low < minPrice then minPrice = candle.low end
-        if candle.high > maxPrice then maxPrice = candle.high end
+    function view:Draw(data)
+        self:ReleaseAllCandles()
+        self.data = data
+        local w = self.canvas:GetWidth()
+        local h = self.canvas:GetHeight()
+        local numCandles = #data
+        if numCandles == 0 then return end
+
+        local minPrice, maxPrice = data[1].low, data[1].high
+        for _, candle in ipairs(data) do
+            if candle.low < minPrice then minPrice = candle.low end
+            if candle.high > maxPrice then maxPrice = candle.high end
+        end
+        local priceRange = maxPrice - minPrice
+        if priceRange == 0 then priceRange = 1 end
+
+        local slotWidth = w / numCandles
+        local spacing = (slotWidth > 5) and 2 or (slotWidth > 3 and 1 or 0)
+        local visualWidth = math.max(1, math.min(150, slotWidth - spacing))
+
+        for i = 1, numCandles do
+            local d = data[i]
+            local xPos = (i - 1) * slotWidth
+            local yHigh = ((d.high - minPrice) / priceRange) * h
+            local yLow = ((d.low - minPrice) / priceRange) * h
+            local yOpen = ((d.open - minPrice) / priceRange) * h
+            local yClose = ((d.close - minPrice) / priceRange) * h
+            local color = (d.close >= d.open) and CONFIG.colors.bullish or CONFIG.colors.bearish
+            
+            local f = self:AcquireCandle()
+            f.data = d 
+            f:SetPoint("BOTTOMLEFT", self.canvas, "BOTTOMLEFT", xPos, 0)
+            f:SetSize(slotWidth, h) 
+
+            f.wick:SetColorTexture(unpack(color))
+            f.wick:ClearAllPoints()
+            f.wick:SetPoint("BOTTOM", f, "BOTTOM", 0, yLow)
+            f.wick:SetSize(math.max(1, visualWidth * 0.1), math.max(1, yHigh - yLow)) 
+
+            local bodyBottom = math.min(yOpen, yClose)
+            f.body:SetColorTexture(unpack(color))
+            f.body:ClearAllPoints()
+            f.body:SetPoint("BOTTOM", f, "BOTTOM", 0, bodyBottom)
+            f.body:SetSize(visualWidth, math.max(1, math.max(yOpen, yClose) - bodyBottom))
+        end
+        
+        -- TREND LINE (5-period SMA)
+        if numCandles > 5 then
+            self.trendLines = self.trendLines or {}
+            local prevX, prevY = nil, nil
+            for i = 5, numCandles do
+                local sum = 0
+                for j = i-4, i do sum = sum + data[j].close end
+                local avg = sum / 5
+                
+                local currentX = (i - 0.5) * slotWidth
+                local currentY = ((avg - minPrice) / priceRange) * h
+                
+                if prevX then
+                    local line = self.trendLines[i]
+                    if not line then
+                        line = self:CreateLine()
+                        line:SetThickness(1.5)
+                        line:SetColorTexture(0.7, 0.4, 1.0, 0.6) -- Soft Purple
+                        self.trendLines[i] = line
+                    end
+                    line:SetStartPoint("BOTTOMLEFT", self.canvas, prevX, prevY)
+                    line:SetEndPoint("BOTTOMLEFT", self.canvas, currentX, currentY)
+                    line:Show()
+                end
+                prevX, prevY = currentX, currentY
+            end
+        end
     end
     
-    local priceRange = maxPrice - minPrice
-    if priceRange == 0 then priceRange = 1 end
-    
-    -- SLOT BASED DRAWING (Precision Fit)
-    local slotWidth = width / numCandles
-    local spacing = 2
-    
-    -- Adjust spacing for very tight views
-    if slotWidth < 5 then spacing = 1 end
-    if slotWidth < 3 then spacing = 0 end
-    
-    local visualWidth = slotWidth - spacing
-    
-    -- Caps
-    if visualWidth < 1 then visualWidth = 1 end
-    if visualWidth > 150 then visualWidth = 150 end
-    
-    for i = 1, numCandles do
-        local d = data[i]
-        local xPos = (i - 1) * slotWidth
+    function view:SetIconByItem(itemName)
+        if not itemName or itemName == "" then self.icon:Hide() return end
         
-        -- Y Coordinates
-        local yHigh = ((d.high - minPrice) / priceRange) * height
-        local yLow = ((d.low - minPrice) / priceRange) * height
-        local yOpen = ((d.open - minPrice) / priceRange) * height
-        local yClose = ((d.close - minPrice) / priceRange) * height
-        
-        local color = (d.close >= d.open) and CONFIG.colors.bullish or CONFIG.colors.bearish
-        
-        local f = AcquireCandle()
-        f.data = d 
-        
-        -- Frame fills the slot for easy hovering
-        f:SetPoint("BOTTOMLEFT", Canvas, "BOTTOMLEFT", xPos, 0)
-        f:SetSize(slotWidth, height) 
-        
-        -- Wick
-        local wickBottom = yLow
-        local wickHeight = math.max(1, yHigh - yLow)
-        
-        f.wick:SetColorTexture(unpack(color))
-        f.wick:ClearAllPoints()
-        f.wick:SetPoint("BOTTOM", f, "BOTTOM", 0, wickBottom)
-        -- Wick scales slightly but stays thin relative to big candles
-        f.wick:SetSize(math.max(1, visualWidth * 0.1), wickHeight) 
-        
-        -- Body
-        local bodyTop = math.max(yOpen, yClose)
-        local bodyBottom = math.min(yOpen, yClose)
-        local bodyHeight = math.max(1, bodyTop - bodyBottom) 
-        
-        f.body:SetColorTexture(unpack(color))
-        f.body:ClearAllPoints()
-        f.body:SetPoint("BOTTOM", f, "BOTTOM", 0, bodyBottom)
-        f.body:SetSize(visualWidth, bodyHeight)
+        -- Try to get icon immediately
+        local icon = GetItemIcon(itemName)
+        if icon then
+            self.icon:SetTexture(icon)
+            self.icon:Show()
+        else
+            -- If not in cache, request info and hide/placeholder
+            self.icon:SetTexture("Interface\\Icons\\INV_Misc_QuestionMark")
+            self.icon:Show()
+            
+            -- Request item info to force cache
+            local item = Item:CreateFromItemName(itemName)
+            if not item:IsItemEmpty() then
+                item:ContinueOnItemLoad(function()
+                    local newIcon = GetItemIcon(itemName)
+                    if newIcon then
+                        self.icon:SetTexture(newIcon)
+                    end
+                end)
+            end
+        end
     end
+
+    return view
 end
 
 -- Initial Data
@@ -277,13 +401,69 @@ local function CreateStyledInput(name, w, xPos, placeholder)
     
     local lbl = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     lbl:SetPoint("BOTTOMLEFT", f, "TOPLEFT", 0, 2)
-    lbl:SetText(name)
+    lbl:SetText(L[name:gsub(" ", "_"):upper()] or name)
     
     return eb
 end
 
-local SearchBox = CreateStyledInput("Item Name", 160, 10, "Copper Ore")
-local PriceBox = CreateStyledInput("Price (Gold)", 80, 180, "0.50")
+local SearchBox = CreateStyledInput("ITEM_NAME", 160, 10, "Copper Ore")
+local PriceBox = CreateStyledInput("PRICE_GOLD", 80, 180, "0.50")
+
+-- Track Button
+local TrackBtn = CreateFrame("Button", nil, TopBar, "BackdropTemplate")
+TrackBtn:SetSize(26, 26)
+TrackBtn:SetPoint("LEFT", 270, 0)
+TrackBtn:SetBackdrop({
+    bgFile = "Interface\\Buttons\\WHITE8x8",
+    edgeFile = "Interface\\Buttons\\WHITE8x8",
+    edgeSize = 1,
+})
+TrackBtn:SetBackdropColor(0.2, 0.6, 0.4, 1)
+local TrackText = TrackBtn:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+TrackText:SetPoint("CENTER")
+TrackText:SetText("+")
+TrackBtn:SetScript("OnClick", function()
+    local name = SearchBox:GetText()
+    local price = PriceBox:GetText()
+    if name ~= "" and price ~= "" then
+        table.insert(AzerothCandlesticksDB.watchlist, { name = name, lastPrice = price })
+        print("|cff00e5ccAC:|r " .. L.ITEM_ADDED .. name)
+        NS.RefreshDashboard()
+    end
+end)
+
+-- Dashboard Toggle
+local DashBtn = CreateFrame("Button", nil, TopBar, "BackdropTemplate")
+DashBtn:SetSize(100, 26)
+DashBtn:SetPoint("LEFT", 400, 0)
+DashBtn:SetBackdrop({
+    bgFile = "Interface\\Buttons\\WHITE8x8",
+    edgeFile = "Interface\\Buttons\\WHITE8x8",
+    edgeSize = 1,
+})
+DashBtn:SetBackdropColor(0.2, 0.2, 0.5, 1)
+local DashText = DashBtn:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+DashText:SetPoint("CENTER")
+DashText:SetText(L.DASHBOARD)
+
+local function UpdateDashBtnText()
+    if not AzerothCandlesticksDB or not AzerothCandlesticksDB.config then return end
+    if AzerothCandlesticksDB.config.viewMode == "SINGLE" then
+        DashText:SetText(L.DASHBOARD)
+    else
+        DashText:SetText(L.SINGLE)
+    end
+end
+
+DashBtn:SetScript("OnClick", function()
+    if AzerothCandlesticksDB.config.viewMode == "SINGLE" then
+        AzerothCandlesticksDB.config.viewMode = "DASHBOARD"
+    else
+        AzerothCandlesticksDB.config.viewMode = "SINGLE"
+    end
+    UpdateDashBtnText()
+    NS.RefreshView()
+end)
 -- Enable mouse interaction for drag
 SearchBox:EnableMouse(true)
 PriceBox:EnableMouse(true)
@@ -291,7 +471,7 @@ PriceBox:EnableMouse(true)
 -- Analyze Button (Renamed to AC_SearchBtn to ensure uniqueness)
 AC_SearchBtn = CreateFrame("Button", nil, TopBar, "BackdropTemplate")
 AC_SearchBtn:SetSize(80, 26)
-AC_SearchBtn:SetPoint("LEFT", 270, 0)
+AC_SearchBtn:SetPoint("LEFT", 310, 0)
 AC_SearchBtn:SetBackdrop({
     bgFile = "Interface\\Buttons\\WHITE8x8",
     edgeFile = "Interface\\Buttons\\WHITE8x8",
@@ -303,7 +483,7 @@ AC_SearchBtn:SetBackdropBorderColor(0.8, 0.4, 1.0, 1)
 
 local SearchBtnText = AC_SearchBtn:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 SearchBtnText:SetPoint("CENTER")
-SearchBtnText:SetText("UPDATE")
+SearchBtnText:SetText(L.UPDATE)
 
 -- ... (Data Management logic remains) ...
 
@@ -316,8 +496,7 @@ ZoomBar:SetSize(200, 25)
 
 -- ... (Zoom buttons logic) ...
 
--- Adjust Canvas Top to make room for everything
-Canvas:SetPoint("TOPLEFT", 10, -100)
+-- Adjust TopBar position if needed
 
 -- Data Management
 local activeData = {}
@@ -407,31 +586,46 @@ end
 local currentViewCount = 168
 
 -- Zoom/Slice Logic
-local function DrawSlice(count)
-    if #activeData == 0 then return end
-    currentViewCount = count
+function NS.PrepareChartData(itemName, startPrice)
+    local fullData = LoadItemData(itemName, startPrice)
+    local count = AzerothCandlesticksDB.config.currentZoom or 168
     
-    -- Slice the last 'count' entries
-    local startIndex = math.max(1, #activeData - count + 1)
+    local startIndex = math.max(1, #fullData - count + 1)
     local slice = {}
-    for i = startIndex, #activeData do
-        table.insert(slice, activeData[i])
+    for i = startIndex, #fullData do
+        table.insert(slice, fullData[i])
     end
-    DrawChart(slice)
-    
-    -- Update Signal based on sliced view context
-    local lastClose = slice[#slice].close
-    local prevClose = slice[1].close -- Compare to start of view
+    return slice
+end
+
+local function UpdateSignal(data)
+    if not data or #data == 0 then return end
+    local lastClose = data[#data].close
+    local prevClose = data[1].close
     local perf = (lastClose - prevClose) / prevClose
-    
     local priceStr = string.format("|cffffd100%.2fg|r", lastClose / 100)
     
     if perf > 0.05 then
-        signalText:SetText(string.format("Price: %s  Signal: |cff00e5ccVoid Ascendance|r (+%d%%)", priceStr, math.floor(perf*100)))
+        signalText:SetText(string.format("%s: %s  %s: |cff00e5cc%s|r (+%d%%)", L.PRICE_GOLD, priceStr, L.SIGNAL, L.VOID_ASC, math.floor(perf*100)))
     elseif perf < -0.05 then
-        signalText:SetText(string.format("Price: %s  Signal: |cffe50080Void Crash|r (%d%%)", priceStr, math.floor(perf*100)))
+        signalText:SetText(string.format("%s: %s  %s: |cffe50080%s|r (%d%%)", L.PRICE_GOLD, priceStr, L.SIGNAL, L.VOID_CRASH, math.floor(perf*100)))
     else
-        signalText:SetText(string.format("Price: %s  Signal: |cffadb0baStagnant|r", priceStr))
+        signalText:SetText(string.format("%s: %s  %s: |cffadb0ba%s|r", L.PRICE_GOLD, priceStr, L.SIGNAL, L.STAGNANT))
+    end
+end
+
+DrawSlice = function(count)
+    AzerothCandlesticksDB.config.currentZoom = count
+    NS.RefreshView()
+    -- Highlight active button
+    for c, btn in pairs(ZoomButtons) do
+        if c == count then
+            btn:SetBackdropBorderColor(0.0, 0.9, 0.8, 1) -- Active Cyan
+            btn:SetBackdropColor(0.3, 1.0, 0.9, 0.2)
+        else
+            btn:SetBackdropBorderColor(0.5, 0.3, 0.8, 1)
+            btn:SetBackdropColor(0.2, 0.1, 0.3, 1)
+        end
     end
 end
 
@@ -470,6 +664,7 @@ local function CreateZoomButton(text, count)
     btn:SetScript("OnClick", function()
         DrawSlice(count)
     end)
+    ZoomButtons[count] = btn
     return btn
 end
 
@@ -480,12 +675,198 @@ btn24H:SetPoint("RIGHT", btn7D, "LEFT", -5, 0)
 local btn1H = CreateZoomButton("1H", 6)
 btn1H:SetPoint("RIGHT", btn24H, "LEFT", -5, 0)
 
--- Initial Load
-LoadItemData("Copper Ore", "0.50")
-DrawSlice(168)
+-- Main Viewport Management
+MainChart = CreateChartView(MainFrame, 780, 350)
+MainChart:SetPoint("TOPLEFT", 10, -120)
 
--- Adjust Canvas Top to make room for everything
-Canvas:SetPoint("TOPLEFT", 10, -120)
+local DashboardFrame = CreateFrame("Frame", nil, MainFrame)
+DashboardFrame:SetPoint("TOPLEFT", 10, -120)
+DashboardFrame:SetPoint("BOTTOMRIGHT", -10, 10)
+DashboardFrame:Hide()
+
+-- GALLERY VIEW ASSETS
+local GalleryContainer = CreateFrame("Frame", nil, DashboardFrame)
+GalleryContainer:SetAllPoints()
+
+local NavPrev = CreateFrame("Button", nil, GalleryContainer, "BackdropTemplate")
+NavPrev:SetSize(40, 40)
+NavPrev:SetPoint("LEFT", GalleryContainer, "LEFT", -15, 0)
+NavPrev:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1 })
+NavPrev:SetBackdropColor(0.1, 0.1, 0.2, 0.8)
+local NavPrevText = NavPrev:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge")
+NavPrevText:SetPoint("CENTER")
+NavPrevText:SetText("<")
+NavPrev:SetScript("OnClick", function()
+    local count = #AzerothCandlesticksDB.watchlist
+    if count == 0 then return end
+    local idx = AzerothCandlesticksDB.config.dashboardIndex or 1
+    AzerothCandlesticksDB.config.dashboardIndex = (idx - 2 + count) % count + 1
+    NS.RefreshDashboard()
+end)
+
+local NavNext = CreateFrame("Button", nil, GalleryContainer, "BackdropTemplate")
+NavNext:SetSize(40, 40)
+NavNext:SetPoint("RIGHT", GalleryContainer, "RIGHT", 15, 0)
+NavNext:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1 })
+NavNext:SetBackdropColor(0.1, 0.1, 0.2, 0.8)
+local NavNextText = NavNext:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge")
+NavNextText:SetPoint("CENTER")
+NavNextText:SetText(">")
+NavNext:SetScript("OnClick", function()
+    local count = #AzerothCandlesticksDB.watchlist
+    if count == 0 then return end
+    local idx = AzerothCandlesticksDB.config.dashboardIndex or 1
+    AzerothCandlesticksDB.config.dashboardIndex = (idx % count) + 1
+    NS.RefreshDashboard()
+end)
+
+local GalleryChart = CreateChartView(GalleryContainer, 700, 350)
+GalleryChart:SetPoint("CENTER", 0, 0)
+GalleryChart.title = GalleryChart:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+GalleryChart.title:SetPoint("TOP", 0, 30)
+
+local DashIndicator = GalleryContainer:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+DashIndicator:SetPoint("BOTTOM", 0, -10)
+
+-- GRID VIEW ASSETS (Scrollable)
+local ScrollFrame = CreateFrame("ScrollFrame", "AC_ScrollFrame", DashboardFrame, "UIPanelScrollFrameTemplate")
+ScrollFrame:SetPoint("TOPLEFT", 0, -30)
+ScrollFrame:SetPoint("BOTTOMRIGHT", -25, 10)
+ScrollFrame:Hide()
+
+local ScrollChild = CreateFrame("Frame", nil, ScrollFrame)
+ScrollChild:SetSize(ScrollFrame:GetWidth(), 1)
+ScrollFrame:SetScrollChild(ScrollChild)
+
+local gridViews = {}
+
+-- View Toggle Button (Sub-Layout)
+local LayoutToggle = CreateFrame("Button", nil, DashboardFrame, "BackdropTemplate")
+LayoutToggle:SetSize(120, 22)
+LayoutToggle:SetPoint("TOPLEFT", 10, 5)
+LayoutToggle:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1 })
+LayoutToggle:SetBackdropColor(0.3, 0.2, 0.4, 1)
+local LayoutToggleText = LayoutToggle:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+LayoutToggleText:SetPoint("CENTER")
+
+LayoutToggle:SetScript("OnClick", function()
+    if AzerothCandlesticksDB.config.dashboardType == "GALLERY" then
+        AzerothCandlesticksDB.config.dashboardType = "GRID"
+    else
+        AzerothCandlesticksDB.config.dashboardType = "GALLERY"
+    end
+    NS.RefreshDashboard()
+end)
+
+function NS.RefreshDashboard()
+    if AzerothCandlesticksDB.config.dashboardType == "GALLERY" then
+        LayoutToggleText:SetText(L.LAYOUT .. ": " .. L.GRID)
+        ScrollFrame:Hide()
+        GalleryContainer:Show()
+        
+        local items = AzerothCandlesticksDB.watchlist
+        if #items == 0 then
+            GalleryChart:Hide()
+            GalleryChart.title:SetText(L.WATCHLIST_EMPTY)
+            DashIndicator:SetText(L.ADD_ITEMS)
+            return
+        end
+        local idx = AzerothCandlesticksDB.config.dashboardIndex or 1
+        if idx > #items then idx = 1 end
+        local item = items[idx]
+        GalleryChart:Show()
+        GalleryChart.title:SetText(item.name)
+        DashIndicator:SetText(string.format("Item %d de %d", idx, #items))
+        GalleryChart:SetIconByItem(item.name)
+        GalleryChart:Draw(NS.PrepareChartData(item.name, item.lastPrice))
+    else
+        LayoutToggleText:SetText(L.LAYOUT .. ": " .. L.GALLERY)
+        GalleryContainer:Hide()
+        ScrollFrame:Show()
+        
+        -- Clear grid views (Recycle)
+        for _, v in ipairs(gridViews) do v:Hide() end
+        
+        local items = AzerothCandlesticksDB.watchlist
+        local cols = 2
+        local spacingX, spacingY = 10, 40
+        local chartW = (ScrollFrame:GetWidth() - (cols-1)*spacingX) / cols
+        local chartH = 160
+        
+        for i, item in ipairs(items) do
+            local view = gridViews[i]
+            if not view then
+                view = CreateChartView(ScrollChild, chartW, chartH)
+                table.insert(gridViews, view)
+                view.title = view:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+                view.title:SetPoint("BOTTOMLEFT", view, "TOPLEFT", 0, 2)
+            end
+            
+            local row = math.floor((i-1)/cols)
+            local col = (i-1)%cols
+            view:SetSize(chartW, chartH)
+            view:SetPoint("TOPLEFT", col*(chartW + spacingX), -(row*(chartH + spacingY) + 20))
+            view:Show()
+            view.title:SetText(item.name)
+            view:SetIconByItem(item.name)
+            view:Draw(NS.PrepareChartData(item.name, item.lastPrice))
+            
+            -- Update ScrollChild Height
+            ScrollChild:SetHeight((row + 1) * (chartH + spacingY) + 40)
+        end
+    end
+end
+
+function NS.RefreshView()
+    if AzerothCandlesticksDB.config.viewMode == "DASHBOARD" then
+        MainChart:Hide()
+        signalFrame:Hide()
+        DashboardFrame:Show()
+        NS.RefreshDashboard()
+        MainFrame.title:SetText(L.DASHBOARD .. ": Gallery Mode")
+    else
+        DashboardFrame:Hide()
+        MainChart:Show()
+        signalFrame:Show()
+        local name = SearchBox:GetText()
+        local price = PriceBox:GetText()
+        local data = NS.PrepareChartData(name, price)
+        MainChart:SetIconByItem(name)
+        MainChart:Draw(data)
+        MainFrame.title:SetText("Azeroth Candlesticks: " .. name)
+        UpdateSignal(data)
+    end
+end
+
+-- Initial Load Implementation
+local function InitialLoad()
+    InitDB()
+    UpdateDashBtnText()
+    NS.RefreshView()
+end
+
+-- Adjusted Zoom Logic for MainChart
+local function DrawSlice(count)
+    if not MainChart.data or #MainChart.data == 0 then return end
+    currentViewCount = count
+    local startIndex = math.max(1, #activeData - count + 1)
+    local slice = {}
+    for i = startIndex, #activeData do table.insert(slice, activeData[i]) end
+    MainChart:Draw(slice)
+    
+    -- Signal logic (rest unchanged but using MainChart.data)
+    local lastClose = slice[#slice].close
+    local prevClose = slice[1].close
+    local perf = (lastClose - prevClose) / prevClose
+    local priceStr = string.format("|cffffd100%.2fg|r", lastClose / 100)
+    if perf > 0.05 then
+        signalText:SetText(string.format("%s: %s  %s: |cff00e5cc%s|r (+%d%%)", L.PRICE_GOLD, priceStr, L.SIGNAL, L.VOID_ASC, math.floor(perf*100)))
+    elseif perf < -0.05 then
+        signalText:SetText(string.format("%s: %s  %s: |cffe50080%s|r (%d%%)", L.PRICE_GOLD, priceStr, L.SIGNAL, L.VOID_CRASH, math.floor(perf*100)))
+    else
+        signalText:SetText(string.format("%s: %s  %s: |cffadb0ba%s|r", L.PRICE_GOLD, priceStr, L.SIGNAL, L.STAGNANT))
+    end
+end
 
 -- Basic resize handling
 MainFrame:SetResizable(true)
@@ -521,10 +902,10 @@ AC_SearchBtn:SetScript("OnUpdate", function(self, elapsed)
         end
         
         if isOpen then
-            SearchBtnText:SetText("SCAN")
+            SearchBtnText:SetText(L.SCAN)
             self:SetBackdropColor(0.0, 0.6, 0.2, 1) -- Green for Scan
         else
-            SearchBtnText:SetText("UPDATE")
+            SearchBtnText:SetText(L.UPDATE)
             self:SetBackdropColor(0.4, 0.1, 0.6, 1) -- Purple for Manual
         end
     end
@@ -557,13 +938,13 @@ Scanner:SetScript("OnEvent", function(self, event, ...)
             -- Convert copper to Gold string
             local goldVal = bestPrice / 10000 
             PriceBox:SetText(string.format("%.2f", goldVal))
-            print("|cff00e5ccAC:|r MATCH FOUND: " .. Scanner.targetItem .. " @ " .. GetMoneyString(bestPrice))
+            print("|cff00e5ccAC:|r " .. string.format(L.MATCH_FOUND, Scanner.targetItem, GetMoneyString(bestPrice)))
             
             -- Auto update chart with real price
             LoadItemData(Scanner.targetItem, tostring(goldVal))
             DrawSlice(168)
         else
-            print("|cff00e5ccAC:|r Scan complete. Exact match not found.")
+            print("|cff00e5ccAC:|r " .. L.SCAN_COMPLETE)
         end
     end
 end)
@@ -574,7 +955,7 @@ AC_SearchBtn:SetScript("OnClick", function()
     local isOpen = (AuctionHouseFrame and AuctionHouseFrame:IsShown())
     
     if isOpen and C_AuctionHouse then
-        print("|cff00e5ccAC:|r Scanning for EXACT match: ["..item.."]...")
+        print("|cff00e5ccAC:|r " .. string.format(L.SCANNING, item))
         Scanner.isScanning = true
         Scanner.targetItem = item
         
@@ -594,7 +975,7 @@ AC_SearchBtn:SetScript("OnClick", function()
         LoadItemData(item, PriceBox:GetText())
         DrawSlice(168) 
         if not isOpen then
-             print("|cff00e5ccAC:|r AH Not Open. Using Manual Inputs.")
+             print("|cff00e5ccAC:|r " .. L.AH_NOT_OPEN)
         end
     end
 
@@ -604,7 +985,10 @@ end)
 
 -- Load Confirmation
 local loader = CreateFrame("Frame")
-loader:RegisterEvent("PLAYER_LOGIN")
-loader:SetScript("OnEvent", function()
-    print("|cff00e5ccAC:|r v3.0 LOADED - CHECK CHAT. Type /ac to open.")
+loader:RegisterEvent("ADDON_LOADED")
+loader:SetScript("OnEvent", function(self, event, arg1)
+    if arg1 == addonName then
+        InitialLoad()
+        print("|cff00e5ccAC:|r " .. L.LOADED)
+    end
 end)

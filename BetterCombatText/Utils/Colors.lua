@@ -18,6 +18,7 @@ BCT.Colors = {
     critHot = {0.4, 1, 0.4, 1},
     -- Fin NUEVOS COLORES
     damageTaken = {1, 0, 0, 1},
+    miss = {0.5, 0.5, 0.5, 1},
     physical = {1, 0.8, 0.4, 1},
     magic = {0.4, 0.8, 1, 1},
     fire = {1, 0.2, 0.2, 1},

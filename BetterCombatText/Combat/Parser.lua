@@ -43,6 +43,14 @@ function BCT:ParseCombatEvent(...)
         if destGUID == playerGUID or sourceGUID == playerGUID then
             self:ShowPeriodicHealingText(amount, critical)
         end
+        
+    elseif subevent == "SWING_MISSED" then
+        local missType, isOffHand, amountMissed = select(12, ...)
+        self:ShowMissText(missType, sourceGUID == playerGUID)
+        
+    elseif subevent == "SPELL_MISSED" or subevent == "RANGE_MISSED" or subevent == "SPELL_PERIODIC_MISSED" then
+        local spellId, spellName, spellSchool, missType, isOffHand, amountMissed = select(12, ...)
+        self:ShowMissText(missType, sourceGUID == playerGUID)
     end
 end
 
@@ -131,4 +139,25 @@ function BCT:ShowPeriodicHealingText(amount, isCrit)
     local text = "+" .. self:FormatNumber(amount)
     
     self:DisplayFloatingText(text, color, size, isCrit, false, true)
+end
+
+-- Show miss text
+function BCT:ShowMissText(missType, isOutgoing)
+    if not self.config.showDamage then return end
+    
+    local color = self.Colors and self.Colors.miss or {0.5, 0.5, 0.5, 1}
+    local size = self.config.fontSize
+    
+    local text = missType
+    if type(text) == "string" then
+        text = text:sub(1,1):upper() .. text:sub(2):lower()
+    else
+        text = "Miss"
+    end
+    
+    if self.AddToCombatLog then
+        self:AddToCombatLog(0, text, false, false, false, isOutgoing)
+    end
+    
+    self:DisplayFloatingText(text, color, size, false, false)
 end

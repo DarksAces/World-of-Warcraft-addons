@@ -2,52 +2,14 @@ local ADDON_NAME, namespace = ...
 local L = namespace.L
 
 local QuestGroupsByName = {}
-local buttonPool = CreateFramePool("Button", QuestMapFrame.QuestsFrame, "UIPanelButtonTemplate")
+
 
 -- Slugify zone name
 local function Slug(value)
     return value:lower():gsub('[^a-z]', '')
 end
 
--- Create abandon button near zone headers
-local function PlaceButton(parent, offset, title, tooltip, slug)
-    title = title or parent:GetText()
-    tooltip = tooltip or title
-    slug = slug or Slug(title)
-    if QuestGroupsByName[slug] then
-        local button = buttonPool:Acquire()
-        button:SetPoint("TOPRIGHT", parent, "TOPRIGHT", offset, 0)
-        button:SetText("X")
-        button:SetSize(24, 24)
-        button.title = title
-        button.tooltip = tooltip
-        button.slug = slug
-        button:SetScript("OnClick", function(self)
-            local dialog = StaticPopup_Show("AAQ_ZONE_CONFIRM", self.title)
-            if dialog then
-                dialog.data = self.slug
-            end
-        end)
-        button:SetScript("OnEnter", function(self)
-            GameTooltip:SetOwner(self)
-            GameTooltip:SetText(string.format(L.ABANDON_DIALOG_ZONE, self.title))
-            GameTooltip:Show()
-        end)
-        button:SetScript("OnLeave", function() GameTooltip:Hide() end)
-        button:Show()
-    end
-end
 
--- Show buttons for all headers
-local function ButtonsShow()
-    buttonPool:ReleaseAll()
-    for header in QuestScrollFrame.headerFramePool:EnumerateActive() do
-        PlaceButton(header, 240)
-    end
-    for header in QuestScrollFrame.campaignHeaderFramePool:EnumerateActive() do
-        PlaceButton(header.Text, 15)
-    end
-end
 
 -- Abandon quests by group
 local function AbandonQuests(slug)
@@ -113,10 +75,10 @@ StaticPopupDialogs["AAQ_ALL_CONFIRM"] = {
 }
 
 -- Create main button to abandon all quests
-local globalButton = CreateFrame("Button", "AbandonAllQuest_MainButton", QuestScrollFrame.Contents, "UIPanelButtonTemplate")
+local globalButton = CreateFrame("Button", "AbandonAllQuest_MainButton", QuestMapFrame.QuestsFrame, "UIPanelButtonTemplate")
 globalButton:SetText(L.MAP_BUTTON_LABEL)
 globalButton:SetSize(200, 26)
-globalButton:SetPoint("BOTTOM", 0, -40)
+globalButton:SetPoint("BOTTOM", 0, 10)
 globalButton:SetScript("OnClick", function()
     StaticPopup_Show("AAQ_ALL_CONFIRM")
 end)
@@ -149,5 +111,4 @@ frame:SetScript("OnEvent", function(_, event, arg1)
     end
 end)
 
-QuestMapFrame:HookScript("OnShow", ButtonsShow)
-QuestMapFrame:HookScript("OnHide", function() buttonPool:ReleaseAll() end)
+
