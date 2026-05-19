@@ -3,76 +3,31 @@ local addonName, private = ...
 local TimeTracker = CreateFrame("Frame")
 TimeTracker:RegisterEvent("ADDON_LOADED")
 TimeTracker:RegisterEvent("PLAYER_LOGIN")
+TimeTracker:RegisterEvent("PLAYER_ENTERING_WORLD")
 TimeTracker:RegisterEvent("PLAYER_LOGOUT")
 TimeTracker:RegisterEvent("TIME_PLAYED_MSG")
 
 -- Variables from private for convenience
 local GetLocalizedText = private.GetLocalizedText
 
--- Global Variables
+-- Global Variables (exposed to private for other modules)
 private.playerKey = ""
 private.playerName = ""
 private.realmName = ""
 
+-- Tracking State Variables
 local sessionStartTime = 0
 local lastUpdateTime = 0
-local isRequestingTime = false
+private.isRequestingTime = false
 local updateTimer = nil
-local TimeTrackerFrame = nil
+local activityTimer = nil
 
--- Default Database
-local defaultDB = {
-    characters = {},
-    settings = {
-        showOnLogin = true,
-        updateInterval = 300, 
-        timeFormat = "complete",
-        minimapPos = { angle = 45 }
-    }
-}
-
--- Data Sanitization
-local function SanitizeData()
-    if not TimeTrackerDB or not TimeTrackerDB.characters then return end
-    for key, char in pairs(TimeTrackerDB.characters) do
-        if char.daily then
-            for dateStr, seconds in pairs(char.daily) do
-                if seconds > 86400 then 
-                    -- Reset to 0 if > 24h as it's definitely corrupted data
-                    char.daily[dateStr] = 0 
-                end
-            end
-        end
-    end
-end
-
--- NEW: Cleanup old data (+1 year)
-local function CleanupOldData()
-    if not TimeTrackerDB or not TimeTrackerDB.characters then return end
-    
-    local thresholdTime = time() - (365 * 24 * 60 * 60)
-    local thresholdStr = date("%Y-%m-%d", thresholdTime)
-    
-    for _, char in pairs(TimeTrackerDB.characters) do
-        if char.daily then
-            for dateStr, _ in pairs(char.daily) do
-                if dateStr < thresholdStr then
-                    char.daily[dateStr] = nil
-                end
-            end
-        end
-        if char.activityHistory and char.activityHistory.daily then
-            for dateStr, _ in pairs(char.activityHistory.daily) do
-                if dateStr < thresholdStr then
-                    char.activityHistory.daily[dateStr] = nil
-                end
-            end
-        end
-    end
-end
-
--- Format Helpers (Exposed to private for UI)
+-- Formatting Helpers
 function private.GetCurrentDate()
+    if C_DateAndTime and C_DateAndTime.GetCurrentCalendarTime then
+        local d = C_DateAndTime.GetCurrentCalendarTime()
+        return string.format("%04d-%02d-%02d", d.year, d.month, d.monthDay)
+    end
     return date("%Y-%m-%d")
 end
 
@@ -84,10 +39,18 @@ function private.GetCurrentWeek()
 end
 
 function private.GetCurrentMonth()
+    if C_DateAndTime and C_DateAndTime.GetCurrentCalendarTime then
+        local d = C_DateAndTime.GetCurrentCalendarTime()
+        return string.format("%04d-%02d", d.year, d.month)
+    end
     return date("%Y-%m")
 end
 
 function private.GetCurrentYear()
+    if C_DateAndTime and C_DateAndTime.GetCurrentCalendarTime then
+        local d = C_DateAndTime.GetCurrentCalendarTime()
+        return string.format("%04d", d.year)
+    end
     return date("%Y")
 end
 
@@ -109,7 +72,7 @@ function private.FormatTime(seconds, format)
         return math.floor(seconds / 60) .. "m"
     elseif format == "seconds" then
         return seconds .. "s"
-    else -- complete
+    else
         local result = ""
         if days > 0 then result = result .. days .. "d " end
         if hours > 0 then result = result .. hours .. "h " end
@@ -118,83 +81,63 @@ function private.FormatTime(seconds, format)
     end
 end
 
--- Account Totals Helper
-function private.GetAccountDailyTotals()
-    local totals = {}
-    if TimeTrackerDB and TimeTrackerDB.characters then
-        for _, char in pairs(TimeTrackerDB.characters) do
-            if char.daily then
-                for dateStr, seconds in pairs(char.daily) do
-                    totals[dateStr] = (totals[dateStr] or 0) + seconds
-                end
-            end
-        end
-    end
-    return totals
-end
-
--- Database Init
-local function InitializeCharacter()
-    local className, classFilename = UnitClass("player")
-    local raceName, raceFile = UnitRace("player")
-    
-    if not TimeTrackerDB.characters[private.playerKey] then
-        TimeTrackerDB.characters[private.playerKey] = {
-            name = private.playerName,
-            realm = private.realmName,
-            class = className,
-            classFile = classFilename,
-            race = raceName,
-            raceFile = raceFile,
-            level = UnitLevel("player"),
-            totalTime = 0,
-            levelTime = 0,
-            daily = {},
-            weekly = {},
-            monthly = {},
-            yearly = {},
-            sessions = {}, 
-            activities = { afk = 0, dungeons = 0, raids = 0 },
-            activitiesYearly = {},
-            lastLogin = time(),
-            firstLogin = time(),
-            baseTime = nil,
-            lastKnownTime = nil
-        }
-    else
-        local char = TimeTrackerDB.characters[private.playerKey]
-        char.class = className
-        char.classFile = classFilename
-        char.race = raceName
-        char.raceFile = raceFile
-        char.level = UnitLevel("player")
-        char.lastLogin = time()
-        if not char.firstLogin then char.firstLogin = time() end
-        if not char.yearly then char.yearly = {} end
-        -- detailed activity history
-        if not char.activityHistory then 
-             char.activityHistory = { daily = {}, weekly = {}, monthly = {}, yearly = {} }
-        end
-        -- keep simple totals for backward compat or quick access if needed, but primarily use history now
-        if not char.activities then char.activities = { afk = 0, dungeons = 0, raids = 0 } end
-    end
-end
-
 -- Tracking State
 local lastTickState = { time = GetTime() }
 
-local function SafeUnitIsAFK()
-    local success, result = pcall(function()
-        if UnitIsAFK("player") then return true end
+local function SafeCallBoolean(func, ...)
+    local args = {...}
+    local success, res = pcall(function()
+        if func(unpack(args)) then
+            return true
+        end
         return false
     end)
-    return success and result
+    if success then
+        return res
+    end
+    return false
 end
+
+local function SafeUnitIsAFK()
+    return SafeCallBoolean(UnitIsAFK, "player")
+end
+
+local function SafeUnitIsDeadOrGhost()
+    return SafeCallBoolean(UnitIsDeadOrGhost, "player")
+end
+
+local function SafeUnitOnTaxi()
+    return SafeCallBoolean(UnitOnTaxi, "player")
+end
+
+local function SafeIsResting()
+    return SafeCallBoolean(IsResting)
+end
+
+local function SafeIsInBattle()
+    if not (C_PetBattles and C_PetBattles.IsInBattle) then return false end
+    return SafeCallBoolean(C_PetBattles.IsInBattle)
+end
+
+local function SafeIsInInstance()
+    local success, inInstance, instanceType = pcall(function()
+        local inInst, instType = IsInInstance()
+        if inInst then
+            return true, instType
+        end
+        return false, nil
+    end)
+    if success then
+        return inInstance, instanceType
+    end
+    return false, nil
+end
+
 local function UpdateActivityTime()
     local currentTime = GetTime()
     local delta = currentTime - lastTickState.time
     lastTickState.time = currentTime
-    if delta > 30 then delta = 1 end -- Prevent huge leaps
+    if delta > 30 then delta = 1 end 
     
     local char = TimeTrackerDB.characters[private.playerKey]
     if not char then return end
@@ -206,28 +149,22 @@ local function UpdateActivityTime()
     local monthId = private.GetCurrentMonth()
     local yearId = private.GetCurrentYear()
     
-    -- Helper to update table
     local function AddToTable(tbl, key, field, amount)
         if not tbl[key] then tbl[key] = { afk = 0, dungeons = 0, raids = 0 } end
         tbl[key][field] = (tbl[key][field] or 0) + amount
     end
 
     local activity = nil
-    
-    -- Check Pet Battles
-    if C_PetBattles and C_PetBattles.IsInBattle() then
+    if SafeIsInBattle() then
         activity = "petbattles"
-    -- Check Taxi (Flight Path)
-    elseif UnitOnTaxi("player") then
+    elseif SafeUnitOnTaxi() then
         activity = "taxi"
-    -- Check Dead / Ghost
-    elseif UnitIsDeadOrGhost("player") then
+    elseif SafeUnitIsDeadOrGhost() then
         activity = "dead"
-    -- AFK Check
     elseif SafeUnitIsAFK() then
         activity = "afk"
     else
-        local inInstance, instanceType = IsInInstance()
+        local inInstance, instanceType = SafeIsInInstance()
         if inInstance then
             if instanceType == "party" then
                 activity = "dungeons"
@@ -241,19 +178,13 @@ local function UpdateActivityTime()
                 activity = "arenas"
             end
         end
-        
-        -- If not in an instance activity, check world activities
         if not activity then
-            -- Check Auction House
             if (AuctionHouseFrame and AuctionHouseFrame:IsShown()) or (AuctionFrame and AuctionFrame:IsShown()) then
                 activity = "auction"
-            -- Check Professions
             elseif (ProfessionsFrame and ProfessionsFrame:IsShown()) or (TradeSkillFrame and TradeSkillFrame:IsShown()) then
                 activity = "professions"
-            -- Check Resting (City / Inn)
-            elseif IsResting() then
+            elseif SafeIsResting() then
                 activity = "city"
-            -- Default to World Content
             else
                 activity = "world"
             end
@@ -268,18 +199,32 @@ local function UpdateActivityTime()
         AddToTable(char.activityHistory.yearly, yearId, activity, delta)
     end
     
-    -- Queue Tracking (Can exist alongside other activities)
-    local inQueue = false
-    -- Check LFG Queues
-    for i = 1, 6 do -- Iterate LFG categories
-        local mode = GetLFGMode(i)
-        if mode == "queued" then inQueue = true; break end
+    if sessionStartTime > 0 then
+        local sessionDuration = time() - sessionStartTime
+        if private.ldbObject then
+            private.ldbObject.text = "Sesión: " .. private.FormatTime(sessionDuration, "complete")
+        end
+        if TimeTrackerDB.settings.breakReminder then
+            if not private.lastBreakReminder then private.lastBreakReminder = 0 end
+            if sessionDuration > (private.lastBreakReminder + 7200) then
+                print("|cff00ccff[Time Tracker]|r: Llevas más de 2 horas jugando seguidas. ¡Aprovecha para levantarte, estirar y beber agua!")
+                private.lastBreakReminder = sessionDuration
+            end
+        end
     end
-    -- Check PvP Queues
+    
+    local inQueue = false
+    for i = 1, 6 do
+        local success, mode = pcall(GetLFGMode, i)
+        if success and mode == "queued" then inQueue = true; break end
+    end
     if not inQueue then
-        for i = 1, GetMaxBattlefieldID() do
-            local status = GetBattlefieldStatus(i)
-            if status == "queued" then inQueue = true; break end
+        local success, maxID = pcall(GetMaxBattlefieldID)
+        if success and type(maxID) == "number" then
+            for i = 1, maxID do
+                local s, status = pcall(GetBattlefieldStatus, i)
+                if s and status == "queued" then inQueue = true; break end
+            end
         end
     end
     
@@ -293,7 +238,6 @@ local function UpdateActivityTime()
     end
 end
  
--- Helper for updating play time (Local to this file scope, but needs access to DB)
 local function UpdatePlayTime(totalTime, levelTime)
     local char = TimeTrackerDB.characters[private.playerKey]
     if not char then return end
@@ -302,7 +246,6 @@ local function UpdatePlayTime(totalTime, levelTime)
     local currentWeek = private.GetCurrentWeek()
     local currentMonth = private.GetCurrentMonth()
     local currentYear = private.GetCurrentYear()
-    local currentTime = time()
     
     if totalTime and totalTime > 0 then
         char.totalTime = totalTime
@@ -328,8 +271,6 @@ local function UpdatePlayTime(totalTime, levelTime)
         char.monthly[currentMonth] = (char.monthly[currentMonth] or 0)
         char.yearly[currentYear] = (char.yearly[currentYear] or 0)
         
-        -- Sanity check: Only ignore if negative or absurdly high 
-        -- Limit to 8 hours (28800s). If jump is larger, we skip adding to daily stats to avoid corruption from bugs/long offline.
         if timePlayed > 0 and timePlayed < 28800 then
             char.daily[currentDate] = char.daily[currentDate] + timePlayed
             char.weekly[currentWeek] = char.weekly[currentWeek] + timePlayed
@@ -337,225 +278,68 @@ local function UpdatePlayTime(totalTime, levelTime)
             char.yearly[currentYear] = char.yearly[currentYear] + timePlayed
         end
         
-        -- ALWAYS update lastKnownTime to avoid getting stuck in a loop where difference keeps growing
         char.lastKnownTime = totalTime
     end
 
-    SanitizeData()
-    CleanupOldData()
+    if private.SanitizeData then private.SanitizeData() end
+    if private.CleanupOldData then private.CleanupOldData() end
 end
 
--- Request Time
 function private.RequestTimePlayed()
     RequestTimePlayed() 
 end
-local function SafeRequestTime()
+
+function private.SafeRequestTime()
+    private.isRequestingTime = true
     RequestTimePlayed()
-    isRequestingTime = true
 end
 
--- Timer
+local function BlockTimePlayedMessage(self, event, msg)
+    if private.isRequestingTime then
+        return true
+    end
+    return false
+end
+ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", BlockTimePlayedMessage)
+
 local function StartUpdateTimer()
     if updateTimer then updateTimer:Cancel() end
     local interval = TimeTrackerDB and TimeTrackerDB.settings.updateInterval or 300
     updateTimer = C_Timer.NewTicker(interval, function()
         if private.playerKey and TimeTrackerDB and TimeTrackerDB.characters[private.playerKey] then
-            SafeRequestTime()
+            private.SafeRequestTime()
         end
     end)
     
-    -- New Activity Ticker (1 sec)
     if activityTimer then activityTimer:Cancel() end
-    activityTimer = C_Timer.NewTicker(1, function()
+    activityTimer = C_Timer.NewTicker(10, function()
         UpdateActivityTime()
     end)
-end
-
--- Slash Commands
-SLASH_TIMETRACKER1 = "/timetrack"
-SLASH_TIMETRACKER2 = "/timetracker"
-function SlashCmdList.TIMETRACKER(msg)
-    local command = string.lower(msg or "")
-    if command == "show" or command == "" then
-        if TimeTrackerFrame then
-            if TimeTrackerFrame:IsShown() then
-                TimeTrackerFrame:Hide()
-            else
-                TimeTrackerFrame:Show()
-                -- Refresh active tab
-                if TimeTrackerFrame.tabDashboard and TimeTrackerFrame.tabDashboard.selected then
-                    private.UpdateDashboard(TimeTrackerFrame)
-                elseif TimeTrackerFrame.tabPersonal and TimeTrackerFrame.tabPersonal.selected then
-                    private.UpdateCurrentCharacterStats(TimeTrackerFrame)
-                elseif TimeTrackerFrame.tabCharacters and TimeTrackerFrame.tabCharacters.selected then
-                    private.UpdateCharactersStats(TimeTrackerFrame)
-                elseif TimeTrackerFrame.tabClasses and TimeTrackerFrame.tabClasses.selected then
-                    private.UpdateClassesStats(TimeTrackerFrame)
-                elseif TimeTrackerFrame.tabRaces and TimeTrackerFrame.tabRaces.selected then
-                    private.UpdateRacesStats(TimeTrackerFrame)
-                elseif TimeTrackerFrame.tabActivities and TimeTrackerFrame.tabActivities.selected then
-                    private.UpdateActivitiesStats(TimeTrackerFrame)
-                elseif TimeTrackerFrame.tabSummary and TimeTrackerFrame.tabSummary.selected then
-                    private.UpdateSummaryStats(TimeTrackerFrame)
-                elseif TimeTrackerFrame.tabStatistics and TimeTrackerFrame.tabStatistics.selected then
-                    private.UpdateStatisticsStats(TimeTrackerFrame)
-                elseif TimeTrackerFrame.tabBackup and TimeTrackerFrame.tabBackup.selected then
-                    private.UpdateBackupPanel(TimeTrackerFrame)
-                end
-                
-                -- Update Buttons text if needed
-                local fmt = TimeTrackerDB.settings.timeFormat or "complete"
-                local textMap = {
-                    hours = GetLocalizedText("ONLY_HOURS"), 
-                    minutes = GetLocalizedText("ONLY_MINUTES"), 
-                    seconds = GetLocalizedText("ONLY_SECONDS"), 
-                    complete = GetLocalizedText("COMPLETE_FORMAT")
-                }
-                local text = textMap[fmt]
-                if TimeTrackerFrame.personalFormatDropdown then UIDropDownMenu_SetText(TimeTrackerFrame.personalFormatDropdown, text) end
-                if TimeTrackerFrame.charFormatDropdown then UIDropDownMenu_SetText(TimeTrackerFrame.charFormatDropdown, text) end
-                if TimeTrackerFrame.classFormatDropdown then UIDropDownMenu_SetText(TimeTrackerFrame.classFormatDropdown, text) end
-                if TimeTrackerFrame.raceFormatDropdown then UIDropDownMenu_SetText(TimeTrackerFrame.raceFormatDropdown, text) end
-            end
-        end
-    elseif command == "time" then
-        SafeRequestTime()
-        print("Time Tracker: " .. GetLocalizedText("GETTING_TIME"))
-    elseif command == "stats" then
-        local char = TimeTrackerDB.characters[private.playerKey]
-        if char then
-            local fmt = TimeTrackerDB.settings.timeFormat
-            print("Time Tracker - " .. GetLocalizedText("QUICK_STATS_TITLE"))
-            print(GetLocalizedText("TOTAL") .. ": " .. private.FormatTime(char.totalTime, fmt))
-            print(GetLocalizedText("TODAY") .. ": " .. private.FormatTime(char.daily[private.GetCurrentDate()] or 0, fmt))
-            print(GetLocalizedText("THIS_WEEK") .. ": " .. private.FormatTime(char.weekly[private.GetCurrentWeek()] or 0, fmt))
-        else
-            print("Time Tracker: " .. GetLocalizedText("NO_DATA"))
-        end
-    elseif command == "format" then
-        print("Time Tracker - " .. GetLocalizedText("FORMATS_AVAILABLE"))
-        -- ... simplified text output
-        print(GetLocalizedText("CURRENT_FORMAT") .. " " .. (TimeTrackerDB.settings.timeFormat or "complete"))
-        print(GetLocalizedText("CHANGE_FORMAT"))
-    else
-        print("Time Tracker - " .. GetLocalizedText("COMMANDS_AVAILABLE"))
-        print("/timetrack show - " .. GetLocalizedText("SHOW_HIDE_WINDOW"))
-        print("/timetrack time - " .. GetLocalizedText("GET_TIME_PLAYED"))
-        print("/timetrack stats - " .. GetLocalizedText("QUICK_STATS"))
-        print("/timetrack format - " .. GetLocalizedText("FORMAT_INFO"))
-    end
-end
-
-
--- --- BACKUP SYSTEM (Serialization) ---
-function private.SerializeDatabase()
-    if not TimeTrackerDB then return "" end
-    
-    local function serialize(t)
-        local s = "{"
-        for k, v in pairs(t) do
-            local key = type(k) == "string" and string.format("[%q]", k) or string.format("[%d]", k)
-            local val
-            if type(v) == "table" then
-                val = serialize(v)
-            elseif type(v) == "string" then
-                val = string.format("%q", v)
-            elseif type(v) == "number" or type(v) == "boolean" then
-                val = tostring(v)
-            end
-            if val then s = s .. key .. "=" .. val .. "," end
-        end
-        return s .. "}"
-    end
-    
-    -- We only export the characters data to keep it clean, settings can be manual
-    local data = {
-        version = private.addonVersion or "2.1",
-        timestamp = time(),
-        characters = TimeTrackerDB.characters
-    }
-    
-    return "TT_BACKUP:" .. serialize(data)
-end
-
-function private.DeserializeDatabase(str)
-    if not str or str == "" then return false end
-    if not str:find("^TT_BACKUP:{") then return false end
-    
-    local code = str:gsub("^TT_BACKUP:", "")
-    
-    -- Safe execution of the table string
-    -- In WoW, we can use SecureCmdOptionParse or simply loadstring if we trust it,
-    -- but for safety we should use a custom parser or check for malicious calls.
-    -- Since this is for a private addon, loadstring is the most powerful.
-    local func, err = loadstring("return " .. code)
-    if not func then return false end
-    
-    -- Run in a safe environment if possible, or just pcall it
-    local success, result = pcall(func)
-    if not success or not result or type(result) ~= "table" then return false end
-    
-    if result.characters then
-        -- Merge or overwrite? Usually overwrite for a full restore
-        TimeTrackerDB.characters = result.characters
-        return true, #result.characters -- Returns number of items for info
-    end
-    
-    return false
-end
-
-
--- Backfill Yearly Stats from Daily
-local function BackfillYearlyStats()
-    if not TimeTrackerDB or not TimeTrackerDB.characters then return end
-    local currentYear = private.GetCurrentYear()
-    
-    for key, char in pairs(TimeTrackerDB.characters) do
-        if char.daily then
-            local yearSum = 0
-            for dateStr, seconds in pairs(char.daily) do
-                -- Extracts YYYY from YYYY-MM-DD
-                local y = string.match(dateStr, "^(%d+)-")
-                if y == currentYear then
-                    yearSum = yearSum + seconds
-                end
-            end
-            
-            char.yearly = char.yearly or {}
-            -- Only update if calculated sum is greater (to avoid overwriting if we already tracked some, though sum should be accurate source of truth)
-            if yearSum > (char.yearly[currentYear] or 0) then
-                char.yearly[currentYear] = yearSum
-            end
-        end
-    end
 end
 
 -- Events
 TimeTracker:SetScript("OnEvent", function(self, event, ...)
     local arg1 = ...
     if event == "ADDON_LOADED" and arg1 == "TimeTracker" then
-        if not TimeTrackerDB then TimeTrackerDB = CopyTable(defaultDB) end
+        if not TimeTrackerDB then TimeTrackerDB = CopyTable(private.defaultDB or {}) end
         if not TimeTrackerDB.settings.timeFormat then TimeTrackerDB.settings.timeFormat = "complete" end
         
-        -- Run sanitization
-        SanitizeData()
-        CleanupOldData()
-
-        -- Run backfill to populate yearly stats from existing daily data
-        BackfillYearlyStats()
+        if private.SanitizeData then private.SanitizeData() end
+        if private.CleanupOldData then private.CleanupOldData() end
+        if private.BackfillYearlyStats then private.BackfillYearlyStats() end
         
-        -- Cleanup legacy sessions data
         if TimeTrackerDB and TimeTrackerDB.characters then
             for _, char in pairs(TimeTrackerDB.characters) do
                 if char.sessions then char.sessions = nil end
             end
         end
         
-        -- Build UI
-        TimeTrackerFrame = private.CreateMainFrame()
+        private.TimeTrackerFrame = private.CreateMainFrame()
         print(GetLocalizedText("ADDON_LOADED"))
         
-        -- Init Minimap Button
+        if private.CreateOptionsPanel then private.CreateOptionsPanel() end
+        if private.InitDataBroker then private.InitDataBroker() end
+        
         C_Timer.After(2, function()
             private.CreateMinimapButton()
         end)
@@ -567,10 +351,10 @@ TimeTracker:SetScript("OnEvent", function(self, event, ...)
         sessionStartTime = time()
         lastUpdateTime = time()
         
-        InitializeCharacter()
+        if private.InitializeCharacter then private.InitializeCharacter() end
         
         C_Timer.After(5, function()
-            SafeRequestTime()
+            private.SafeRequestTime()
             StartUpdateTimer()
         end)
         
@@ -578,33 +362,29 @@ TimeTracker:SetScript("OnEvent", function(self, event, ...)
             print("Time Tracker: " .. string.format(GetLocalizedText("WELCOME"), private.playerName))
         end
         
+    elseif event == "PLAYER_ENTERING_WORLD" then
+        if private.playerKey and TimeTrackerDB and TimeTrackerDB.characters[private.playerKey] then
+            TimeTrackerDB.characters[private.playerKey].level = UnitLevel("player")
+        end
+        
     elseif event == "PLAYER_LOGOUT" then
-        local sessionEnd = time()
         if sessionStartTime > 0 then
-            local sessionDuration = sessionEnd - sessionStartTime
-            
-            -- Session History Logic removed (Legacy)
-            
             UpdatePlayTime(nil, nil)
         end
         
     elseif event == "TIME_PLAYED_MSG" then
         local totalTime, levelTime = ...
-        if isRequestingTime then
+        if private.isRequestingTime then
             UpdatePlayTime(totalTime, levelTime)
-            isRequestingTime = false
+            private.isRequestingTime = false
             
-            if TimeTrackerFrame and TimeTrackerFrame:IsShown() then
-                 if TimeTrackerFrame.tabPersonal.selected then
-                    private.UpdateCurrentCharacterStats(TimeTrackerFrame)
-                elseif TimeTrackerFrame.tabCharacters and TimeTrackerFrame.tabCharacters.selected then
-                    private.UpdateCharactersStats(TimeTrackerFrame)
-                elseif TimeTrackerFrame.tabClasses and TimeTrackerFrame.tabClasses.selected then
-                    private.UpdateClassesStats(TimeTrackerFrame)
-                elseif TimeTrackerFrame.tabRaces and TimeTrackerFrame.tabRaces.selected then
-                    private.UpdateRacesStats(TimeTrackerFrame)
-                elseif TimeTrackerFrame.tabHistory and TimeTrackerFrame.tabHistory.selected then
-                    private.UpdateHistoryStats(TimeTrackerFrame)
+            local f = private.TimeTrackerFrame
+            if f and f:IsShown() then
+                 if f.tabPersonal and f.tabPersonal.selected then private.UpdateCurrentCharacterStats(f)
+                elseif f.tabCharacters and f.tabCharacters.selected then private.UpdateCharactersStats(f)
+                elseif f.tabClasses and f.tabClasses.selected then private.UpdateClassesStats(f)
+                elseif f.tabRaces and f.tabRaces.selected then private.UpdateRacesStats(f)
+                elseif f.tabHistory and f.tabHistory.selected then private.UpdateHistoryStats(f)
                 end
             end
         end

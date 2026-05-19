@@ -1,19 +1,21 @@
 ## Interface: 120001, 120000, 110200, 110207, 120000, 11505, 11506, 50400, 50401, 20505
 ## Title: Time Tracker
-## Notes: Rastrea el tiempo jugado por día, semana, mes y total para todos los personajes
+## Notes: Rastrea el tiempo jugado por día, semana, mes y total para todos los personajes.
 ## Author: DarkAce
 ## Version: 2.1.0
 ## SavedVariables: TimeTrackerDB
 
-Locales.lua
+Locales\Locales.lua
+Core\TimeTracker_Database.lua
+Core\TimeTracker_Options.lua
 TimeTracker.lua
-UI.lua
-UI_Dashboard.lua
-UI_Personal.lua
-UI_Characters.lua
-UI_Classes.lua
-UI_Races.lua
-UI_Activities.lua
-UI_Summary.lua
-UI_Statistics.lua
-UI_Backup.lua
+UI\UI.lua
+UI\UI_Dashboard.lua
+UI\UI_Personal.lua
+UI\UI_Characters.lua
+UI\UI_Classes.lua
+UI\UI_Races.lua
+UI\UI_Activities.lua
+UI\UI_Summary.lua
+UI\UI_Statistics.lua
+UI\UI_Backup.lua
