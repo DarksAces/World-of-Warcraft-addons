@@ -33,6 +33,16 @@ elseif locale == "deDE" then
     L["Improved"]      = "Verbessert"
     L["Worse"]         = "Verschlechtert"
     L["DamageDone"]    = "Verursachter Schaden: %d"
+elseif locale == "ruRU" then
+    L["CombatEnded"]   = "MicroMetrics - Бой окончен:"
+    L["Duration"]      = " - Общая длительность: %.1f сек"
+    L["NoDamage"]      = " - Время без нанесения урона: %.1f сек"
+    L["Uptime"]        = " - Время активности: %d%%"
+    L["RecordCombat"]  = "Новый рекорд длительности боя."
+    L["RecordUptime"]  = "Новый рекорд времени активности."
+    L["Improved"]      = "Улучшено"
+    L["Worse"]         = "Ухудшено"
+    L["DamageDone"]    = "Нанесено урона: %d"
 elseif locale == "itIT" then
     L["CombatEnded"]   = "MicroMetrics - Combattimento terminato:"
     L["Duration"]      = " - Durata totale: %.1f s"
