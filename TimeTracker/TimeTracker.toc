@@ -19,3 +19,4 @@ UI\UI_Activities.lua
 UI\UI_Summary.lua
 UI\UI_Statistics.lua
 UI\UI_Backup.lua
+UI\UI_Collaborators.lua

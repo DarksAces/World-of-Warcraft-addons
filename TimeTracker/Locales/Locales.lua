@@ -115,6 +115,15 @@ L["en"] = {
     ACTIVITY_HEATMAP = "Activity Heatmap (Last 30 Days)",
     LAST_30_DAYS = "Last 30 Days",
     CATEGORY = "Category",
+    COLLABORATORS_TAB = "Collaborators",
+    COLLABORATORS_TITLE = "--- Collaborators & Translators ---",
+    COLLABORATORS_DESC = "Special thanks to all the amazing people who helped translate and improve Time Tracker!",
+    COLLABORATOR_RU = "ZamestoTV",
+    COLLABORATOR_RU_DESC = "Russian Translation",
+    COLLABORATOR_AUTHOR = "DarkAce",
+    COLLABORATOR_AUTHOR_DESC = "Creator & Developer",
+    COLLABORATOR_JOIN_TITLE = "Want to help?",
+    COLLABORATOR_JOIN_DESC = "If you want to translate the addon to other languages or contribute code, join us on GitHub!",
 }
 
 -- Spanish
@@ -241,6 +250,15 @@ L["es"] = {
     ACTIVITY_HEATMAP = "Mapa de Actividad (Últimos 30 Días)",
     LAST_30_DAYS = "Últimos 30 Días",
     CATEGORY = "Categoría",
+    COLLABORATORS_TAB = "Colaboradores",
+    COLLABORATORS_TITLE = "--- Colaboradores y Traductores ---",
+    COLLABORATORS_DESC = "¡Un agradecimiento especial a todas las personas increíbles que ayudaron a traducir y mejorar Time Tracker!",
+    COLLABORATOR_RU = "ZamestoTV",
+    COLLABORATOR_RU_DESC = "Traducción al Ruso",
+    COLLABORATOR_AUTHOR = "DarkAce",
+    COLLABORATOR_AUTHOR_DESC = "Creador y Desarrollador",
+    COLLABORATOR_JOIN_TITLE = "¿Quieres ayudar?",
+    COLLABORATOR_JOIN_DESC = "Si deseas traducir el addon a otros idiomas o contribuir con el código, ¡únete en GitHub!",
 }
 
 -- Translator ZamestoTV
@@ -354,6 +372,15 @@ L["ru"] = {
     ACTIVITY_HEATMAP = "Тепловая карта активности (Последние 30 дней)",
     LAST_30_DAYS = "Последние 30 дней",
     CATEGORY = "Категория",
+    COLLABORATORS_TAB = "Помощники",
+    COLLABORATORS_TITLE = "--- Помощники и переводчики ---",
+    COLLABORATORS_DESC = "Особая благодарность всем замечательным людям, которые помогли перевести и улучшить Time Tracker!",
+    COLLABORATOR_RU = "ZamestoTV",
+    COLLABORATOR_RU_DESC = "Перевод на русский",
+    COLLABORATOR_AUTHOR = "DarkAce",
+    COLLABORATOR_AUTHOR_DESC = "Создатель и разработчик",
+    COLLABORATOR_JOIN_TITLE = "Хотите помочь?",
+    COLLABORATOR_JOIN_DESC = "Если вы хотите перевести аддон на другие языки или помочь с кодом, присоединяйтесь к нам на GitHub!",
 }
 
 -- Get localized string function

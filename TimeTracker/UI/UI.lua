@@ -146,7 +146,7 @@ end
 -- Create Main Frame
 function private.CreateMainFrame()
     local frame = CreateFrame("Frame", "TimeTrackerFrame", UIParent, "BasicFrameTemplateWithInset, BackdropTemplate")
-    frame:SetSize(940, 620); frame:SetPoint("CENTER"); frame:SetMovable(true); frame:EnableMouse(true)
+    frame:SetSize(1095, 620); frame:SetPoint("CENTER"); frame:SetMovable(true); frame:EnableMouse(true)
     frame:RegisterForDrag("LeftButton"); frame:SetScript("OnDragStart", frame.StartMoving); frame:SetScript("OnDragStop", frame.StopMovingOrSizing); frame:Hide()
     
     frame:SetBackdrop({
@@ -168,7 +168,8 @@ function private.CreateMainFrame()
         { "Activities", "ACTIVITIES_TAB", 100 },
         { "Summary", "SUMMARY_TAB", 90 },
         { "Statistics", "STATISTICS_TAB", 110 },
-        { "Backup", "BACKUP_TAB", 130 }
+        { "Backup", "BACKUP_TAB", 130 },
+        { "Collaborators", "COLLABORATORS_TAB", 120 }
     }
 
     local lastTab = nil
@@ -216,6 +217,7 @@ function private.CreateMainFrame()
     frame.summaryPanel = CreatePanel("Summary")
     frame.statisticsPanel = CreatePanel("Statistics")
     frame.backupPanel = CreatePanel("Backup", true)
+    frame.collaboratorsPanel = CreatePanel("Collaborators")
 
     -- Shared Dropdowns
     frame.personalFormatDropdown = CreateTimeFormatDropdown(frame.personalPanel, 5, -30)
@@ -248,7 +250,7 @@ function private.CreateMainFrame()
         frame["tab" .. id].selected = true
         UpdateTabAppearance()
         frame.dashboardPanel:Hide(); frame.personalPanel:Hide(); frame.charactersPanel:Hide(); frame.classesPanel:Hide(); frame.racesPanel:Hide()
-        frame.activitiesPanel:Hide(); frame.summaryPanel:Hide(); frame.statisticsPanel:Hide(); frame.backupPanel:Hide()
+        frame.activitiesPanel:Hide(); frame.summaryPanel:Hide(); frame.statisticsPanel:Hide(); frame.backupPanel:Hide(); frame.collaboratorsPanel:Hide()
         frame[id:lower() .. "Panel"]:Show()
         if updateFunc then updateFunc(frame) end
     end
@@ -262,6 +264,7 @@ function private.CreateMainFrame()
     frame.tabSummary:SetScript("OnClick", function() ShowTab("Summary", private.UpdateSummaryStats) end)
     frame.tabStatistics:SetScript("OnClick", function() ShowTab("Statistics", private.UpdateStatisticsStats) end)
     frame.tabBackup:SetScript("OnClick", function() ShowTab("Backup", private.UpdateBackupPanel) end)
+    frame.tabCollaborators:SetScript("OnClick", function() ShowTab("Collaborators", private.UpdateCollaboratorsPanel) end)
 
     frame.tabDashboard.selected = true
     UpdateTabAppearance()
