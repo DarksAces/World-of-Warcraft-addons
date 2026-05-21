@@ -4,7 +4,14 @@ namespace.L = {}
 local L = {}
 setmetatable(L, { __index = function(_, key) return key end })
 
-if GetLocale() == "esES" or GetLocale() == "esMX" then
+if GetLocale() == "ruRU" then
+    L.MAP_BUTTON_LABEL = "Отменить все задания"
+    L.ABANDON_DIALOG_ALL = "Вы уверены, что хотите отменить все активные задания?"
+    L.ABANDON_DIALOG_ZONE = "Вы уверены, что хотите отменить все задания в зоне %s?"
+    L.ABANDON_QUEST_SUCCESS = "Вы отменили задание: %s"
+    L.SLASH_HELP = "Используйте /abandonzone [название] или /abandonzone all, чтобы отменить задания в зоне или все сразу."
+    L.ZONE_NOT_FOUND = "Зона '%s' не найдена."
+elseif GetLocale() == "esES" or GetLocale() == "esMX" then
     L.MAP_BUTTON_LABEL = "Abandonar todas las misiones"
     L.ABANDON_DIALOG_ALL = "¿Seguro que quieres abandonar todas las misiones activas?"
     L.ABANDON_DIALOG_ZONE = "¿Seguro que quieres abandonar todas las misiones en %s?"
