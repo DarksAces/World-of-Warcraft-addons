@@ -4,6 +4,7 @@
 ## Author: DarkAce
 ## Version: 1.0.1
 ## DefaultState: Enabled
+## SavedVariables: AbandonAllQuestDB
 
 Localization.lua
 AbandonAllQuest.lua

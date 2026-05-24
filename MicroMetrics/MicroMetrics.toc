@@ -3,5 +3,6 @@
 ## Notes: Estadísticas rápidas al salir de combate
 ## Author: Daniel
 ## Version: 1.0.2
+## SavedVariables: MicroMetricsDB
 Locales.lua
 MicroMetrics.lua
