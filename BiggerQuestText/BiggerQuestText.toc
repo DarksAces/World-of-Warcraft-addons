@@ -1,6 +1,6 @@
-## Interface: 110200
+## Interface: 120001, 120000, 110200
 ## Title: Bigger Quest Text
-## Notes: Makes NPC dialog and quest text bigger and more readable
+## Notes: Makes NPC dialog and quest text bigger and more readable.
 ## Author: DarkAce
 ## Version: 1.0
 ## SavedVariables: BiggerQuestTextDB
