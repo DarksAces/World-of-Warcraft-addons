@@ -2,7 +2,7 @@
 ## Title: Bigger Quest Text
 ## Notes: Makes NPC dialog and quest text bigger and more readable.
 ## Author: DarkAce
-## Version: 1.0
+## Version: 1.0.1
 ## SavedVariables: BiggerQuestTextDB
 
 BiggerQuestText.lua
